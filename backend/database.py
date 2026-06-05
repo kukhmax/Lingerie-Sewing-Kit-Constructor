@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_url, create_engine, Column, String, Float
+from sqlalchemy import create_engine, Column, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
