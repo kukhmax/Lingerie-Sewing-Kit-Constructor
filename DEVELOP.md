@@ -32,13 +32,20 @@ W tym kroku wykonaliśmy:
 **Data:** 2026-06-05
 
 W tym kroku wykonaliśmy:
-1. Przeanalizowano kod źródłowy strony głównej **subtelnedetale.pl** w celu dopasowania identyfikacji wizualnej (zbadano kolory, takie jak charakterystyczne złoto `#c9a236`, oraz czcionkę `Poppins`).
-2. Utworzono arkusz stylów `frontend/src/index.css`, implementujący:
-   * Czcionki *Playfair Display* (szeryfowa, dla nagłówków) oraz *Inter* (bezszeryfowa, dla tekstu i tabel).
-   * Kolorystykę pasującą do butiku (tło mleczno-pudrowe `#fdfcf9`, złote akcenty `#c9a236`/`#cca374`, antracytowe teksty).
-   * Efekty hover, zaokrąglenia kart premium, niestandardowy pasek przewijania (scrollbar) oraz style dla interaktywnych elementów SVG.
-3. Opracowano główny komponent `frontend/src/App.jsx` w języku polskim:
-   * Dodano przełączanie między 3 typami bielizny: Biustonosz (bra), Majtki (panties), Koszulka nocna (nightgown).
-   * Wdrożono boczny panel katalogu materiałów z filtrowaniem kategorii (Tkaniny i Koronki, Taśmy i Gumy, Akcesoria, Zapięcia, Tunele/Fiszbiny).
-   * Wdrożono boczny panel listy zakupów (Checklist) z podglądem wybranego koloru/rozmiaru i automatyczną kalkulacją sumy oraz norm zużycia.
-   * Dodano integrację z koszykiem Laravel (`POST /api/constructor/cart/add`) oraz panel wirtualnego konsultanta AI z wejściem na klucz API Gemini.
+1. Przeanalizowano kod źródłowy strony głównej **subtelnedetale.pl** w celu dopasowania identyfikacji wizualnej.
+2. Utworzono arkusz stylów `frontend/src/index.css`.
+3. Opracowano główny komponent `frontend/src/App.jsx` w języku polskim (panel wyboru wyrobów, boczny panel materiałów z filtrowaniem, lista zakupów, koszyk, panel Gemini).
+
+---
+
+## Krok 4: Interaktywne schematy SVG (Biustonosz, Majtki, Koszulka nocna)
+**Data:** 2026-06-05
+
+W tym kroku wykonaliśmy:
+1. Utworzono trzy osobne komponenty rysunków wektorowych (SVG):
+   * `frontend/src/components/BraSvg.jsx` — szczegółowy wektorowy rysunek biustonosza zawierający miseczki, ramiączka, regulatory, zapięcie tyłu, gumki obszywkowe, tunele i mostek.
+   * `frontend/src/components/PantiesSvg.jsx` — rysunek majtek z panelem przednim, panelem tylnym, klinem kroku, gumką w pasie i otworami na nogawki.
+   * `frontend/src/components/NightgownSvg.jsx` — rysunek koszulki nocnej zawierający stanik/miseczki, dół koszulki (spódnicę), ramiączka, gumkę pod biustem i dolne wykończenie z koronki.
+2. Powiązano ścieżki i kształty SVG z klasą `interactive-part` z pliku CSS w celu wywoływania animacji podświetlenia (efekt hover ze złotym cieniem i obramowaniem).
+3. Dodano obsługę kliknięć na poszczególne elementy rysunku: kliknięcie podświetla element złotym konturem jako aktywny (`activePart`) i filtruje listę materiałów po lewej stronie, aby wyświetlić tylko te artykuły, które nadają się do uszycia wybranego elementu.
+4. Zaimplementowano w strukturze SVG dynamiczne wiązanie kolorów (atrybut `fill` pobiera odcień Hex z wybranego produktu) oraz nałożono wzór tekstury koronki (`url(#lace-pattern)`) z płynnym mieszaniem warstw (`mixBlendMode: overlay`).

@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import BraSvg from './components/BraSvg';
+import PantiesSvg from './components/PantiesSvg';
+import NightgownSvg from './components/NightgownSvg';
 
 // Default presets for the garments
 const COLOR_PRESETS = [
@@ -528,28 +531,27 @@ Wybierz tylko poprawne ID z katalogu! Nie wymyślaj nowych ID.`;
           </div>
 
           <div className="canvas-wrapper" style={{ width: '100%' }}>
-            {/* SVG Visualizer Placeholder - Will be updated in Step 4 */}
-            <div style={{
-              border: '2px dashed var(--color-border)',
-              borderRadius: 'var(--radius-lg)',
-              width: '100%',
-              height: '350px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: '#fafafa'
-            }}>
-              <span style={{ fontSize: '3rem' }}>
-                {activeGarment === 'bra' ? '👙' : activeGarment === 'panties' ? '🩲' : '👗'}
-              </span>
-              <p style={{ fontWeight: '500', marginTop: '1rem' }}>
-                {activeGarment === 'bra' ? 'Szkic Biustonosza' : activeGarment === 'panties' ? 'Szkic Majtek' : 'Szkic Koszulki Nocnej'}
-              </p>
-              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                [W kroku 4 wstawimy interaktywny wektorowy rysunek SVG]
-              </p>
-            </div>
+            {activeGarment === 'bra' && (
+              <BraSvg 
+                activePart={activePart} 
+                setActivePart={setActivePart} 
+                selections={selections.bra} 
+              />
+            )}
+            {activeGarment === 'panties' && (
+              <PantiesSvg 
+                activePart={activePart} 
+                setActivePart={setActivePart} 
+                selections={selections.panties} 
+              />
+            )}
+            {activeGarment === 'nightgown' && (
+              <NightgownSvg 
+                activePart={activePart} 
+                setActivePart={setActivePart} 
+                selections={selections.nightgown} 
+              />
+            )}
           </div>
 
           {/* Active Part Info Bar */}
