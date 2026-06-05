@@ -64,3 +64,15 @@ W tym kroku wykonaliśmy:
    - `backend` (FastAPI z wystawionym portem 8000:8000)
    - `frontend` (Nginx Alpine z wystawionym portem 5173:80)
 3. Uruchomiono i zweryfikowano pełny zestaw kontenerów za pomocą polecenia `docker compose up --build -d`. Aplikacja frontendowa zintegrowana z backendowym API jest w pełni dostępna i sprawna pod adresem `http://localhost:5173/`.
+
+## Krok 7: Dopasowanie listy części i podział akcesoriów (Zgodnie z PLAN.md)
+**Data:** 2026-06-06
+
+W tym kroku wykonaliśmy:
+1. Zaktualizowano definicję części `GARMENT_PARTS` w [App.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/App.jsx) zgodnie ze szczegółowymi specyfikacjami z `PLAN.md`:
+   - Rozdzielono akcesoria metalowe na oddzielne kroki: **Kółka metalowe** (kategoria `ring`) i **Regulatory metalowe** (kategoria `slider`).
+   - Dodano **Tiul stabilny** i **Tiul elastyczny** jako osobne elementy dla biustonosza.
+   - Dodano ozdobne wstawki (`fabric_extra`) dla majtek.
+   - Dodano fiszbiny boczne oraz dedykowany tunel dla braletu.
+2. Zaktualizowano komponent wizualizacji [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) w celu obsługi nowej struktury części (osobne bindowanie kolorów i kliknięć dla kółek, regulatorów, tiuli itp.).
+3. Ponownie zbudowano aplikację w kontenerach Docker za pomocą `docker compose up --build -d` i zweryfikowano pomyślną kompilację frontendu przez Vite.

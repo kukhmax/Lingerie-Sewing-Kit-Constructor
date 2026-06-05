@@ -8,33 +8,38 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || `${window.location.protocol
 const GARMENT_PARTS = {
   biustonosz: [
     { id: 'fabric', name: 'Materiał główny (miseczki)', category: 'fabric', required: true, isMain: true, qty: 0.5 },
-    { id: 'lace', name: 'Koronka elastyczna', category: 'lace', required: true, isMain: true, qty: 1.0 },
-    { id: 'tunnel', name: 'Tunel gorseciarski', category: 'tunnel', required: true, isMain: false, qty: 1.5 },
-    { id: 'underwire', name: 'Fiszbiny metalowe', category: 'underwire', required: true, isMain: false, qty: 1.0 },
+    { id: 'lace', name: 'Koronka elastyczna', category: 'fabric', required: true, isMain: true, qty: 1.0 },
+    { id: 'tulle_elastic', name: 'Tiul elastyczny (obwód)', category: 'fabric', required: true, isMain: true, qty: 0.5 },
+    { id: 'tulle_stable', name: 'Tiul stabilny (mostek)', category: 'fabric', required: true, isMain: true, qty: 0.5 },
     { id: 'elastic_trim', name: 'Guma obszywkowa (obwód)', category: 'elastic_trim', required: true, isMain: false, qty: 1.5 },
     { id: 'elastic_strap', name: 'Guma ramiączkowa', category: 'elastic_strap', required: true, isMain: false, qty: 1.2 },
-    { id: 'hardware', name: 'Regulatory i kółka', category: 'hardware', required: true, isMain: false, qty: 1.0 },
+    { id: 'ring', name: 'Kółka metalowe', category: 'ring', required: true, isMain: false, qty: 2.0 },
+    { id: 'slider', name: 'Regulatory metalowe', category: 'slider', required: true, isMain: false, qty: 2.0 },
     { id: 'closure', name: 'Zapięcie haftkowe', category: 'closure', required: true, isMain: false, qty: 1.0 },
+    { id: 'underwire', name: 'Fiszbiny metalowe', category: 'underwire', required: true, isMain: false, qty: 1.0 },
     { id: 'bow', name: 'Kokardka ozdobna', category: 'bow', required: false, isMain: false, qty: 1.0 },
+    { id: 'tunnel', name: 'Tunel gorseciarski', category: 'tunnel', required: true, isMain: false, qty: 1.5 },
     { id: 'threads', name: 'Nici Ariadna Talia 120', category: 'threads', required: true, isMain: false, qty: 1.0 }
   ],
   majtki: [
-    { id: 'fabric', name: 'Materiał główny (dzianina)', category: 'fabric', required: true, isMain: true, qty: 0.5 },
-    { id: 'lace', name: 'Koronka wykończeniowa', category: 'lace', required: false, isMain: false, qty: 1.5 },
-    { id: 'elastic_trim', name: 'Guma obszywkowa', category: 'elastic_trim', required: true, isMain: false, qty: 2.0 },
-    { id: 'gusset', name: 'Bawełna na klin', category: 'fabric', required: true, isMain: false, qty: 0.2 }, // In database: category is 'fabric'
-    { id: 'threads', name: 'Nici Talia 120', category: 'threads', required: true, isMain: false, qty: 1.0 }
+    { id: 'fabric', name: 'Materiał 1 (dzianina)', category: 'fabric', required: true, isMain: true, qty: 0.5 },
+    { id: 'fabric_extra', name: 'Materiał 2 (dekoracyjny)', category: 'fabric', required: false, isMain: true, qty: 0.5 },
+    { id: 'lace', name: 'Koronka wykończeniowa', category: 'fabric', required: false, isMain: true, qty: 1.5 },
+    { id: 'gusset', name: 'Bawełna na klin', category: 'fabric', required: true, isMain: false, qty: 0.2 },
+    { id: 'elastic_trim', name: 'Guma ozdobna (pas)', category: 'elastic_trim', required: true, isMain: false, qty: 2.0 },
+    { id: 'threads', name: 'Nici do szwów płaskich', category: 'threads', required: true, isMain: false, qty: 1.0 }
   ],
   bralet: [
-    { id: 'lace', name: 'Koronka elastyczna (miseczki)', category: 'lace', required: true, isMain: true, qty: 1.5 },
+    { id: 'lace', name: 'Koronka elastyczna (miseczki)', category: 'fabric', required: true, isMain: true, qty: 1.5 },
     { id: 'fabric', name: 'Tiul elastyczny (obwód)', category: 'fabric', required: true, isMain: true, qty: 0.5 },
     { id: 'elastic_trim', name: 'Guma pod biust', category: 'elastic_trim', required: true, isMain: false, qty: 1.5 },
     { id: 'elastic_strap', name: 'Guma ramiączkowa', category: 'elastic_strap', required: true, isMain: false, qty: 1.2 },
-    { id: 'hardware', name: 'Regulatory i kółka', category: 'hardware', required: true, isMain: false, qty: 1.0 },
+    { id: 'ring', name: 'Kółka metalowe', category: 'ring', required: true, isMain: false, qty: 2.0 },
+    { id: 'slider', name: 'Regulatory metalowe', category: 'slider', required: true, isMain: false, qty: 2.0 },
     { id: 'closure', name: 'Zapięcie haftkowe', category: 'closure', required: true, isMain: false, qty: 1.0 },
-    { id: 'bow', name: 'Kokardka ozdobna', category: 'bow', required: false, isMain: false, qty: 1.0 },
-    { id: 'cup_insert', name: 'Piankowe wkładki', category: 'cup_insert', required: false, isMain: false, qty: 1.0 },
-    { id: 'threads', name: 'Nici Talia 120', category: 'threads', required: true, isMain: false, qty: 1.0 }
+    { id: 'underwire', name: 'Fiszbiny boczne pionowe', category: 'underwire', required: false, isMain: false, qty: 2.0 },
+    { id: 'tunnel', name: 'Tunel na fiszbiny boczne', category: 'tunnel', required: false, isMain: false, qty: 1.0 },
+    { id: 'threads', name: 'Nici Ariadna Talia 120', category: 'threads', required: true, isMain: false, qty: 1.0 }
   ]
 };
 

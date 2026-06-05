@@ -28,11 +28,14 @@ export default function GarmentVisualizer({
   const renderBiustonosz = () => {
     const cupColor = getPartColor('fabric');
     const laceColor = getPartColor('lace');
-    const tunnelColor = getPartColor('tunnel');
+    const tulleElasticColor = getPartColor('tulle_elastic');
+    const tulleStableColor = getPartColor('tulle_stable');
     const elasticColor = getPartColor('elastic_trim');
     const strapColor = getPartColor('elastic_strap');
-    const hardwareColor = getPartColor('hardware', '#d1d5db');
+    const ringColor = getPartColor('ring', '#d1d5db');
+    const sliderColor = getPartColor('slider', '#d1d5db');
     const closureColor = getPartColor('closure');
+    const tunnelColor = getPartColor('tunnel');
     const bowColor = getPartColor('bow');
     const threadColor = getPartColor('threads', '#888');
 
@@ -42,32 +45,32 @@ export default function GarmentVisualizer({
         <div className="view-section">
           <svg width="240" height="240" viewBox="0 0 260 260" className="garment-svg">
             <g transform="translate(0, 20)">
-              {/* Back Wings (visible from front sides) */}
+              {/* Back Wings (tulle_elastic - visible from front sides) */}
               <path
                 d="M 25,130 C 45,135 70,140 90,141 L 90,154 C 65,152 45,145 25,136 Z"
-                fill={elasticColor}
-                stroke={getPartStroke('elastic_trim')}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
+                fill={tulleElasticColor}
+                stroke={getPartStroke('tulle_elastic')}
+                strokeWidth={getPartStrokeWidth('tulle_elastic')}
                 className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
+                onClick={() => onPartClick('tulle_elastic')}
               />
               <path
                 d="M 235,130 C 215,135 190,140 170,141 L 170,154 C 195,152 215,145 235,136 Z"
-                fill={elasticColor}
-                stroke={getPartStroke('elastic_trim')}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
+                fill={tulleElasticColor}
+                stroke={getPartStroke('tulle_elastic')}
+                strokeWidth={getPartStrokeWidth('tulle_elastic')}
                 className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
+                onClick={() => onPartClick('tulle_elastic')}
               />
 
-              {/* Cradle/Bridge */}
+              {/* Cradle/Bridge (tulle_stable) */}
               <path
                 d="M 70,135 C 90,145 110,145 130,135 C 150,135 170,145 190,135 C 200,135 210,130 215,126 C 215,131 215,145 215,148 C 175,158 140,158 100,158 C 85,153 80,145 70,135 Z"
-                fill={cupColor}
-                stroke={getPartStroke('fabric')}
-                strokeWidth={getPartStrokeWidth('fabric')}
+                fill={tulleStableColor}
+                stroke={getPartStroke('tulle_stable')}
+                strokeWidth={getPartStrokeWidth('tulle_stable')}
                 className="interactive-part"
-                onClick={() => onPartClick('fabric')}
+                onClick={() => onPartClick('tulle_stable')}
               />
 
               {/* Left Cup Main Fabric */}
@@ -190,24 +193,24 @@ export default function GarmentVisualizer({
         <div className="view-section">
           <svg width="240" height="240" viewBox="0 0 260 260" className="garment-svg">
             <g transform="translate(0, 20)">
-              {/* Left Back Wing */}
+              {/* Left Back Wing (tulle_elastic) */}
               <path
                 d="M 30,130 C 55,134 95,136 120,136 L 120,154 C 95,154 55,148 30,140 Z"
-                fill={cupColor}
-                stroke={getPartStroke('fabric')}
-                strokeWidth={getPartStrokeWidth('fabric')}
+                fill={tulleElasticColor}
+                stroke={getPartStroke('tulle_elastic')}
+                strokeWidth={getPartStrokeWidth('tulle_elastic')}
                 className="interactive-part"
-                onClick={() => onPartClick('fabric')}
+                onClick={() => onPartClick('tulle_elastic')}
               />
 
-              {/* Right Back Wing */}
+              {/* Right Back Wing (tulle_elastic) */}
               <path
                 d="M 230,130 C 205,134 165,136 140,136 L 140,154 C 165,154 205,148 230,140 Z"
-                fill={cupColor}
-                stroke={getPartStroke('fabric')}
-                strokeWidth={getPartStrokeWidth('fabric')}
+                fill={tulleElasticColor}
+                stroke={getPartStroke('tulle_elastic')}
+                strokeWidth={getPartStrokeWidth('tulle_elastic')}
                 className="interactive-part"
-                onClick={() => onPartClick('fabric')}
+                onClick={() => onPartClick('tulle_elastic')}
               />
 
               {/* Center Back Hook Closure */}
@@ -243,40 +246,40 @@ export default function GarmentVisualizer({
                 onClick={() => onPartClick('elastic_strap')}
               />
 
-              {/* Sliders and Rings (Hardware) */}
-              {/* Rings at band attachments */}
+              {/* Rings (Hardware) */}
               <circle
                 cx="77" cy="132" r="4"
                 fill="none"
-                stroke={hardwareColor}
-                strokeWidth="1.5"
+                stroke={ringColor}
+                strokeWidth={getPartStrokeWidth('ring')}
                 className="interactive-part"
-                onClick={() => onPartClick('hardware')}
+                onClick={() => onPartClick('ring')}
               />
               <circle
                 cx="183" cy="132" r="4"
                 fill="none"
-                stroke={hardwareColor}
-                strokeWidth="1.5"
+                stroke={ringColor}
+                strokeWidth={getPartStrokeWidth('ring')}
                 className="interactive-part"
-                onClick={() => onPartClick('hardware')}
+                onClick={() => onPartClick('ring')}
               />
-              {/* Sliders on straps */}
+
+              {/* Sliders (Hardware) */}
               <rect
                 x="74" y="60" width="6" height="3"
-                fill={hardwareColor}
-                stroke={getPartStroke('hardware')}
-                strokeWidth="0.8"
+                fill={sliderColor}
+                stroke={getPartStroke('slider')}
+                strokeWidth={getPartStrokeWidth('slider')}
                 className="interactive-part"
-                onClick={() => onPartClick('hardware')}
+                onClick={() => onPartClick('slider')}
               />
               <rect
                 x="180" y="60" width="6" height="3"
-                fill={hardwareColor}
-                stroke={getPartStroke('hardware')}
-                strokeWidth="0.8"
+                fill={sliderColor}
+                stroke={getPartStroke('slider')}
+                strokeWidth={getPartStrokeWidth('slider')}
                 className="interactive-part"
-                onClick={() => onPartClick('hardware')}
+                onClick={() => onPartClick('slider')}
               />
 
               {/* Back Elastic Trims (Top and Bottom of wings) */}
@@ -323,9 +326,10 @@ export default function GarmentVisualizer({
   // Render Panties (Majtki) SVGs
   const renderMajtki = () => {
     const mainColor = getPartColor('fabric');
+    const extraColor = getPartColor('fabric_extra', '#eae8e3'); // additional decorative panel
     const laceColor = getPartColor('lace');
+    const gussetColor = getPartColor('gusset', '#e2ded5'); // Bawełna na klin
     const elasticColor = getPartColor('elastic_trim');
-    const gussetColor = getPartColor('fabric', '#e2ded5'); // Bawełna na klin
     const threadColor = getPartColor('threads', '#888');
 
     return (
@@ -342,6 +346,24 @@ export default function GarmentVisualizer({
                 strokeWidth={getPartStrokeWidth('fabric')}
                 className="interactive-part"
                 onClick={() => onPartClick('fabric')}
+              />
+
+              {/* Decorative Material 2 Panels (fabric_extra) */}
+              <path
+                d="M 60,61 C 75,90 90,110 100,120 L 100,62 Z"
+                fill={extraColor}
+                stroke={getPartStroke('fabric_extra')}
+                strokeWidth={getPartStrokeWidth('fabric_extra')}
+                className="interactive-part"
+                onClick={() => onPartClick('fabric_extra')}
+              />
+              <path
+                d="M 200,61 C 185,90 170,110 160,120 L 160,62 Z"
+                fill={extraColor}
+                stroke={getPartStroke('fabric_extra')}
+                strokeWidth={getPartStrokeWidth('fabric_extra')}
+                className="interactive-part"
+                onClick={() => onPartClick('fabric_extra')}
               />
 
               {/* Decorative Lace Inserts on the sides */}
@@ -366,11 +388,11 @@ export default function GarmentVisualizer({
               <path
                 d="M 107,175 C 115,145 145,145 153,175 C 150,182 110,182 107,175 Z"
                 fill={gussetColor}
-                stroke={getPartStroke('fabric')}
-                strokeWidth="0.8"
+                stroke={getPartStroke('gusset')}
+                strokeWidth={getPartStrokeWidth('gusset')}
                 strokeDasharray="3,3"
                 className="interactive-part"
-                onClick={() => onPartClick('fabric')}
+                onClick={() => onPartClick('gusset')}
               />
 
               {/* Waistband Elastic Trim */}
@@ -473,10 +495,13 @@ export default function GarmentVisualizer({
     const laceColor = getPartColor('lace');   // Lace cups
     const elasticColor = getPartColor('elastic_trim');
     const strapColor = getPartColor('elastic_strap');
-    const hardwareColor = getPartColor('hardware', '#d1d5db');
+    const ringColor = getPartColor('ring', '#d1d5db');
+    const sliderColor = getPartColor('slider', '#d1d5db');
     const closureColor = getPartColor('closure');
     const bowColor = getPartColor('bow');
     const insertColor = getPartColor('cup_insert', 'rgba(255, 255, 255, 0.4)');
+    const underwireColor = getPartColor('underwire', '#bfb5a8');
+    const tunnelColor = getPartColor('tunnel', '#e2ded5');
 
     return (
       <div className="garment-visualizer">
@@ -530,6 +555,37 @@ export default function GarmentVisualizer({
                 onClick={() => onPartClick('cup_insert')}
               />
 
+              {/* Bralet side underwires (underwire & tunnel) */}
+              <line 
+                x1="80" y1="145" x2="80" y2="110" 
+                stroke={tunnelColor} 
+                strokeWidth={selectedPartId === 'tunnel' ? '4' : '2.5'}
+                className="interactive-part"
+                onClick={() => onPartClick('tunnel')}
+              />
+              <line 
+                x1="80" y1="141" x2="80" y2="114" 
+                stroke={underwireColor} 
+                strokeWidth={selectedPartId === 'underwire' ? '2.5' : '1.5'}
+                className="interactive-part"
+                onClick={() => onPartClick('underwire')}
+              />
+
+              <line 
+                x1="180" y1="145" x2="180" y2="110" 
+                stroke={tunnelColor} 
+                strokeWidth={selectedPartId === 'tunnel' ? '4' : '2.5'}
+                className="interactive-part"
+                onClick={() => onPartClick('tunnel')}
+              />
+              <line 
+                x1="180" y1="141" x2="180" y2="114" 
+                stroke={underwireColor} 
+                strokeWidth={selectedPartId === 'underwire' ? '2.5' : '1.5'}
+                className="interactive-part"
+                onClick={() => onPartClick('underwire')}
+              />
+
               {/* Underband Elastic Band (Front bottom band) */}
               <rect
                 x="80" y="145" width="100" height="6"
@@ -576,7 +632,7 @@ export default function GarmentVisualizer({
         <div className="view-section">
           <svg width="240" height="240" viewBox="0 0 260 260" className="garment-svg">
             <g transform="translate(0, 20)">
-              {/* Back Mesh/Lining Band Wings */}
+              {/* Back Mesh/Lining Band Wings (fabric) */}
               <path
                 d="M 30,139 C 55,143 95,145 120,145 L 120,154 C 95,154 55,150 30,144 Z"
                 fill={mainColor}
@@ -622,38 +678,40 @@ export default function GarmentVisualizer({
                 onClick={() => onPartClick('elastic_strap')}
               />
 
-              {/* Rings and Sliders */}
+              {/* Rings */}
               <circle
                 cx="72" cy="141" r="4"
                 fill="none"
-                stroke={hardwareColor}
-                strokeWidth="1.5"
+                stroke={ringColor}
+                strokeWidth={getPartStrokeWidth('ring')}
                 className="interactive-part"
-                onClick={() => onPartClick('hardware')}
+                onClick={() => onPartClick('ring')}
               />
               <circle
                 cx="188" cy="141" r="4"
                 fill="none"
-                stroke={hardwareColor}
-                strokeWidth="1.5"
+                stroke={ringColor}
+                strokeWidth={getPartStrokeWidth('ring')}
                 className="interactive-part"
-                onClick={() => onPartClick('hardware')}
+                onClick={() => onPartClick('ring')}
               />
+
+              {/* Sliders */}
               <rect
                 x="69" y="60" width="6" height="3"
-                fill={hardwareColor}
-                stroke={getPartStroke('hardware')}
-                strokeWidth="0.8"
+                fill={sliderColor}
+                stroke={getPartStroke('slider')}
+                strokeWidth={getPartStrokeWidth('slider')}
                 className="interactive-part"
-                onClick={() => onPartClick('hardware')}
+                onClick={() => onPartClick('slider')}
               />
               <rect
                 x="185" y="60" width="6" height="3"
-                fill={hardwareColor}
-                stroke={getPartStroke('hardware')}
-                strokeWidth="0.8"
+                fill={sliderColor}
+                stroke={getPartStroke('slider')}
+                strokeWidth={getPartStrokeWidth('slider')}
                 className="interactive-part"
-                onClick={() => onPartClick('hardware')}
+                onClick={() => onPartClick('slider')}
               />
             </g>
           </svg>
