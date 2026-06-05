@@ -569,7 +569,43 @@ Wybierz tylko poprawne ID z katalogu! Nie wymyślaj nowych ID.`;
 
         {/* RIGHT COLUMN: Checklist / Order Summary */}
         <section className="card">
-          <h3 className="card-title">Twoja kreacja</h3>
+          <h3 className="card-title">
+            Twoja kreacja
+            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 'normal' }}>
+              {currentParts.filter(part => selections[activeGarment][part.id] !== null).length}/{currentParts.length}
+            </span>
+          </h3>
+
+          {/* Progress Bar & Status */}
+          <div style={{ marginBottom: '1rem' }}>
+            <div style={{
+              height: '6px',
+              backgroundColor: 'var(--color-border)',
+              borderRadius: '3px',
+              overflow: 'hidden',
+              marginBottom: '0.5rem'
+            }}>
+              <div style={{
+                height: '100%',
+                width: `${(currentParts.filter(part => selections[activeGarment][part.id] !== null).length / currentParts.length) * 100}%`,
+                backgroundColor: 'var(--color-primary)',
+                transition: 'width 0.3s ease'
+              }} />
+            </div>
+            
+            {currentParts.filter(part => selections[activeGarment][part.id] !== null).length === currentParts.length && (
+              <div className="success-badge" style={{
+                display: 'block',
+                textAlign: 'center',
+                padding: '0.4rem',
+                fontSize: '0.75rem',
+                borderRadius: 'var(--radius-sm)',
+                marginBottom: '0.5rem'
+              }}>
+                Zestaw kompletny i gotowy do szycia! 🎉
+              </div>
+            )}
+          </div>
           
           <div className="summary-list">
             {currentParts.map(part => {

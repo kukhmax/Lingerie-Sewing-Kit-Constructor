@@ -34,7 +34,7 @@ W tym kroku wykonaliśmy:
 W tym kroku wykonaliśmy:
 1. Przeanalizowano kod źródłowy strony głównej **subtelnedetale.pl** w celu dopasowania identyfikacji wizualnej.
 2. Utworzono arkusz stylów `frontend/src/index.css`.
-3. Opracowano główny komponent `frontend/src/App.jsx` w języku polskim (panel wyboru wyrobów, boczny panel materiałów z filtrowaniem, lista zakupów, koszyk, panel Gemini).
+3. Opracowano główny komponent `frontend/src/App.jsx` w języku polskim (panel wyboru wyrobów, boczny panel materiałów с filtrowaniem, lista zakupów, koszyk, panel Gemini).
 
 ---
 
@@ -42,10 +42,18 @@ W tym kroku wykonaliśmy:
 **Data:** 2026-06-05
 
 W tym kroku wykonaliśmy:
-1. Utworzono trzy osobne komponenty rysunków wektorowych (SVG):
-   * `frontend/src/components/BraSvg.jsx` — szczegółowy wektorowy rysunek biustonosza zawierający miseczki, ramiączka, regulatory, zapięcie tyłu, gumki obszywkowe, tunele i mostek.
-   * `frontend/src/components/PantiesSvg.jsx` — rysunek majtek z panelem przednim, panelem tylnym, klinem kroku, gumką w pasie i otworami na nogawki.
-   * `frontend/src/components/NightgownSvg.jsx` — rysunek koszulki nocnej zawierający stanik/miseczki, dół koszulki (spódnicę), ramiączka, gumkę pod biustem i dolne wykończenie z koronki.
-2. Powiązano ścieżki i kształty SVG z klasą `interactive-part` z pliku CSS w celu wywoływania animacji podświetlenia (efekt hover ze złotym cieniem i obramowaniem).
-3. Dodano obsługę kliknięć na poszczególne elementy rysunku: kliknięcie podświetla element złotym konturem jako aktywny (`activePart`) i filtruje listę materiałów po lewej stronie, aby wyświetlić tylko te artykuły, które nadają się do uszycia wybranego elementu.
-4. Zaimplementowano w strukturze SVG dynamiczne wiązanie kolorów (atrybut `fill` pobiera odcień Hex z wybranego produktu) oraz nałożono wzór tekstury koronki (`url(#lace-pattern)`) z płynnym mieszaniem warstw (`mixBlendMode: overlay`).
+1. Utworzono trzy wektorowe rysunki (SVG) dla bielizny (`BraSvg.jsx`, `PantiesSvg.jsx`, `NightgownSvg.jsx`).
+2. Powiązano kształty z systemem stylów CSS w celu animowania hover/active.
+3. Dodano obsługę kliknięć w celu automatycznego wyboru części i filtrowania katalogu.
+4. Zaimplementowano dynamiczny fill i nałożenie wzoru tekstury.
+
+---
+
+## Krok 5: Logika kompletacji zestawu (Checklist) i wskaźnik postępu
+**Data:** 2026-06-05
+
+W tym kroku wykonaliśmy:
+1. Wdrożono mechanizm walidacji kompletności wyrobu w panelu bocznym. Zliczane są wybrane i wymagane elementy dla każdego z trzech wyrobów.
+2. Dodano graficzny wskaźnik postępu (Progress Bar) u góry prawej kolumny podsumowania, wskazujący procent skompletowania zestawu (np. `4/8` elementów dla Biustonosza).
+3. Dodano dedykowaną plakietkę sukcesu "Zestaw kompletny i gotowy do szycia! 🎉" wyświetlaną automatycznie, gdy użytkownik dokona wyboru wszystkich komponentów dla wybranego modelu.
+4. Przetestowano aplikację pod kątem poprawnego sumowania cen oraz przeliczania standardowych norm zużycia przy wielokrotnym wyborze jednego materiału do różnych elementów.
