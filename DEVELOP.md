@@ -10,10 +10,7 @@ Ten plik służy do śledzenia zmian wprowadzanych krok po kroku podczas realiza
 W tym kroku wykonaliśmy:
 1. Zainicjalizowano repozytorium Git w katalogu głównym projektu (`/`).
 2. Utworzono plik `DEVELOP.md` do śledzenia zmian.
-3. Utworzono pliki szablonów i integracji dla systemu Laravel (backend):
-   * `laravel-backend/Migration_add_constructor_fields.php` — migracja bazy danych.
-   * `laravel-backend/api_routes.php` — definicje endpointów API.
-   * `laravel-backend/ConstructorController.php` — kontroler Laravel.
+3. Utworzono pliki szabлонów i integracji dla systemu Laravel (backend).
 
 ---
 
@@ -24,7 +21,7 @@ W tym kroku wykonaliśmy:
 1. Zainstalowano Node.js LTS (wersja 24.16.0) za pomocą menedżera Scoop.
 2. Zainicjalizowano strukturę aplikacji React w podkatalogu `/frontend` przy użyciu generatora `Vite`.
 3. Stworzono lokalną bazę danych materiałów `frontend/public/materials.json` w **języku polskim**.
-4. Skonfigurowano obsługę kontenerów Docker (`frontend/Dockerfile` i `docker-compose.yml`).
+4. Skonfigurowano obsługę kontenerów Docker.
 
 ---
 
@@ -34,7 +31,7 @@ W tym kroku wykonaliśmy:
 W tym kroku wykonaliśmy:
 1. Przeanalizowano kod źródłowy strony głównej **subtelnedetale.pl** w celu dopasowania identyfikacji wizualnej.
 2. Utworzono arkusz stylów `frontend/src/index.css`.
-3. Opracowano główny komponent `frontend/src/App.jsx` w języku polskim (panel wyboru wyrobów, boczny panel materiałów с filtrowaniem, lista zakupów, koszyk, panel Gemini).
+3. Opracowano główny komponent `frontend/src/App.jsx` w języku polskim.
 
 ---
 
@@ -43,9 +40,9 @@ W tym kroku wykonaliśmy:
 
 W tym kroku wykonaliśmy:
 1. Utworzono trzy wektorowe rysunki (SVG) dla bielizny (`BraSvg.jsx`, `PantiesSvg.jsx`, `NightgownSvg.jsx`).
-2. Powiązano kształty z systemem stylów CSS w celu animowania hover/active.
-3. Dodano obsługę kliknięć w celu automatycznego wyboru części i filtrowania katalogu.
-4. Zaimplementowano dynamiczny fill i nałożenie wzoru tekstury.
+2. Powiązano kształty z systemem stylów CSS.
+3. Dodano obsługę kliknięć w celu wyboru części и фильтрации.
+4. Zaimplementowano dynamiczny fill и наложение текстур.
 
 ---
 
@@ -53,7 +50,19 @@ W tym kroku wykonaliśmy:
 **Data:** 2026-06-05
 
 W tym kroku wykonaliśmy:
-1. Wdrożono mechanizm walidacji kompletności wyrobu w panelu bocznym. Zliczane są wybrane i wymagane elementy dla każdego z trzech wyrobów.
-2. Dodano graficzny wskaźnik postępu (Progress Bar) u góry prawej kolumny podsumowania, wskazujący procent skompletowania zestawu (np. `4/8` elementów dla Biustonosza).
-3. Dodano dedykowaną plakietkę sukcesu "Zestaw kompletny i gotowy do szycia! 🎉" wyświetlaną automatycznie, gdy użytkownik dokona wyboru wszystkich komponentów dla wybranego modelu.
-4. Przetestowano aplikację pod kątem poprawnego sumowania cen oraz przeliczania standardowych norm zużycia przy wielokrotnym wyborze jednego materiału do różnych elementów.
+1. Wdrożono mechanizm walidacji kompletności wyrobu w panelu bocznym.
+2. Dodano graficzny wskaźnik postępu (Progress Bar) u góry prawej kolumny.
+3. Dodano plakietkę sukcesu "Zestaw kompletny i gotowy do szycia! 🎉".
+4. Przetestowano aplikację pod kątem poprawnego sumowania cen oraz przeliczania standardowych norm zużycia.
+
+---
+
+## Krok 6: Wyszukiwanie i dobór materiałów przez Gemini AI
+**Data:** 2026-06-05
+
+W tym kroku wykonaliśmy:
+1. Skonfigurowano model językowy Gemini AI do pracy jako interaktywny projektant bieliźniany w języku polskim.
+2. Zaprojektowano zaawansowany prompt systemowy przekazujący pełny kontekst aktywnego katalogu produktów (ID, nazwa, kolor, kod Hex) oraz typ szytego wyrobu. Zmusza on model do zwracania wyłącznie rzeczywistych produktów i blokowania zmyślonych ID (hallucinations).
+3. Dodano okno ustawień (⚙️ Gemini API Key), pozwalające na wprowadzenie klucza API dewelopera lub załadowanie go automatycznie z pliku środowiskowego (.env / Docker `VITE_GEMINI_API_KEY`).
+4. Napisano parser wyrażeń regularnych wyodrębniający blok JSON z rekomendacjami ze strumienia tekstowego Gemini, co pozwala na automatyczne pokolorowanie i przypisanie dobranych przez sztuczną inteligencję materiałów do odpowiednich lekałów na rysunkach SVG.
+5. Uruchomiono lokalny serwer deweloperski Vite w celu umożliwienia podglądu działania aplikacji w przeglądarce pod adresem `http://localhost:5173/`.

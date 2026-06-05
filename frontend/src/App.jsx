@@ -51,7 +51,7 @@ export default function App() {
   const [aiChat, setAiChat] = useState([
     { sender: 'assistant', text: 'Cześć! Jestem Twoim konsultantem krawieckim AI. Opisz mi, jaki komplet marzysz uszyć (np. "chcę zmysłowy czerwony zestaw ze złotymi regulatorami"), a pomogę dobrać odpowiednie materiały!' }
   ]);
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = useState(import.meta.env.VITE_GEMINI_API_KEY || '');
   const [showSettings, setShowSettings] = useState(false);
 
   // Load materials on mount
