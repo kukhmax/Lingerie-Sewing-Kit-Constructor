@@ -33,3 +33,34 @@ W tym kroku wykonaliśmy:
 2. Zainicjalizowano pusty projekt frontendowy React + Vite w katalogu `/frontend` za pomocą komendy `npx create-vite@latest ./ --template react --no-interactive`.
 3. Zainstalowano zależności projektu za pomocą `npm install`.
 4. Oczyszczono domyślny plik `App.css` i napisano autorski system stylów CSS w `frontend/src/index.css`, oparty na tożsamości wizualnej marki **subtelnedetale.pl** (kremowo-pudrowe tło `#faf7f2`, złote akcenty `#c9a236`, fonty *Playfair Display* i *Montserrat*, glassmorphism oraz animacje micro-interactions).
+
+## Krok 4: Wdrożenie interaktywnych rysunków SVG (Przód i Tył)
+**Data:** 2026-06-06
+
+W tym kroku wykonaliśmy:
+1. Utworzono komponent `frontend/src/components/GarmentVisualizer.jsx` wyświetlający rysunki techniczne konstrukcji dla 3 typów bielizny:
+   - **Biustonosz** (miseczki, koronka, tunel, ramiączka, guma obszykowa, zapięcie haftkowe, kokardka, szwy).
+   - **Majtki Figi** (panel przedni, klin bawełniany, wstawki koronkowe, gumy obszykowe pasa i nóg).
+   - **Bralet** (miseczki trójkątne z koronki, tiul obwodu, gumy pod biustem i ramiączkowe, kółka/regulatory, piankowe wkładki).
+2. Każda sekcja rysunku posiada unikalny identyfikator, dynamiczne bindowanie koloru wypełnienia (`fill`) pobieranego z wybranego produktu oraz podświetlenie konturu przy najechaniu i wyborze części.
+3. Rysunki pokazują jednocześnie widok z przodu (**Przód**) oraz z tyłu (**Tył**).
+
+## Krok 5: Implementacja logiki sekwencyjnego wyboru i panelu zamówień
+**Data:** 2026-06-06
+
+W tym kroku wykonaliśmy:
+1. Zaprogramowano w [App.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/App.jsx) logikę blokowania elementów: na starcie odblokowane są tylko materiały główne (tkanina/koronka). Wybór pierwszego materiału określa **kolor wiodący** zestawu i odblokowuje pozostałe akcesoria.
+2. Zintegrowano filtrowanie kompatybilności kolorystycznej z API: popupy wyświetlają wyłącznie produkty harmonizujące z wybranym kolorem wiodącym.
+3. Dodano panel koszyka po prawej stronie z listą wybranych elementów, kontrolerem mnożników ilości (np. 1.5m gumy, 2szt kółek) i automatycznym przeliczaniem ceny łącznej w PLN.
+4. Zaimplementowano wysyłkę zamówienia przez żądanie POST do `/api/cart/add`, weryfikację pozycji w bazie danych oraz okno dialogowe sukcesu z przekierowaniem do koszyka **subtelnedetale.pl**.
+5. Zaktualizowano [index.html](file:///c:/Users/m-win/Projects/konstructor/frontend/index.html) (ustawienie języka polskiego `pl`, optymalizacja tagów SEO oraz tytułu strony).
+
+## Krok 6: Integracja za pomocą Docker Compose
+**Data:** 2026-06-06
+
+W tym kroku wykonaliśmy:
+1. Utworzono plik `frontend/Dockerfile` dla etapu budowania produkcyjnego React (SPA) za pomocą Node.js oraz serwowania plików statycznych za pomocą Nginx Alpine na porcie 80.
+2. Utworzono główny plik `docker-compose.yml` w katalogu głównym projektu, łączący usługi:
+   - `backend` (FastAPI z wystawionym portem 8000:8000)
+   - `frontend` (Nginx Alpine z wystawionym portem 5173:80)
+3. Uruchomiono i zweryfikowano pełny zestaw kontenerów za pomocą polecenia `docker compose up --build -d`. Aplikacja frontendowa zintegrowana z backendowym API jest w pełni dostępna i sprawna pod adresem `http://localhost:5173/`.

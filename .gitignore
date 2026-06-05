@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 all_extracted_products.json
+backend/constructor.db
+*.db
