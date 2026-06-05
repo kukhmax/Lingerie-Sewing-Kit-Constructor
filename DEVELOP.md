@@ -24,3 +24,12 @@ W tym kroku wykonaliśmy:
 3. Dodano punkt końcowy `POST /api/cart/add`, który weryfikuje istnienie produktów w bazie danych, oblicza sumaryczne ceny pozycji i zwraca link przekierowujący do rzeczywistego koszyka WooCommerce na stronie **subtelnedetale.pl**.
 4. Naprawiono błąd importu `create_url` w pliku `backend/database.py`, usuwając nieużywany import biblioteki SQLAlchemy.
 5. Zbudowano obraz Docker `constructor-backend` i pomyślnie zweryfikowano działanie API poprzez wykonanie zapytań testowych do kontenera.
+
+## Krok 3: Inicjalizacja projektu frontendowego React i konfiguracja stylów
+**Data:** 2026-06-06
+
+W tym kroku wykonaliśmy:
+1. Zresetowano konfigurację Scoop dla Node.js, aby przywrócić poprawną ścieżkę do narzędzi npm/npx w powłoce systemowej.
+2. Zainicjalizowano pusty projekt frontendowy React + Vite w katalogu `/frontend` za pomocą komendy `npx create-vite@latest ./ --template react --no-interactive`.
+3. Zainstalowano zależności projektu za pomocą `npm install`.
+4. Oczyszczono domyślny plik `App.css` i napisano autorski system stylów CSS w `frontend/src/index.css`, oparty na tożsamości wizualnej marki **subtelnedetale.pl** (kremowo-pudrowe tło `#faf7f2`, złote akcenty `#c9a236`, fonty *Playfair Display* i *Montserrat*, glassmorphism oraz animacje micro-interactions).
