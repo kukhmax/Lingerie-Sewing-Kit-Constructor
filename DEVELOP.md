@@ -10,7 +10,10 @@ Ten plik służy do śledzenia zmian wprowadzanych krok po kroku podczas realiza
 W tym kroku wykonaliśmy:
 1. Zainicjalizowano repozytorium Git w katalogu głównym projektu (`/`).
 2. Utworzono plik `DEVELOP.md` do śledzenia zmian.
-3. Utworzono pliki szabлонów i integracji dla systemu Laravel (backend).
+3. Utworzono pliki szablonów i integracji dla systemu Laravel (backend):
+   * `laravel-backend/Migration_add_constructor_fields.php` — migracja bazy danych.
+   * `laravel-backend/api_routes.php` — definicje endpointów API.
+   * `laravel-backend/ConstructorController.php` — kontroler Laravel.
 
 ---
 
@@ -21,7 +24,7 @@ W tym kroku wykonaliśmy:
 1. Zainstalowano Node.js LTS (wersja 24.16.0) za pomocą menedżera Scoop.
 2. Zainicjalizowano strukturę aplikacji React w podkatalogu `/frontend` przy użyciu generatora `Vite`.
 3. Stworzono lokalną bazę danych materiałów `frontend/public/materials.json` w **języku polskim**.
-4. Skonfigurowano obsługę kontenerów Docker.
+4. Skonfigurowano obsługę kontenerów Docker (`frontend/Dockerfile` i `docker-compose.yml`).
 
 ---
 
@@ -41,8 +44,8 @@ W tym kroku wykonaliśmy:
 W tym kroku wykonaliśmy:
 1. Utworzono trzy wektorowe rysunki (SVG) dla bielizny (`BraSvg.jsx`, `PantiesSvg.jsx`, `NightgownSvg.jsx`).
 2. Powiązano kształty z systemem stylów CSS.
-3. Dodano obsługę kliknięć w celu wyboru części и фильтрации.
-4. Zaimplementowano dynamiczny fill и наложение текстур.
+3. Dodano obsługę kliknięć w celu wyboru części i filtrowania.
+4. Zaimplementowano dynamiczny fill i nałożenie tekstur.
 
 ---
 
@@ -53,7 +56,7 @@ W tym kroku wykonaliśmy:
 1. Wdrożono mechanizm walidacji kompletności wyrobu w panelu bocznym.
 2. Dodano graficzny wskaźnik postępu (Progress Bar) u góry prawej kolumny.
 3. Dodano plakietkę sukcesu "Zestaw kompletny i gotowy do szycia! 🎉".
-4. Przetestowano aplikację pod kątem poprawnego sumowania cen oraz przeliczania standardowych norm zużycia.
+4. Przetestowano aplikację pod kątem postwarnego sumowania cen oraz przeliczania standardowych norm zużycia.
 
 ---
 
@@ -61,8 +64,21 @@ W tym kroku wykonaliśmy:
 **Data:** 2026-06-05
 
 W tym kroku wykonaliśmy:
-1. Skonfigurowano model językowy Gemini AI do pracy jako interaktywny projektant bieliźniany w języku polskim.
-2. Zaprojektowano zaawansowany prompt systemowy przekazujący pełny kontekst aktywnego katalogu produktów (ID, nazwa, kolor, kod Hex) oraz typ szytego wyrobu. Zmusza on model do zwracania wyłącznie rzeczywistych produktów i blokowania zmyślonych ID (hallucinations).
-3. Dodano okno ustawień (⚙️ Gemini API Key), pozwalające na wprowadzenie klucza API dewelopera lub załadowanie go automatycznie z pliku środowiskowego (.env / Docker `VITE_GEMINI_API_KEY`).
-4. Napisano parser wyrażeń regularnych wyodrębniający blok JSON z rekomendacjami ze strumienia tekstowego Gemini, co pozwala na automatyczne pokolorowanie i przypisanie dobranych przez sztuczną inteligencję materiałów do odpowiednich lekałów na rysunkach SVG.
-5. Uruchomiono lokalny serwer deweloperski Vite w celu umożliwienia podglądu działania aplikacji w przeglądarce pod adresem `http://localhost:5173/`.
+1. Skonfigurowano model językowy Gemini AI do pracy jako projektant bieliźniany w języku polskim.
+2. Zaprojektowano prompt systemowy przekazujący katalog produktów.
+3. Dodano okno ustawień klucza API dewelopera i powiązano z `VITE_GEMINI_API_KEY`.
+4. Napisano parser wyrażeń regularnych wyodrębniający blok JSON z rekomendacjami.
+5. Uruchomiono lokalny serwer deweloperski pod adresem `http://localhost:5173/`.
+
+---
+
+## Krok 7: Kompilacja produkcyjna i pełna dokumentacja integracji
+**Data:** 2026-06-05
+
+W tym kroku wykonaliśmy:
+1. Przetestowano kompilację produkcyjną frontu za pomocą komendy `npm run build` w folderze `/frontend`. Kompilacja przebiegła pomyślnie w czasie 1.05 sekundy bez żadnych ostrzeżeń ani błędów (wygenerowano zoptymalizowane pliki JS i CSS w folderze `dist/`).
+2. Utworzono kompletny i szczegółowy plik dokumentacji `README.md` w katalogu głównym projektu, opisujący:
+   * Architekturę rozwiązania i zastosowane technologie.
+   * Sposób instalacji i komendy uruchomienia lokalnego (oraz polecenia Docker).
+   * Instrukcję krok po kroku, jak zintegrować moduł z silnikiem Laravel sklepu **subtelnedetale.pl** (migracje SQL, routing, kontroler PHP, widoki Blade oraz deployment zasobów).
+3. Zweryfikowano działanie aplikacji w przeglądarce pod adresem `http://localhost:5173/`.
