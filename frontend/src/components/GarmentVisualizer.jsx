@@ -17,7 +17,7 @@ export default function GarmentVisualizer({
 
   const getPartColor = (partId, defaultColor = '#e2ded5') => {
     if (partId === 'fabric') {
-      return partColors.fabric_elastic || partColors.fabric_stable || partColors.tulle_elastic || partColors.fabric || defaultColor;
+      return partColors.fabric_elastic || partColors.fabric_stable || partColors.tulle_elastic || partColors.tulle_stable || partColors.fabric || defaultColor;
     }
     if (partId === 'lace') {
       return partColors.lace_elastic || partColors.lace_stable || partColors.lace || defaultColor;
@@ -27,14 +27,14 @@ export default function GarmentVisualizer({
 
   const getPartStroke = (partId) => {
     const isSelected = selectedPartId === partId ||
-      (partId === 'fabric' && (selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'tulle_elastic')) ||
+      (partId === 'fabric' && (selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'tulle_elastic' || selectedPartId === 'tulle_stable')) ||
       (partId === 'lace' && (selectedPartId === 'lace_elastic' || selectedPartId === 'lace_stable'));
     return isSelected ? '#c9a236' : '#a49e95';
   };
 
   const getPartStrokeWidth = (partId) => {
     const isSelected = selectedPartId === partId ||
-      (partId === 'fabric' && (selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'tulle_elastic')) ||
+      (partId === 'fabric' && (selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'tulle_elastic' || selectedPartId === 'tulle_stable')) ||
       (partId === 'lace' && (selectedPartId === 'lace_elastic' || selectedPartId === 'lace_stable'));
     return isSelected ? '2.5' : '1.2';
   };
@@ -60,18 +60,12 @@ export default function GarmentVisualizer({
       case 'material':
       case 'miseczki':
       case 'fabric':
-        if (garmentType === 'bralet') {
-          return 'fabric';
-        }
-        if (selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'tulle_elastic') {
+        if (selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'tulle_elastic' || selectedPartId === 'tulle_stable') {
           return selectedPartId;
         }
         return 'fabric_elastic';
       case 'koronka':
       case 'lace':
-        if (garmentType === 'bralet') {
-          return 'lace';
-        }
         if (selectedPartId === 'lace_elastic' || selectedPartId === 'lace_stable') {
           return selectedPartId;
         }
@@ -106,7 +100,7 @@ export default function GarmentVisualizer({
       return partColors.lace_elastic || partColors.lace_stable || partColors.lace || defaultGuideColors[guideId] || '#e2ded5';
     }
     if (guideId === 'material' || guideId === 'miseczki') {
-      return partColors.fabric_elastic || partColors.fabric_stable || partColors.fabric || defaultGuideColors[guideId] || '#e2ded5';
+      return partColors.fabric_elastic || partColors.fabric_stable || partColors.tulle_elastic || partColors.tulle_stable || partColors.fabric || defaultGuideColors[guideId] || '#e2ded5';
     }
     if (guideId === 'tiul_elastyczny') {
       return partColors.tulle_elastic || defaultGuideColors[guideId] || '#e2ded5';
@@ -124,7 +118,7 @@ export default function GarmentVisualizer({
       return selectedPartId === 'lace_elastic' || selectedPartId === 'lace_stable' || selectedPartId === 'lace';
     }
     if (id === 'material' || id === 'miseczki') {
-      return selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'fabric';
+      return selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'tulle_elastic' || selectedPartId === 'tulle_stable' || selectedPartId === 'fabric';
     }
     return mapGuidePartIdToMainId(id) === selectedPartId;
   };
@@ -1045,7 +1039,7 @@ export default function GarmentVisualizer({
                 stroke={getPartStroke('lace')}
                 strokeWidth={getPartStrokeWidth('lace')}
                 className="interactive-part"
-                onClick={() => onPartClick('lace')}
+                onClick={() => onPartClick(mapGuidePartIdToMainId('lace'))}
               />
 
               {/* Left Cup Inside Insert outline (visible) */}
@@ -1066,7 +1060,7 @@ export default function GarmentVisualizer({
                 stroke={getPartStroke('lace')}
                 strokeWidth={getPartStrokeWidth('lace')}
                 className="interactive-part"
-                onClick={() => onPartClick('lace')}
+                onClick={() => onPartClick(mapGuidePartIdToMainId('lace'))}
               />
 
               {/* Right Cup Inside Insert outline */}
@@ -1164,7 +1158,7 @@ export default function GarmentVisualizer({
                 stroke={getPartStroke('fabric')}
                 strokeWidth={getPartStrokeWidth('fabric')}
                 className="interactive-part"
-                onClick={() => onPartClick('fabric')}
+                onClick={() => onPartClick(mapGuidePartIdToMainId('fabric'))}
               />
               <path
                 d="M 230,139 C 205,143 165,145 140,145 L 140,154 C 165,154 205,150 230,144 Z"
@@ -1172,7 +1166,7 @@ export default function GarmentVisualizer({
                 stroke={getPartStroke('fabric')}
                 strokeWidth={getPartStrokeWidth('fabric')}
                 className="interactive-part"
-                onClick={() => onPartClick('fabric')}
+                onClick={() => onPartClick(mapGuidePartIdToMainId('fabric'))}
               />
 
               {/* Hook Closure (Back center) */}

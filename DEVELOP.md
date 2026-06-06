@@ -134,4 +134,16 @@ W tym kroku wykonaliśmy:
 4. Zintegrowano grupowanie "Materiał główny" w panelu bocznym w [App.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/App.jsx) dla modeli `biustonosz` i `majtki`, dzięki czemu główne materiały są spójnie renderowane pod tym samym nagłówkiem i z tym samym opisem, pokazując wybrany kolor i kolorową kropkę.
 5. Dostosowano funkcje w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) (`getPartColor`, `getPartStroke`, `getPartStrokeWidth`, `mapGuidePartIdToMainId`) tak, aby poprawnie kolorować i wyróżniać elementy `majtki` w zależności od aktywnych nowych ID, z zachowaniem pełnej kompatybilności wstecznej dla `bralet` (gdzie nadal używane są `'fabric'` i `'lace'`).
 6. Zaktualizowano zdarzenia kliknięcia (`onClick`) na ścieżkach SVG wewnątrz `renderMajtki` w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx), przełączając je na wywołanie `mapGuidePartIdToMainId('fabric')` oraz `mapGuidePartIdToMainId('lace')`.
-7. Przebudowano aplikację w kontenerach Docker za pomocą `docker compose up --build -d` i zweryfikowano poprawność kompilacji kodu React przez Vite.
+7. Przebudowano aplikację w kontenerach Docker za pomocą `docker compose up --build -d` and zweryfikowano poprawność kompilacji kodu React przez Vite.
+
+## Krok 13: Restrukturyzacja sekcji materiałów w konstruktorze braletu (Bralet) oraz pełna unifikacja kodu
+**Data:** 2026-06-06
+
+W tym kroku wykonaliśmy:
+1. Zaktualizowano definicję części `GARMENT_PARTS.bralet` w [App.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/App.jsx), zastępując stare materiały główne listą 6 specyficznych opcji: **Koronka elastyczna** (`lace_elastic`), **Koronka stabilna** (`lace_stable`), **Tkanina elastyczna** (`fabric_elastic`), **Tkanina stabilna** (`fabric_stable`), **Tiul elastyczny** (`tulle_elastic`) i **Tiul stabilny** (`tulle_stable`). Wszystkie 6 pozycji zostało oznaczonych jako `isMain: true` oraz `required: false`.
+2. Zunifikowano logikę walidacji (`requiredCompleted`) w [App.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/App.jsx) dla wszystkich typów odzieży – obecnie każdy model wymaga wybrania przynajmniej jednego materiału głównego (`hasMainMaterial`) oraz wszystkich obowiązkowych akcesoriów.
+3. Zunifikowano filtrowanie po stronie klienta w `handlePartClick` w [App.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/App.jsx) oraz uproszczono renderowanie paska bocznego "Elementy zestawu", eliminując warunkowe bloki i renderując sekcję "Materiał główny" domyślnie dla każdego modelu.
+4. Zaktualizowano pomocnicze mapowania w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) (`getPartColor`, `getPartStroke`, `getPartStrokeWidth`, `getGuidePartColor`, `isPartActive`), dodając pełne wsparcie dla `tulle_stable` oraz upraszczając warunki dotyczące typu bielizny.
+5. Przypisano zdarzenia kliknięcia (`onClick`) wewnątrz `renderBralet()` w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) do dynamicznego mapowania za pomocą `mapGuidePartIdToMainId` dla `'lace'` i `'fabric'`.
+6. Przebudowano aplikację w kontenerach Docker za pomocą `docker compose up --build -d` i zweryfikowano poprawność kompilacji kodu React przez Vite.
+

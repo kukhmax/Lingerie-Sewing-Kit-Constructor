@@ -33,8 +33,12 @@ const GARMENT_PARTS = {
     { id: 'threads', name: 'Nici do szwów płaskich', category: 'threads', required: true, isMain: false, qty: 1.0 }
   ],
   bralet: [
-    { id: 'lace', name: 'Koronka elastyczna (miseczki)', category: 'fabric', required: true, isMain: true, qty: 1.5 },
-    { id: 'fabric', name: 'Tiul elastyczny (obwód)', category: 'fabric', required: true, isMain: true, qty: 0.5 },
+    { id: 'lace_elastic', name: 'Koronka elastyczna', category: 'fabric', required: false, isMain: true, qty: 1.5 },
+    { id: 'lace_stable', name: 'Koronka stabilna', category: 'fabric', required: false, isMain: true, qty: 1.5 },
+    { id: 'fabric_elastic', name: 'Tkanina elastyczna', category: 'fabric', required: false, isMain: true, qty: 0.5 },
+    { id: 'fabric_stable', name: 'Tkanina stabilna', category: 'fabric', required: false, isMain: true, qty: 0.5 },
+    { id: 'tulle_elastic', name: 'Tiul elastyczny', category: 'fabric', required: false, isMain: true, qty: 0.5 },
+    { id: 'tulle_stable', name: 'Tiul stabilny', category: 'fabric', required: false, isMain: true, qty: 0.5 },
     { id: 'elastic_trim', name: 'Guma pod biust', category: 'elastic_trim', required: true, isMain: false, qty: 1.5 },
     { id: 'elastic_strap', name: 'Guma ramiączkowa', category: 'elastic_strap', required: true, isMain: false, qty: 1.2 },
     { id: 'ring', name: 'Kółka metalowe', category: 'ring', required: true, isMain: false, qty: 2.0 },
@@ -111,7 +115,7 @@ export default function App() {
       let filteredData = data;
       if (garment === 'majtki' && partId === 'gusset') {
         filteredData = data.filter(p => p.id.includes('bawelna') || p.name.toLowerCase().includes('bawełna'));
-      } else if (garment === 'biustonosz' || garment === 'majtki') {
+      } else {
         if (partId === 'lace_elastic') {
           filteredData = data.filter(p => p.name.toLowerCase().includes('koronka') && !p.name.toLowerCase().includes('stabiln'));
         } else if (partId === 'lace_stable') {
@@ -194,9 +198,7 @@ export default function App() {
   const requiredParts = activeParts.filter(p => p.required);
   
   const hasMainMaterial = activeParts.some(p => p.isMain && selections[p.id]);
-  const requiredCompleted = (garment === 'biustonosz' || garment === 'majtki')
-    ? (hasMainMaterial && requiredParts.every(p => selections[p.id]))
-    : requiredParts.every(p => selections[p.id]);
+  const requiredCompleted = hasMainMaterial && requiredParts.every(p => selections[p.id]);
     
   const progressPercent = Math.round((selectedCount / activeParts.length) * 100);
 
@@ -300,77 +302,30 @@ export default function App() {
             </div>
 
             <div className="parts-list">
-              {garment === 'biustonosz' || garment === 'majtki' ? (
-                <>
-                  {/* Sektor Materiał główny */}
-                  <div className="main-materials-group">
-                    <div className="main-materials-group-header">
-                      <div className="main-materials-title-row">
-                        <span className="main-materials-group-title">Materiał główny</span>
-                        {primaryColor && (
-                          <div className="primary-color-badge">
-                            <span className="primary-color-name">{primaryColor}</span>
-                            <span 
-                              className="color-indicator-dot" 
-                              style={{ 
-                                backgroundColor: primaryColorHex || '#ccc' 
-                              }}
-                            />
-                          </div>
-                        )}
+              {/* Sektor Materiał główny */}
+              <div className="main-materials-group">
+                <div className="main-materials-group-header">
+                  <div className="main-materials-title-row">
+                    <span className="main-materials-group-title">Materiał główny</span>
+                    {primaryColor && (
+                      <div className="primary-color-badge">
+                        <span className="primary-color-name">{primaryColor}</span>
+                        <span 
+                          className="color-indicator-dot" 
+                          style={{ 
+                            backgroundColor: primaryColorHex || '#ccc' 
+                          }}
+                        />
                       </div>
-                      <p className="main-materials-group-desc">
-                        Wybierz materiał z proponowanych dla wyboru głównego koloru produktu.
-                      </p>
-                    </div>
-
-                    <div className="main-materials-items">
-                      {activeParts.filter(p => p.isMain).map((part) => {
-                        const isLocked = isPartLocked(part);
-                        const isSelected = !!selections[part.id];
-                        const activeClass = selectedPartId === part.id ? 'active' : '';
-                        const lockedClass = isLocked ? 'disabled' : '';
-
-                        return (
-                          <div 
-                            key={part.id}
-                            className={`part-item ${activeClass} ${lockedClass}`}
-                            onClick={() => handlePartClick(part.id)}
-                          >
-                            <div className="part-item-info">
-                              <span className="part-name">
-                                {part.name} {part.required && <span style={{ color: 'var(--color-error)' }}>*</span>}
-                              </span>
-                              {isSelected ? (
-                                <span className="part-color-selected">
-                                  {selections[part.id].colorName} • {(quantities[part.id] || part.qty)}{selections[part.id].unit}
-                                </span>
-                              ) : (
-                                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                                  ✍️ Kliknij, aby wybrać
-                                </span>
-                              )}
-                            </div>
-                            <div className="display-flex align-items-center gap-2">
-                              {isSelected && (
-                                <span 
-                                  className="modal-close-btn" 
-                                  style={{ fontSize: '1rem', marginRight: '8px' }}
-                                  onClick={(e) => handleRemoveSelection(part.id, e)}
-                                >
-                                  ✕
-                                </span>
-                              )}
-                              <span className={`part-status-badge ${isSelected ? 'completed' : 'pending'}`}></span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                    )}
                   </div>
+                  <p className="main-materials-group-desc">
+                    Wybierz materiał z proponowanych dla wyboru głównego koloru produktu.
+                  </p>
+                </div>
 
-                  {/* Pozostałe akcesoria */}
-                  {activeParts.filter(p => !p.isMain).map((part) => {
+                <div className="main-materials-items">
+                  {activeParts.filter(p => p.isMain).map((part) => {
                     const isLocked = isPartLocked(part);
                     const isSelected = !!selections[part.id];
                     const activeClass = selectedPartId === part.id ? 'active' : '';
@@ -392,7 +347,7 @@ export default function App() {
                             </span>
                           ) : (
                             <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                              {isLocked ? '🔒 Zablokowane (wybierz materiał)' : '✍️ Kliknij, aby wybrać'}
+                              ✍️ Kliknij, aby wybrać
                             </span>
                           )}
                         </div>
@@ -411,51 +366,51 @@ export default function App() {
                       </div>
                     );
                   })}
-                </>
-              ) : (
-                // Oryginalna płaska lista dla innych modeli
-                activeParts.map((part) => {
-                  const isLocked = isPartLocked(part);
-                  const isSelected = !!selections[part.id];
-                  const activeClass = selectedPartId === part.id ? 'active' : '';
-                  const lockedClass = isLocked ? 'disabled' : '';
+                </div>
+              </div>
 
-                  return (
-                    <div 
-                      key={part.id}
-                      className={`part-item ${activeClass} ${lockedClass}`}
-                      onClick={() => handlePartClick(part.id)}
-                    >
-                      <div className="part-item-info">
-                        <span className="part-name">
-                          {part.name} {part.required && <span style={{ color: 'var(--color-error)' }}>*</span>}
+              {/* Pozostałe akcesoria */}
+              {activeParts.filter(p => !p.isMain).map((part) => {
+                const isLocked = isPartLocked(part);
+                const isSelected = !!selections[part.id];
+                const activeClass = selectedPartId === part.id ? 'active' : '';
+                const lockedClass = isLocked ? 'disabled' : '';
+
+                return (
+                  <div 
+                    key={part.id}
+                    className={`part-item ${activeClass} ${lockedClass}`}
+                    onClick={() => handlePartClick(part.id)}
+                  >
+                    <div className="part-item-info">
+                      <span className="part-name">
+                        {part.name} {part.required && <span style={{ color: 'var(--color-error)' }}>*</span>}
+                      </span>
+                      {isSelected ? (
+                        <span className="part-color-selected">
+                          {selections[part.id].colorName} • {(quantities[part.id] || part.qty)}{selections[part.id].unit}
                         </span>
-                        {isSelected ? (
-                          <span className="part-color-selected">
-                            {selections[part.id].colorName} • {(quantities[part.id] || part.qty)}{selections[part.id].unit}
-                          </span>
-                        ) : (
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                            {isLocked ? '🔒 Zablokowane (wybierz materiał)' : '✍️ Kliknij, aby wybrać'}
-                          </span>
-                        )}
-                      </div>
-                      <div className="display-flex align-items-center gap-2">
-                        {isSelected && (
-                          <span 
-                            className="modal-close-btn" 
-                            style={{ fontSize: '1rem', marginRight: '8px' }}
-                            onClick={(e) => handleRemoveSelection(part.id, e)}
-                          >
-                            ✕
-                          </span>
-                        )}
-                        <span className={`part-status-badge ${isSelected ? 'completed' : 'pending'}`}></span>
-                      </div>
+                      ) : (
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                          {isLocked ? '🔒 Zablokowane (wybierz materiał)' : '✍️ Kliknij, aby wybrać'}
+                        </span>
+                      )}
                     </div>
-                  );
-                })
-              )}
+                    <div className="display-flex align-items-center gap-2">
+                      {isSelected && (
+                        <span 
+                          className="modal-close-btn" 
+                          style={{ fontSize: '1rem', marginRight: '8px' }}
+                          onClick={(e) => handleRemoveSelection(part.id, e)}
+                        >
+                          ✕
+                        </span>
+                      )}
+                      <span className={`part-status-badge ${isSelected ? 'completed' : 'pending'}`}></span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
