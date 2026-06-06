@@ -16,15 +16,27 @@ export default function GarmentVisualizer({
   const [hoveredPartId, setHoveredPartId] = useState(null);
 
   const getPartColor = (partId, defaultColor = '#e2ded5') => {
+    if (partId === 'fabric') {
+      return partColors.fabric_elastic || partColors.fabric_stable || partColors.tulle_elastic || partColors.fabric || defaultColor;
+    }
+    if (partId === 'lace') {
+      return partColors.lace_elastic || partColors.lace_stable || partColors.lace || defaultColor;
+    }
     return partColors[partId] || defaultColor;
   };
 
   const getPartStroke = (partId) => {
-    return selectedPartId === partId ? '#c9a236' : '#a49e95';
+    const isSelected = selectedPartId === partId ||
+      (partId === 'fabric' && (selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'tulle_elastic')) ||
+      (partId === 'lace' && (selectedPartId === 'lace_elastic' || selectedPartId === 'lace_stable'));
+    return isSelected ? '#c9a236' : '#a49e95';
   };
 
   const getPartStrokeWidth = (partId) => {
-    return selectedPartId === partId ? '2.5' : '1.2';
+    const isSelected = selectedPartId === partId ||
+      (partId === 'fabric' && (selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'tulle_elastic')) ||
+      (partId === 'lace' && (selectedPartId === 'lace_elastic' || selectedPartId === 'lace_stable'));
+    return isSelected ? '2.5' : '1.2';
   };
 
   const defaultGuideColors = {
@@ -47,15 +59,23 @@ export default function GarmentVisualizer({
     switch (id) {
       case 'material':
       case 'miseczki':
-        if (selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable') {
+      case 'fabric':
+        if (garmentType === 'bralet') {
+          return 'fabric';
+        }
+        if (selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'tulle_elastic') {
           return selectedPartId;
         }
-        return 'fabric';
+        return 'fabric_elastic';
       case 'koronka':
+      case 'lace':
+        if (garmentType === 'bralet') {
+          return 'lace';
+        }
         if (selectedPartId === 'lace_elastic' || selectedPartId === 'lace_stable') {
           return selectedPartId;
         }
-        return 'lace';
+        return 'lace_elastic';
       case 'tiul_elastyczny':
         return 'tulle_elastic';
       case 'tiul_stabilny':
@@ -850,7 +870,7 @@ export default function GarmentVisualizer({
                 stroke={getPartStroke('fabric')}
                 strokeWidth={getPartStrokeWidth('fabric')}
                 className="interactive-part"
-                onClick={() => onPartClick('fabric')}
+                onClick={() => onPartClick(mapGuidePartIdToMainId('fabric'))}
               />
 
               {/* Decorative Material 2 Panels (fabric_extra) */}
@@ -878,7 +898,7 @@ export default function GarmentVisualizer({
                 stroke={getPartStroke('lace')}
                 strokeWidth={getPartStrokeWidth('lace')}
                 className="interactive-part"
-                onClick={() => onPartClick('lace')}
+                onClick={() => onPartClick(mapGuidePartIdToMainId('lace'))}
               />
               <path
                 d="M 220,60 C 212,72 202,88 192,102 C 200,95 210,80 220,60 Z"
@@ -886,7 +906,7 @@ export default function GarmentVisualizer({
                 stroke={getPartStroke('lace')}
                 strokeWidth={getPartStrokeWidth('lace')}
                 className="interactive-part"
-                onClick={() => onPartClick('lace')}
+                onClick={() => onPartClick(mapGuidePartIdToMainId('lace'))}
               />
 
               {/* Gusset (klin) outline visible inside front */}
@@ -954,7 +974,7 @@ export default function GarmentVisualizer({
                 stroke={getPartStroke('fabric')}
                 strokeWidth={getPartStrokeWidth('fabric')}
                 className="interactive-part"
-                onClick={() => onPartClick('fabric')}
+                onClick={() => onPartClick(mapGuidePartIdToMainId('fabric'))}
               />
 
               {/* Waistband Elastic Trim */}

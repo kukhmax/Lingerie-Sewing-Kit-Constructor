@@ -24,9 +24,10 @@ const GARMENT_PARTS = {
     { id: 'threads', name: 'Nici Ariadna Talia 120', category: 'threads', required: true, isMain: false, qty: 1.0 }
   ],
   majtki: [
-    { id: 'fabric', name: 'Materiał 1 (dzianina)', category: 'fabric', required: true, isMain: true, qty: 0.5 },
-    { id: 'fabric_extra', name: 'Materiał 2 (dekoracyjny)', category: 'fabric', required: false, isMain: true, qty: 0.5 },
-    { id: 'lace', name: 'Koronka wykończeniowa', category: 'fabric', required: false, isMain: true, qty: 1.5 },
+    { id: 'lace_elastic', name: 'Koronka elastyczna', category: 'fabric', required: false, isMain: true, qty: 1.5 },
+    { id: 'lace_stable', name: 'Koronka stabilna', category: 'fabric', required: false, isMain: true, qty: 1.5 },
+    { id: 'fabric_elastic', name: 'Tkanina elastyczna', category: 'fabric', required: false, isMain: true, qty: 0.5 },
+    { id: 'tulle_elastic', name: 'Tiul elastyczny', category: 'fabric', required: false, isMain: true, qty: 0.5 },
     { id: 'gusset', name: 'Bawełna na klin', category: 'fabric', required: true, isMain: false, qty: 0.2 },
     { id: 'elastic_trim', name: 'Guma ozdobna (pas)', category: 'elastic_trim', required: true, isMain: false, qty: 2.0 },
     { id: 'threads', name: 'Nici do szwów płaskich', category: 'threads', required: true, isMain: false, qty: 1.0 }
@@ -110,7 +111,7 @@ export default function App() {
       let filteredData = data;
       if (garment === 'majtki' && partId === 'gusset') {
         filteredData = data.filter(p => p.id.includes('bawelna') || p.name.toLowerCase().includes('bawełna'));
-      } else if (garment === 'biustonosz') {
+      } else if (garment === 'biustonosz' || garment === 'majtki') {
         if (partId === 'lace_elastic') {
           filteredData = data.filter(p => p.name.toLowerCase().includes('koronka') && !p.name.toLowerCase().includes('stabiln'));
         } else if (partId === 'lace_stable') {
@@ -193,7 +194,7 @@ export default function App() {
   const requiredParts = activeParts.filter(p => p.required);
   
   const hasMainMaterial = activeParts.some(p => p.isMain && selections[p.id]);
-  const requiredCompleted = garment === 'biustonosz'
+  const requiredCompleted = (garment === 'biustonosz' || garment === 'majtki')
     ? (hasMainMaterial && requiredParts.every(p => selections[p.id]))
     : requiredParts.every(p => selections[p.id]);
     
@@ -299,7 +300,7 @@ export default function App() {
             </div>
 
             <div className="parts-list">
-              {garment === 'biustonosz' ? (
+              {garment === 'biustonosz' || garment === 'majtki' ? (
                 <>
                   {/* Sektor Materiał główny */}
                   <div className="main-materials-group">
