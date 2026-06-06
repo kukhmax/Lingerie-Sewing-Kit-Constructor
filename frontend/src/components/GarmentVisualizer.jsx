@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // GarmentVisualizer renders Front and Back SVGs side-by-side
 // Props:
@@ -13,6 +13,8 @@ export default function GarmentVisualizer({
   partColors = {},
   showLabels = true
 }) {
+  const [hoveredPartId, setHoveredPartId] = useState(null);
+
   const getPartColor = (partId, defaultColor = '#e2ded5') => {
     return partColors[partId] || defaultColor;
   };
@@ -25,568 +27,772 @@ export default function GarmentVisualizer({
     return selectedPartId === partId ? '2.5' : '1.2';
   };
 
-  // Render Bra SVGs (Flat layout projection matching media__1780697054315.png, no separate front/back)
-  const renderBiustonosz = () => {
-    const cupColor = getPartColor('fabric');
-    const laceColor = getPartColor('lace');
-    const tulleElasticColor = getPartColor('tulle_elastic');
-    const tulleStableColor = getPartColor('tulle_stable');
-    const elasticColor = getPartColor('elastic_trim');
-    const strapColor = getPartColor('elastic_strap');
-    const ringColor = getPartColor('ring', '#d1d5db');
-    const sliderColor = getPartColor('slider', '#d1d5db');
-    const closureColor = getPartColor('closure');
-    const tunnelColor = getPartColor('tunnel');
-    const bowColor = getPartColor('bow');
-    const threadColor = getPartColor('threads', '#888');
-    const underwireColor = getPartColor('underwire', '#bfb5a8');
+  const defaultGuideColors = {
+    miseczki: '#3B82F6', // Blue
+    material: '#8B5CF6', // Purple
+    koronka: '#EC4899', // Pink
+    tiul_elastyczny: '#06B6D4', // Cyan
+    tiul_stabilny: '#14B8A6', // Teal
+    guma_obszywkowa: '#F59E0B', // Amber
+    guma_ramiackowa: '#10B981', // Emerald
+    kolka: '#EF4444', // Red
+    regulatory: '#EF4444', // Red
+    haftka: '#84CC16', // Lime
+    fiszbiny: '#6366F1', // Indigo
+    tunel_gorseciarski: '#D946EF', // Fuchsia
+    kokardka: '#EAB308', // Yellow
+  };
 
+  const mapGuidePartIdToMainId = (id) => {
+    switch (id) {
+      case 'material':
+      case 'miseczki':
+        return 'fabric';
+      case 'koronka':
+        return 'lace';
+      case 'tiul_elastyczny':
+        return 'tulle_elastic';
+      case 'tiul_stabilny':
+        return 'tulle_stable';
+      case 'guma_obszywkowa':
+        return 'elastic_trim';
+      case 'guma_ramiackowa':
+        return 'elastic_strap';
+      case 'kolka':
+        return 'ring';
+      case 'regulatory':
+        return 'slider';
+      case 'haftka':
+        return 'closure';
+      case 'fiszbiny':
+        return 'underwire';
+      case 'tunel_gorseciarski':
+        return 'tunnel';
+      case 'kokardka':
+        return 'bow';
+      default:
+        return id;
+    }
+  };
+
+  const getGuidePartColor = (guideId) => {
+    const mainId = mapGuidePartIdToMainId(guideId);
+    return partColors[mainId] || defaultGuideColors[guideId] || '#e2ded5';
+  };
+
+  const isPartActive = (id) => {
+    if (hoveredPartId === id) return true;
+    return mapGuidePartIdToMainId(id) === selectedPartId;
+  };
+
+  const getPartStyle = (id) => {
+    const active = isPartActive(id);
+    const color = getGuidePartColor(id);
+    return {
+      fill: active ? `${color}35` : '#ffffff',
+      stroke: active ? color : '#1e293b',
+      strokeWidth: active ? '3.5' : '1.8',
+      transition: 'all 0.25s ease-in-out',
+      cursor: 'pointer',
+    };
+  };
+
+  const getLineStyle = (id, thickness = 1.8) => {
+    const active = isPartActive(id);
+    const color = getGuidePartColor(id);
+    return {
+      stroke: active ? color : '#1e293b',
+      strokeWidth: active ? thickness + 2 : thickness,
+      fill: 'none',
+      transition: 'all 0.25s ease-in-out',
+      cursor: 'pointer',
+    };
+  };
+
+  const getPartName = (partId) => {
+    switch (partId) {
+      case 'fabric': return 'Miseczki (główny kształt)';
+      case 'lace': return 'Koronka elastyczna';
+      case 'tulle_elastic': return 'Tiul elastyczny (obwód)';
+      case 'tulle_stable': return 'Tiul stabilny (mostek)';
+      case 'elastic_trim': return 'Guma obszywkowa (obwód)';
+      case 'elastic_strap': return 'Guma ramiączkowa';
+      case 'ring': return 'Kółka metalowe';
+      case 'slider': return 'Regulatory metalowe';
+      case 'closure': return 'Zapięcie haftkowe';
+      case 'underwire': return 'Fiszbiny metalowe';
+      case 'bow': return 'Kokardka ozdobna';
+      case 'tunnel': return 'Tunel gorseciarski';
+      case 'threads': return 'Nici Ariadna Talia 120';
+      default: return partId;
+    }
+  };
+
+  const renderBiustonosz = () => {
     return (
       <div className="garment-visualizer" style={{ flexDirection: 'column', padding: '1.5rem', alignItems: 'center' }}>
         <div className="view-section" style={{ width: '100%', maxWidth: '950px' }}>
-          <svg width="100%" height="450" viewBox="0 0 1000 480" className="garment-svg" style={{ overflow: 'visible' }}>
+          
+          {/* SVG Interaction Guides */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: '11px',
+            color: '#94a3b8',
+            fontFamily: 'monospace',
+            marginBottom: '0.75rem',
+            width: '100%',
+            padding: '0 0.5rem'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span className="pulse-dot" style={{
+                display: 'inline-block',
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: '#ec4899',
+              }} />
+              <span>Interaktywny model wektorowy</span>
+            </div>
+            <div>
+              {selectedPartId ? (
+                <span>Wybrano: <strong style={{ color: '#475569' }}>{getPartName(selectedPartId)}</strong></span>
+              ) : (
+                <span>Najedź lub kliknij część, by wyodrębnić</span>
+              )}
+            </div>
+          </div>
+
+          <svg
+            id="interactive-bra-svg"
+            viewBox="0 0 1000 500"
+            className="garment-svg"
+            style={{ width: '100%', height: 'auto', userSelect: 'none', overflow: 'visible' }}
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {/* SVG Defs for markers and visual artifacts */}
             <defs>
-              <marker 
-                id="arrow" 
-                viewBox="0 0 10 10" 
-                refX="6" 
-                refY="5" 
-                markerWidth="5" 
-                markerHeight="5" 
+              <marker
+                id="pointer-arrow"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
                 orient="auto-start-reverse"
               >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563" />
+                <path d="M 0 1.5 L 10 5 L 0 8.5 Z" fill="#1e293b" />
               </marker>
             </defs>
 
-            <g transform="translate(0, 10)">
-              {/* Left Closure Hook Panel */}
-              <rect
-                x="185"
-                y="300"
-                width="15"
-                height="40"
-                rx="2"
-                fill={closureColor}
-                stroke={getPartStroke('closure')}
-                strokeWidth={getPartStrokeWidth('closure')}
-                className="interactive-part"
-                onClick={() => onPartClick('closure')}
-                style={{ cursor: 'pointer' }}
-              />
-              <line x1="185" y1="310" x2="180" y2="310" stroke="#444" strokeWidth="1.2" />
-              <line x1="185" y1="320" x2="180" y2="320" stroke="#444" strokeWidth="1.2" />
-              <line x1="185" y1="330" x2="180" y2="330" stroke="#444" strokeWidth="1.2" />
-
-              {/* Right Closure Eye Panel */}
-              <rect
-                x="800"
-                y="300"
-                width="15"
-                height="40"
-                rx="2"
-                fill={closureColor}
-                stroke={getPartStroke('closure')}
-                strokeWidth={getPartStrokeWidth('closure')}
-                className="interactive-part"
-                onClick={() => onPartClick('closure')}
-                style={{ cursor: 'pointer' }}
-              />
-              <circle cx="808" cy="310" r="1.5" fill="#444" />
-              <circle cx="808" cy="320" r="1.5" fill="#444" />
-              <circle cx="808" cy="330" r="1.5" fill="#444" />
-
-              {/* Left Band Wing (tulle_elastic) */}
-              <path
-                d="M 320,250 C 280,260 240,280 200,300 L 200,340 C 240,342 280,342 320,340 Z"
-                fill={tulleElasticColor}
-                stroke={getPartStroke('tulle_elastic')}
-                strokeWidth={getPartStrokeWidth('tulle_elastic')}
-                className="interactive-part"
-                onClick={() => onPartClick('tulle_elastic')}
-                style={{ cursor: 'pointer' }}
-              />
-              {/* Internal vertical seam on left wing */}
-              <line 
-                x1="250" 
-                y1="275" 
-                x2="250" 
-                y2="341" 
-                stroke={threadColor} 
-                strokeWidth="0.8" 
-                strokeDasharray="2,2" 
-              />
-
-              {/* Right Band Wing (tulle_elastic) */}
-              <path
-                d="M 680,250 C 720,260 760,280 800,300 L 800,340 C 760,342 720,342 680,340 Z"
-                fill={tulleElasticColor}
-                stroke={getPartStroke('tulle_elastic')}
-                strokeWidth={getPartStrokeWidth('tulle_elastic')}
-                className="interactive-part"
-                onClick={() => onPartClick('tulle_elastic')}
-                style={{ cursor: 'pointer' }}
-              />
-              {/* Internal vertical seam on right wing */}
-              <line 
-                x1="750" 
-                y1="275" 
-                x2="750" 
-                y2="341" 
-                stroke={threadColor} 
-                strokeWidth="0.8" 
-                strokeDasharray="2,2" 
-              />
-
-              {/* Top and Bottom Elastic Trims (elastic_trim) on Wings */}
-              <path
-                d="M 320,250 C 280,260 240,280 200,300"
-                fill="none"
-                stroke={elasticColor}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-                style={{ cursor: 'pointer' }}
-              />
-              <path
-                d="M 320,340 C 280,342 240,342 200,340"
-                fill="none"
-                stroke={elasticColor}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-                style={{ cursor: 'pointer' }}
-              />
-              <path
-                d="M 680,250 C 720,260 760,280 800,300"
-                fill="none"
-                stroke={elasticColor}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-                style={{ cursor: 'pointer' }}
-              />
-              <path
-                d="M 680,340 C 720,342 760,342 800,340"
-                fill="none"
-                stroke={elasticColor}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-                style={{ cursor: 'pointer' }}
-              />
-
-              {/* Cradle/Bridge (tulle_stable) */}
-              <path
-                d="M 475,240 L 525,240 C 520,270 520,300 525,340 C 510,320 490,320 475,340 C 480,300 480,270 475,240 Z"
-                fill={tulleStableColor}
-                stroke={getPartStroke('tulle_stable')}
-                strokeWidth={getPartStrokeWidth('tulle_stable')}
-                className="interactive-part"
-                onClick={() => onPartClick('tulle_stable')}
-                style={{ cursor: 'pointer' }}
-              />
-              {/* Vertical center stitch on bridge */}
-              <line 
-                x1="500" 
-                y1="240" 
-                x2="500" 
-                y2="328" 
-                stroke={threadColor} 
-                strokeWidth="1" 
-                strokeDasharray="2,2" 
-              />
-
-              {/* Left Cup Lower Cup (fabric) */}
-              <path
-                d="M 320,250 C 342,342 453,342 475,240 C 450,250 420,260 397,260 C 370,260 340,250 320,250 Z"
-                fill={cupColor}
-                stroke={getPartStroke('fabric')}
-                strokeWidth={getPartStrokeWidth('fabric')}
-                className="interactive-part"
-                onClick={() => onPartClick('fabric')}
-                style={{ cursor: 'pointer' }}
-              />
-
-              {/* Left Cup Lace Panel */}
-              <path
-                d="M 320,250 C 340,210 370,180 397,150 C 425,180 455,210 475,240 C 450,250 420,260 397,260 C 370,260 340,250 320,250 Z"
-                fill={laceColor}
-                stroke={getPartStroke('lace')}
-                strokeWidth={getPartStrokeWidth('lace')}
-                className="interactive-part"
-                onClick={() => onPartClick('lace')}
-                style={{ cursor: 'pointer' }}
-              />
-
-              {/* Right Cup Lower Cup (fabric) */}
-              <path
-                d="M 680,250 C 658,342 547,342 525,240 C 550,250 580,260 603,260 C 630,260 660,250 680,250 Z"
-                fill={cupColor}
-                stroke={getPartStroke('fabric')}
-                strokeWidth={getPartStrokeWidth('fabric')}
-                className="interactive-part"
-                onClick={() => onPartClick('fabric')}
-                style={{ cursor: 'pointer' }}
-              />
-
-              {/* Right Cup Lace Panel */}
-              <path
-                d="M 680,250 C 660,210 630,180 603,150 C 575,180 545,210 525,240 C 550,250 580,260 603,260 C 630,260 660,250 680,250 Z"
-                fill={laceColor}
-                stroke={getPartStroke('lace')}
-                strokeWidth={getPartStrokeWidth('lace')}
-                className="interactive-part"
-                onClick={() => onPartClick('lace')}
-                style={{ cursor: 'pointer' }}
-              />
-
-              {/* Dashed guidelines inside cups representing anatomy mapping */}
-              {/* Left vertical breast curve */}
-              <path
-                d="M 397,150 L 397,338"
-                fill="none"
-                stroke={threadColor}
-                strokeWidth="1"
-                strokeDasharray="3,3"
-              />
-              {/* Left apex cross marker */}
-              <line x1="392" y1="255" x2="402" y2="265" stroke="#444" strokeWidth="1.5" />
-              <line x1="402" y1="255" x2="392" y2="265" stroke="#444" strokeWidth="1.5" />
-
-              {/* Right vertical breast curve */}
-              <path
-                d="M 603,150 L 603,338"
-                fill="none"
-                stroke={threadColor}
-                strokeWidth="1"
-                strokeDasharray="3,3"
-              />
-              {/* Right apex cross marker */}
-              <line x1="598" y1="255" x2="608" y2="265" stroke="#444" strokeWidth="1.5" />
-              <line x1="608" y1="255" x2="598" y2="265" stroke="#444" strokeWidth="1.5" />
-
-              {/* Neckline double stitch detail lines */}
-              <path
-                d="M 397,150 C 425,180 455,210 475,240"
-                fill="none"
-                stroke={threadColor}
-                strokeWidth="0.8"
-                strokeDasharray="2,2"
-              />
-              <path
-                d="M 603,150 C 575,180 545,210 525,240"
-                fill="none"
-                stroke={threadColor}
-                strokeWidth="0.8"
-                strokeDasharray="2,2"
-              />
-
-              {/* Left Underwire Channel (tunnel) */}
-              <path
-                d="M 473,242 C 453,342 342,342 322,252"
-                fill="none"
-                stroke={tunnelColor}
-                strokeWidth={selectedPartId === 'tunnel' ? '8' : '5'}
-                className="interactive-part"
-                onClick={() => onPartClick('tunnel')}
-                style={{ cursor: 'pointer' }}
-              />
-
-              {/* Left Underwire (underwire) */}
-              <path
-                d="M 471,245 C 451,337 344,337 324,255"
-                fill="none"
-                stroke={underwireColor}
-                strokeWidth={selectedPartId === 'underwire' ? '3' : '1.8'}
-                className="interactive-part"
-                onClick={() => onPartClick('underwire')}
-                style={{ cursor: 'pointer' }}
-              />
-
-              {/* Right Underwire Channel (tunnel) */}
-              <path
-                d="M 527,242 C 547,342 658,342 678,252"
-                fill="none"
-                stroke={tunnelColor}
-                strokeWidth={selectedPartId === 'tunnel' ? '8' : '5'}
-                className="interactive-part"
-                onClick={() => onPartClick('tunnel')}
-                style={{ cursor: 'pointer' }}
-              />
-
-              {/* Right Underwire (underwire) */}
-              <path
-                d="M 529,245 C 549,337 656,337 676,255"
-                fill="none"
-                stroke={underwireColor}
-                strokeWidth={selectedPartId === 'underwire' ? '3' : '1.8'}
-                className="interactive-part"
-                onClick={() => onPartClick('underwire')}
-                style={{ cursor: 'pointer' }}
-              />
-
-              {/* Side seam / bones (szew boczny / fiszbiny krótkie) */}
-              {/* Left side seam */}
-              <rect
-                x="317"
-                y="250"
-                width="6"
-                height="90"
-                fill={tunnelColor}
-                stroke={getPartStroke('tunnel')}
-                strokeWidth={getPartStrokeWidth('tunnel')}
-                className="interactive-part"
-                onClick={() => onPartClick('tunnel')}
-                style={{ cursor: 'pointer' }}
-              />
-              <line x1="320" y1="250" x2="320" y2="340" stroke={threadColor} strokeWidth="1" strokeDasharray="3,3" />
-
-              {/* Right side seam */}
-              <rect
-                x="677"
-                y="250"
-                width="6"
-                height="90"
-                fill={tunnelColor}
-                stroke={getPartStroke('tunnel')}
-                strokeWidth={getPartStrokeWidth('tunnel')}
-                className="interactive-part"
-                onClick={() => onPartClick('tunnel')}
-                style={{ cursor: 'pointer' }}
-              />
-              <line x1="680" y1="250" x2="680" y2="340" stroke={threadColor} strokeWidth="1" strokeDasharray="3,3" />
-
-              {/* Left Strap (elastic_strap) */}
-              <path
-                d="M 230,288 C 210,130 310,35 397,150"
-                fill="none"
-                stroke={strapColor}
-                strokeWidth={getPartStrokeWidth('elastic_strap')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_strap')}
-                style={{ cursor: 'pointer', strokeWidth: '6px' }}
-              />
-
-              {/* Right Strap (elastic_strap) */}
-              {/* Connected to ring at right apex */}
-              <path
-                d="M 770,288 C 790,130 690,35 603,143"
-                fill="none"
-                stroke={strapColor}
-                strokeWidth={getPartStrokeWidth('elastic_strap')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_strap')}
-                style={{ cursor: 'pointer', strokeWidth: '6px' }}
-              />
-
-              {/* Left Apex Attachment Seam (represented as small band) */}
-              <rect
-                x="389"
-                y="147"
-                width="16"
-                height="5"
-                fill={elasticColor}
-                stroke={getPartStroke('elastic_trim')}
-                strokeWidth="1"
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-                style={{ cursor: 'pointer' }}
-              />
-
-              {/* Right Apex Ring (ring) */}
-              <circle
-                cx="603"
-                cy="150"
-                r="7"
-                fill="none"
-                stroke={ringColor}
-                strokeWidth={selectedPartId === 'ring' ? '3.5' : '2'}
-                className="interactive-part"
-                onClick={() => onPartClick('ring')}
-                style={{ cursor: 'pointer' }}
-              />
-              {/* Loop of lace holding the ring */}
-              <path
-                d="M 603,157 L 603,161"
-                stroke={threadColor}
-                strokeWidth="1.5"
-              />
-
-              {/* Sliders (slider) */}
-              {/* Left Slider */}
-              <rect
-                x="270"
-                y="58"
-                width="14"
-                height="8"
-                rx="1"
-                fill={sliderColor}
-                stroke={getPartStroke('slider')}
-                strokeWidth={getPartStrokeWidth('slider')}
-                className="interactive-part"
-                onClick={() => onPartClick('slider')}
-                style={{ cursor: 'pointer' }}
-              />
-              <line x1="277" y1="58" x2="277" y2="66" stroke="#444" strokeWidth="1" />
-
-              {/* Right Slider */}
-              <rect
-                x="716"
-                y="58"
-                width="14"
-                height="8"
-                rx="1"
-                fill={sliderColor}
-                stroke={getPartStroke('slider')}
-                strokeWidth={getPartStrokeWidth('slider')}
-                className="interactive-part"
-                onClick={() => onPartClick('slider')}
-                style={{ cursor: 'pointer' }}
-              />
-              <line x1="723" y1="58" x2="723" y2="66" stroke="#444" strokeWidth="1" />
-
-              {/* Decorative Bow (bow) on Center Bridge */}
-              <g 
-                className="interactive-part" 
-                onClick={() => onPartClick('bow')}
-                style={{ cursor: 'pointer' }}
-              >
-                {/* Left bow loop */}
-                <path
-                  d="M 500,245 C 490,235 480,245 500,245 Z"
-                  fill={bowColor}
-                  stroke={getPartStroke('bow')}
-                  strokeWidth={getPartStrokeWidth('bow')}
-                />
-                {/* Right bow loop */}
-                <path
-                  d="M 500,245 C 510,235 520,245 500,245 Z"
-                  fill={bowColor}
-                  stroke={getPartStroke('bow')}
-                  strokeWidth={getPartStrokeWidth('bow')}
-                />
-                {/* Bow center knot */}
-                <circle cx="500" cy="245" r="2.5" fill={bowColor} stroke={getPartStroke('bow')} strokeWidth="0.8" />
-                {/* Bow tails */}
-                <path d="M 500,245 L 493,258" stroke={getPartStroke('bow')} strokeWidth="1.2" />
-                <path d="M 500,245 L 507,258" stroke={getPartStroke('bow')} strokeWidth="1.2" />
-              </g>
-
-              {/* Interactive Labels & Arrows Layer */}
-              <g 
-                className="labels-layer" 
-                style={{ 
-                  display: showLabels ? 'inline' : 'none', 
-                  pointerEvents: 'none',
-                  transition: 'opacity 0.3s ease'
-                }}
-              >
-                {/* 1. Left regulatory */}
-                <text x="140" y="54" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">regulatory</text>
-                <line x1="205" y1="50" x2="265" y2="58" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 2. Left guma ramiączkowa */}
-                <text x="240" y="114" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">guma ramiączkowa</text>
-                <line x1="290" y1="100" x2="260" y2="85" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 3. Left zapięcie (haftki) */}
-                <text x="80" y="325" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">zapięcie (haftki)</text>
-                <line x1="172" y1="321" x2="182" y2="321" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 4. Left guma obszywkowa (dół) */}
-                <text x="80" y="420" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">guma obszywkowa (dół)</text>
-                <line x1="120" y1="405" x2="230" y2="338" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 5. Left szew boczny / fiszbiny krótkie */}
-                <text x="180" y="240" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold">szew boczny</text>
-                <text x="180" y="253" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">fiszbiny krótkie</text>
-                <line x1="260" y1="248" x2="313" y2="272" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 6. Left skrzydełko obwodu */}
-                <text x="180" y="355" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">skrzydełko obwodu</text>
-                <line x1="230" y1="340" x2="255" y2="320" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 7. Left tunel gorseciarski */}
-                <text x="200" y="450" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold">tunel gorseciarski</text>
-                <line x1="280" y1="438" x2="348" y2="328" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 8. Left fiszbiny */}
-                <text x="380" y="450" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">fiszbiny</text>
-                <line x1="380" y1="435" x2="385" y2="330" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* Right Side Etykiety */}
-                {/* 9. Right regulatory */}
-                <text x="860" y="54" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">regulatory</text>
-                <line x1="795" y1="50" x2="735" y2="58" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 10. Right guma ramiączkowa */}
-                <text x="760" y="114" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">guma ramiączkowa</text>
-                <line x1="710" y1="100" x2="740" y2="85" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 11. Right kółko (łącznik) */}
-                <text x="750" y="154" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">kółko (łącznik)</text>
-                <line x1="745" y1="150" x2="612" y2="150" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 12. Right szczyt piersi (apex) */}
-                <text x="800" y="215" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">szczyt piersi (apex)</text>
-                <line x1="795" y1="218" x2="612" y2="258" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 13. Right szew boczny / fiszbiny krótkie */}
-                <text x="820" y="240" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold">szew boczny</text>
-                <text x="820" y="253" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">fiszbiny krótkie</text>
-                <line x1="740" y1="248" x2="687" y2="272" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 14. Right skrzydełko obwodu */}
-                <text x="820" y="355" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">skrzydełko obwodu</text>
-                <line x1="770" y1="340" x2="745" y2="320" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 15. Right haftki */}
-                <text x="920" y="325" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">haftki</text>
-                <line x1="828" y1="321" x2="818" y2="321" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 16. Right guma obszywkowa */}
-                <text x="920" y="420" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">guma obszywkowa</text>
-                <line x1="880" y1="405" x2="770" y2="338" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 17. Right tunel gorseciarski */}
-                <text x="800" y="450" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold">tunel gorseciarski</text>
-                <line x1="720" y1="438" x2="652" y2="328" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 18. Right fiszbiny */}
-                <text x="620" y="450" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">fiszbiny</text>
-                <line x1="620" y1="435" x2="615" y2="330" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* Center / Common Etykiety */}
-                {/* 19. Center guma obszywkowa */}
-                <text x="500" y="150" textAnchor="middle" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">guma obszywkowa</text>
-                <line x1="450" y1="150" x2="408" y2="150" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 20. Center guma obszywkowa (dekolt) */}
-                <text x="500" y="185" textAnchor="middle" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold">guma obszywkowa (dekolt)</text>
-                <line x1="450" y1="185" x2="415" y2="195" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-                <line x1="550" y1="185" x2="585" y2="195" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 21. Left/Right tkanina lub koronka */}
-                <text x="320" y="195" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">tkanina lub koronka</text>
-                <line x1="320" y1="185" x2="355" y2="175" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-                <text x="680" y="195" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">tkanina lub koronka</text>
-                <line x1="680" y1="185" x2="645" y2="175" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 22. Left/Right dolna część miseczki */}
-                <text x="310" y="295" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">dolna część miseczki</text>
-                <line x1="330" y1="280" x2="360" y2="275" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-                <text x="690" y="295" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">dolna część miseczki</text>
-                <line x1="670" y1="280" x2="640" y2="275" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-
-                {/* 23. mostek do miseczki */}
-                <text x="500" y="420" textAnchor="middle" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">mostek do miseczki</text>
-                <line x1="500" y1="405" x2="500" y2="330" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
-              </g>
-
-              {/* 24. mostek text - always visible inside the bridge */}
-              <text x="500" y="290" textAnchor="middle" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold" style={{ pointerEvents: 'none' }}>mostek</text>
+            {/* Ambient drafting board style background grid */}
+            <g stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="5 5" opacity="0.65">
+              <line x1="500" y1="20" x2="500" y2="480" />
+              <line x1="40" y1="250" x2="960" y2="250" />
+              <line x1="150" y1="50" x2="850" y2="450" opacity="0.4" />
+              <line x1="850" y1="50" x2="150" y2="450" opacity="0.4" />
             </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 1: BACK WINGS / ELASTIC POWERNET (tiul_elastyczny)  */}
+            {/* ========================================================= */}
+            
+            {/* Left Wing (Back band side - Full band construction) */}
+            <g
+              id="wing-left-panel"
+              onMouseEnter={() => setHoveredPartId('tiul_elastyczny')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('tiul_elastyczny'))}
+            >
+              <path
+                d="M 91 300 C 130 282, 160 264, 180 254 L 180 333 C 150 332, 120 335, 91 340 Z"
+                style={getPartStyle('tiul_elastyczny')}
+              />
+            </g>
+
+            {/* Right Wing (Back band side - Symmetrical Full band construction) */}
+            <g
+              id="wing-right-panel"
+              onMouseEnter={() => setHoveredPartId('tiul_elastyczny')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('tiul_elastyczny'))}
+            >
+              <path
+                d="M 909 300 C 870 282, 840 264, 820 254 L 820 333 C 850 332, 880 335, 909 340 Z"
+                style={getPartStyle('tiul_elastyczny')}
+              />
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 2: THE BACK CLOSURE & HOOK-AND-EYE TAPE (haftka)     */}
+            {/* ========================================================= */}
+            <g
+              id="part-haftka-closure"
+              onMouseEnter={() => setHoveredPartId('haftka')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('haftka'))}
+            >
+              {/* Left Wing Hooks Tape */}
+              <g transform="translate(73, 290)">
+                <rect
+                  x="0"
+                  y="0"
+                  width="18"
+                  height="50"
+                  rx="2"
+                  fill={isPartActive('haftka') ? `${getGuidePartColor('haftka')}35` : '#ffffff'}
+                  stroke={isPartActive('haftka') ? getGuidePartColor('haftka') : '#1e293b'}
+                  strokeWidth="1.8"
+                  style={{ transition: 'all 0.2s' }}
+                />
+                <circle cx="9" cy="12" r="2.5" fill="#1e293b" />
+                <circle cx="9" cy="25" r="2.5" fill="#1e293b" />
+                <circle cx="9" cy="38" r="2.5" fill="#1e293b" />
+              </g>
+
+              {/* Right Wing Eyes tape */}
+              <g transform="translate(909, 290)">
+                <rect
+                  x="0"
+                  y="0"
+                  width="18"
+                  height="50"
+                  rx="2"
+                  fill={isPartActive('haftka') ? `${getGuidePartColor('haftka')}35` : '#ffffff'}
+                  stroke={isPartActive('haftka') ? getGuidePartColor('haftka') : '#1e293b'}
+                  strokeWidth="1.8"
+                  style={{ transition: 'all 0.2s' }}
+                />
+                <path d="M 0 12 Q -5 12, -5 15 Q -5 18, 0 18" fill="none" stroke="#1e293b" strokeWidth="1.8" />
+                <path d="M 0 25 Q -5 25, -5 28 Q -5 31, 0 31" fill="none" stroke="#1e293b" strokeWidth="1.8" />
+                <path d="M 0 38 Q -5 38, -5 41 Q -5 44, 0 44" fill="none" stroke="#1e293b" strokeWidth="1.8" />
+              </g>
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 3: THE STABLE TRAPEZOIDAL CENTER BRIDGE (tiul_stabilny) */}
+            {/* ========================================================= */}
+            <g
+              id="part-bridge-core"
+              onMouseEnter={() => setHoveredPartId('tiul_stabilny')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('tiul_stabilny'))}
+            >
+              <path
+                d="M 465 250 C 485 245, 515 245, 535 250 L 545 345 Q 500 310, 455 345 Z"
+                style={getPartStyle('tiul_stabilny')}
+              />
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 4: FRONT BAND BASE / CRADLE FRAME (material)        */}
+            {/* ========================================================= */}
+            <g
+              id="part-cup-base-frame"
+              onMouseEnter={() => setHoveredPartId('material')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('material'))}
+            >
+              <path
+                d="M 180 254 L 255 245 C 275 350, 445 355, 455 330 C 455 338, 455 345, 455 345 C 320 358, 240 335, 180 333 Z"
+                style={getPartStyle('material')}
+              />
+              <path
+                d="M 820 254 L 745 245 C 725 350, 555 355, 545 330 C 545 338, 545 345, 545 345 C 680 358, 760 335, 820 333 Z"
+                style={getPartStyle('material')}
+              />
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 5: LOWER CUP LOBES (material)                       */}
+            {/* ========================================================= */}
+            <g
+              id="part-lower-cups"
+              onMouseEnter={() => setHoveredPartId('material')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('material'))}
+            >
+              <path
+                d="M 255 245 Q 345 285, 435 310 C 448 296, 458 274, 465 250 C 445 355, 275 350, 255 245 Z"
+                style={getPartStyle('material')}
+              />
+              <path
+                d="M 745 245 Q 655 285, 565 310 C 552 296, 542 274, 535 250 C 555 355, 725 350, 745 245 Z"
+                style={getPartStyle('material')}
+              />
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 6: UPPER CUPS INTRICATE PANELS (koronka)            */}
+            {/* ========================================================= */}
+            <g
+              id="part-upper-cups-lace"
+              onMouseEnter={() => setHoveredPartId('koronka')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('koronka'))}
+            >
+              <path
+                d="M 255 245 Q 345 285, 435 310 C 445 290, 455 270, 465 250 C 440 220, 390 170, 360 140 C 330 170, 280 210, 255 245 Z"
+                style={getPartStyle('koronka')}
+              />
+              <path
+                d="M 745 245 Q 655 285, 565 310 C 555 290, 545 270, 535 250 C 560 220, 610 170, 640 140 C 670 170, 720 210, 745 245 Z"
+                style={getPartStyle('koronka')}
+              />
+              <path
+                d="M 360 140 Q 338 160, 321 180 Q 303 200, 287 220 Q 271 233, 255 245"
+                fill="none"
+                stroke={isPartActive('koronka') ? getGuidePartColor('koronka') : '#475569'}
+                strokeWidth="1.2"
+                strokeDasharray="4 2"
+              />
+              <path
+                d="M 640 140 Q 662 160, 679 180 Q 697 200, 713 220 Q 729 233, 745 245"
+                fill="none"
+                stroke={isPartActive('koronka') ? getGuidePartColor('koronka') : '#475569'}
+                strokeWidth="1.2"
+                strokeDasharray="4 2"
+              />
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 7: DIAGONAL CUP SEAM DOUBLE STITCHES (miseczki)     */}
+            {/* ========================================================= */}
+            <g
+              id="part-cup-seam-details"
+              onMouseEnter={() => setHoveredPartId('miseczki')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('miseczki'))}
+            >
+              <path
+                d="M 255 245 Q 345 285, 435 310"
+                fill="none"
+                stroke={isPartActive('miseczki') ? getGuidePartColor('miseczki') : '#1e293b'}
+                strokeWidth={isPartActive('miseczki') ? '3.5' : '1.8'}
+                style={{ transition: 'all 0.25s' }}
+              />
+              <path
+                d="M 255 248 Q 345 288, 435 313"
+                fill="none"
+                stroke={isPartActive('miseczki') ? getGuidePartColor('miseczki') : '#1e293b'}
+                strokeWidth="1"
+                strokeDasharray="3 2"
+                style={{ transition: 'all 0.25s' }}
+              />
+              <path
+                d="M 745 245 Q 655 285, 565 310"
+                fill="none"
+                stroke={isPartActive('miseczki') ? getGuidePartColor('miseczki') : '#1e293b'}
+                strokeWidth={isPartActive('miseczki') ? '3.5' : '1.8'}
+                style={{ transition: 'all 0.25s' }}
+              />
+              <path
+                d="M 745 248 Q 655 288, 565 313"
+                fill="none"
+                stroke={isPartActive('miseczki') ? getGuidePartColor('miseczki') : '#1e293b'}
+                strokeWidth="1"
+                strokeDasharray="3 2"
+                style={{ transition: 'all 0.25s' }}
+              />
+
+              {/* Interactive invisible full breasts overlay to catch clicks representing "Cups" */}
+              <path
+                d="M 360 140 C 330 170, 280 210, 255 245 C 275 350, 445 355, 465 250 C 440 220, 390 170, 360 140 Z"
+                fill="transparent"
+                stroke="transparent"
+                style={{ cursor: 'pointer' }}
+              />
+              <path
+                d="M 640 140 C 670 170, 720 210, 745 245 C 725 350, 555 355, 535 250 C 560 220, 610 170, 640 140 Z"
+                fill="transparent"
+                stroke="transparent"
+                style={{ cursor: 'pointer' }}
+              />
+
+              {/* Symmetrical design bust lines */}
+              <path
+                d="M 360 260 L 360 318"
+                fill="none"
+                stroke="#94a3b8"
+                strokeWidth="1.2"
+                strokeDasharray="3 3"
+                opacity="0.8"
+              />
+              <path
+                d="M 640 260 L 640 318"
+                fill="none"
+                stroke="#94a3b8"
+                strokeWidth="1.2"
+                strokeDasharray="3 3"
+                opacity="0.8"
+              />
+
+              {/* PHYSICAL Symmetrical BUST APEX MARKERS ('X') - ON BOTH SEAMS REPLICATING THE BLUEPRINT PROMINENTLY */}
+              <g transform="translate(355, 282)">
+                <line x1="-7" y1="-7" x2="7" y2="7" stroke="#1e293b" strokeWidth="2.2" />
+                <line x1="7" y1="-7" x2="-7" y2="7" stroke="#1e293b" strokeWidth="2.2" />
+              </g>
+              <g transform="translate(645, 282)">
+                <line x1="-7" y1="-7" x2="7" y2="7" stroke="#1e293b" strokeWidth="2.2" />
+                <line x1="7" y1="-7" x2="-7" y2="7" stroke="#1e293b" strokeWidth="2.2" />
+              </g>
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 8: UNDERBAND & EDGE ENVELOPING ELASTICS (guma_obszywkowa) */}
+            {/* ========================================================= */}
+            <g
+              id="part-obszywkowa-band-elastics"
+              onMouseEnter={() => setHoveredPartId('guma_obszywkowa')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('guma_obszywkowa'))}
+            >
+              {/* Symmetrical vertical side seams denoting the wing attachment */}
+              <line x1="180" y1="254" x2="180" y2="333" stroke="#1e293b" strokeWidth="1.8" />
+              <line x1="820" y1="254" x2="820" y2="333" stroke="#1e293b" strokeWidth="1.8" />
+
+              {/* Underband Picot Elastic along the entire lower base of the wings */}
+              <path
+                d="M 91 340 C 120 335, 150 332, 180 333"
+                style={getLineStyle('guma_obszywkowa', 3)}
+              />
+              <path
+                d="M 820 333 C 850 332, 880 335, 909 340"
+                style={getLineStyle('guma_obszywkowa', 3)}
+              />
+
+              {/* Underband continuous elastic line extending under left cup as "Bottom of band" */}
+              <path
+                d="M 180 333 C 240 335, 320 358, 455 345"
+                style={getLineStyle('guma_obszywkowa', 3.5)}
+              />
+
+              {/* Underband continuous elastic line extending under right cup */}
+              <path
+                d="M 545 345 C 680 358, 760 335, 820 333"
+                style={getLineStyle('guma_obszywkowa', 3.5)}
+              />
+
+              {/* Gothic arch elastic line along the bottom of the center bridge */}
+              <path
+                d="M 455 345 Q 500 310, 545 345"
+                style={getLineStyle('guma_obszywkowa', 3.5)}
+              />
+
+              {/* Top Elastic band edges along wings */}
+              <path
+                d="M 91 300 C 130 282, 160 264, 180 254"
+                style={getLineStyle('guma_obszywkowa', 2.2)}
+              />
+              <path
+                d="M 820 254 C 840 264, 870 282, 909 300"
+                style={getLineStyle('guma_obszywkowa', 2.2)}
+              />
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 9: CHANNELS & WIRE CASING COVERS (tunel_gorseciarski) */}
+            {/* ========================================================= */}
+            <g
+              id="part-wire-casing-tunnel"
+              onMouseEnter={() => setHoveredPartId('tunel_gorseciarski')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('tunel_gorseciarski'))}
+            >
+              {/* Heavy plush double-line seam covering the underwires */}
+              <path
+                d="M 255 245 C 275 350, 445 355, 465 250"
+                style={getLineStyle('tunel_gorseciarski', 8.5)}
+              />
+              <path
+                d="M 745 245 C 725 350, 555 355, 535 250"
+                style={getLineStyle('tunel_gorseciarski', 8.5)}
+              />
+
+              {/* Technical dashed parallel lines signifying the underwire stitch lines */}
+              <path
+                d="M 253 245 C 273 353, 447 358, 467 250"
+                fill="none"
+                stroke={isPartActive('tunel_gorseciarski') ? getGuidePartColor('tunel_gorseciarski') : '#475569'}
+                strokeWidth="1.2"
+                strokeDasharray="4 3"
+                style={{ transition: 'all 0.25s' }}
+              />
+              <path
+                d="M 747 245 C 727 353, 553 358, 533 250"
+                fill="none"
+                stroke={isPartActive('tunel_gorseciarski') ? getGuidePartColor('tunel_gorseciarski') : '#475569'}
+                strokeWidth="1.2"
+                strokeDasharray="4 3"
+                style={{ transition: 'all 0.25s' }}
+              />
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 10: SPRING STEEL WIRE INSERT FLATS (fiszbiny)        */}
+            {/* ========================================================= */}
+            <g
+              id="part-metal-underwires"
+              onMouseEnter={() => setHoveredPartId('fiszbiny')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('fiszbiny'))}
+            >
+              <path
+                d="M 259 248 C 278 344, 440 348, 461 251"
+                style={getLineStyle('fiszbiny', 2.8)}
+              />
+              <path
+                d="M 741 248 C 722 344, 560 348, 539 251"
+                style={getLineStyle('fiszbiny', 2.8)}
+              />
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 11: DESIGNER SHOULDER STRAPS (guma_ramiackowa)       */}
+            {/* ========================================================= */}
+            <g
+              id="part-straps-elastic"
+              onMouseEnter={() => setHoveredPartId('guma_ramiackowa')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('guma_ramiackowa'))}
+              style={{ cursor: 'pointer' }}
+            >
+              {/* Left Strap */}
+              <path
+                d="M 360 140 C 352 90, 275 36, 175 51 C 115 63, 80 137, 85 300"
+                fill="none"
+                stroke={isPartActive('guma_ramiackowa') ? getGuidePartColor('guma_ramiackowa') : '#1e293b'}
+                strokeWidth="9"
+                style={{ transition: 'all 0.2s' }}
+              />
+              <path
+                d="M 360 140 C 352 90, 275 36, 175 51 C 115 63, 80 137, 85 300"
+                fill="none"
+                stroke={isPartActive('guma_ramiackowa') ? `${getGuidePartColor('guma_ramiackowa')}20` : '#ffffff'}
+                strokeWidth="6"
+                style={{ transition: 'all 0.2s' }}
+              />
+
+              {/* Right Strap */}
+              <path
+                d="M 640 130 C 648 80, 725 36, 825 51 C 885 63, 920 137, 915 300"
+                fill="none"
+                stroke={isPartActive('guma_ramiackowa') ? getGuidePartColor('guma_ramiackowa') : '#1e293b'}
+                strokeWidth="9"
+                style={{ transition: 'all 0.2s' }}
+              />
+              <path
+                d="M 640 130 C 648 80, 725 36, 825 51 C 885 63, 920 137, 915 300"
+                fill="none"
+                stroke={isPartActive('guma_ramiackowa') ? `${getGuidePartColor('guma_ramiackowa')}20` : '#ffffff'}
+                strokeWidth="6"
+                style={{ transition: 'all 0.2s' }}
+              />
+
+              {/* Left peak horizontal connection stitch */}
+              <line x1="352" y1="140" x2="368" y2="140" stroke="#1e293b" strokeWidth="1.8" />
+              <line x1="352" y1="142" x2="368" y2="142" stroke="#1e293b" strokeWidth="1" strokeDasharray="2 1" />
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 12: METAL RING HARDWARE ASYMMETRICAL (kolka)        */}
+            {/* ========================================================= */}
+            <g
+              id="part-hardware-rings"
+              onMouseEnter={() => setHoveredPartId('kolka')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('kolka'))}
+              style={{ cursor: 'pointer' }}
+            >
+              {/* Fabric loop holding Ring at right peak */}
+              <path d="M 632 148 C 632 148, 640 160, 648 148" fill="none" stroke="#1e293b" strokeWidth="1.8" />
+              
+              {/* Symmetrical metal loop on right shoulder strap only */}
+              <circle
+                cx="640"
+                cy="140"
+                r="11"
+                fill="#ffffff"
+                stroke={isPartActive('kolka') ? getGuidePartColor('kolka') : '#1e293b'}
+                strokeWidth={isPartActive('kolka') ? '3.5' : '1.8'}
+                style={{ transition: 'all 0.2s' }}
+              />
+              <circle
+                cx="640"
+                cy="140"
+                r="7.5"
+                fill="none"
+                stroke={isPartActive('kolka') ? getGuidePartColor('kolka') : '#1e293b'}
+                strokeWidth="1"
+              />
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 13: ADJUSTABLE STRAP HARDWARE / BRACKETS (regulatory) */}
+            {/* ========================================================= */}
+            <g
+              id="part-hardware-adjusters"
+              onMouseEnter={() => setHoveredPartId('regulatory')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('regulatory'))}
+              style={{ cursor: 'pointer' }}
+            >
+              {/* Left Slider representation (ósemki) */}
+              <g transform="translate(235, 33) rotate(9)">
+                <rect
+                  x="0"
+                  y="0"
+                  width="18"
+                  height="10"
+                  rx="1.5"
+                  fill={isPartActive('regulatory') ? getGuidePartColor('regulatory') : '#ffffff'}
+                  stroke="#1e293b"
+                  strokeWidth="1.8"
+                  style={{ transition: 'all 0.25s' }}
+                />
+                <line x1="9" y1="0" x2="9" y2="10" stroke="#1e293b" strokeWidth="1.5" />
+              </g>
+
+              {/* Right Slider representation */}
+              <g transform="translate(765, 33) rotate(-9)">
+                <rect
+                  x="0"
+                  y="0"
+                  width="18"
+                  height="10"
+                  rx="1.5"
+                  fill={isPartActive('regulatory') ? getGuidePartColor('regulatory') : '#ffffff'}
+                  stroke="#1e293b"
+                  strokeWidth="1.8"
+                  style={{ transition: 'all 0.25s' }}
+                />
+                <line x1="9" y1="0" x2="9" y2="10" stroke="#1e293b" strokeWidth="1.5" />
+              </g>
+            </g>
+
+            {/* ========================================================= */}
+            {/* LAYER 14: DECORATIVE CENTER RIBBON/BOW (kokardka)          */}
+            {/* ========================================================= */}
+            <g
+              id="part-ribbon-bow"
+              onMouseEnter={() => setHoveredPartId('kokardka')}
+              onMouseLeave={() => setHoveredPartId(null)}
+              onClick={() => onPartClick(mapGuidePartIdToMainId('kokardka'))}
+              style={{ cursor: 'pointer' }}
+            >
+              {/* Centered on center front bridge upper region */}
+              <g transform="translate(500, 252)">
+                <path
+                  d="M 0 0 C -12 -12, -15 8, 0 0 Z"
+                  fill={isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#f43f5e'}
+                  stroke="#be123c"
+                  strokeWidth="0.8"
+                />
+                <path
+                  d="M 0 0 C 12 -12, 15 8, 0 0 Z"
+                  fill={isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#f43f5e'}
+                  stroke="#be123c"
+                  strokeWidth="0.8"
+                />
+                <path d="M 0 0 Q -4 12, -8 18" fill="none" stroke={isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#be123c'} strokeWidth="1.8" />
+                <path d="M 0 0 Q 4 12, 8 18" fill="none" stroke={isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#be123c'} strokeWidth="1.8" />
+                <circle cx="0" cy="0" r="3.2" fill={isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#be123c'} />
+              </g>
+            </g>
+
+            {/* ======================================================================= */}
+            {/* MICROSCOPIC ACCURATE ANNOTATIONS (Perfect match of the drawing text!)  */}
+            {/* ======================================================================= */}
+            {showLabels && (
+              <g id="technical-annotations" style={{ pointerEvents: 'none', transition: 'all 0.3s' }}>
+                
+                {/* 1. Strap Elastic - Guma ramiączkowa */}
+                <path d="M 230 100 L 195 85" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="235" y="104" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="start">guma ramiączkowa</text>
+
+                <path d="M 770 100 L 805 85" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="765" y="104" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="end">guma ramiączkowa</text>
+
+                {/* 2. Top cup with strap extension / Neckline elastic */}
+                <path d="M 430 160 L 372 148" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="438" y="164" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569">guma obszywkowa</text>
+
+                {/* 3. top cup - Tkanina lub koronka */}
+                <text x="350" y="205" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="bold" fill="#475569" textAnchor="middle">tkanina lub koronka</text>
+                <text x="650" y="205" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="bold" fill="#475569" textAnchor="middle">tkanina lub koronka</text>
+
+                {/* 4. Neckline - Górna guma obszywkowa */}
+                <path d="M 500 195 C 485 205, 465 210, 442 214" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <path d="M 500 195 Q 520 205, 558 214" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="500" y="185" fontFamily="Montserrat, sans-serif" fontSize="11.5" fontWeight="bold" fill="#1e293b" textAnchor="middle">guma obszywkowa (dekolt)</text>
+
+                {/* 5. Lower cup - Dolna część miseczki */}
+                <text x="350" y="290" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="middle">dolna część miseczki</text>
+                <text x="650" y="290" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="middle">dolna część miseczki</text>
+
+                {/* 6. Hook and eye closure - Haftka */}
+                <path d="M 32 310 L 71 310" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="26" y="313" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="end">haftka (zapięcie)</text>
+
+                <path d="M 968 310 L 929 310" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="974" y="313" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="start">haftka (zapięcie)</text>
+
+                {/* 7. Wings - Skrzydełko obwodu */}
+                <text x="145" y="310" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="middle">skrzydełko obwodu</text>
+                <text x="855" y="310" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="middle">skrzydełko obwodu</text>
+
+                {/* 8. Underband - Dolna guma obszywkowa */}
+                <path d="M 80 415 C 100 385, 120 355, 130 338" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="75" y="428" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="end">guma obszywkowa (dół)</text>
+
+                <path d="M 920 415 C 900 385, 880 355, 870 338" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="925" y="428" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="start">guma obszywkowa (dół)</text>
+
+                {/* 9. Underwire casing - Tunel gorseciarski */}
+                <path d="M 220 425 C 250 395, 270 365, 285 330" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="220" y="440" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="bold" fill="#334155" textAnchor="middle">tunel gorseciarski</text>
+
+                <path d="M 780 425 C 750 395, 730 365, 715 330" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="780" y="440" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="bold" fill="#334155" textAnchor="middle">tunel gorseciarski</text>
+
+                {/* 10. Underwires - Fiszbiny */}
+                <path d="M 380 425 C 375 395, 365 375, 355 344" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="380" y="440" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="middle">fiszbiny</text>
+
+                <path d="M 620 425 C 625 395, 635 375, 645 344" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="620" y="440" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="middle">fiszbiny</text>
+
+                {/* 11. Center Gore - Mostek */}
+                <text x="500" y="305" fontFamily="Montserrat, sans-serif" fontSize="11.5" fontWeight="bold" fill="#1e293b" textAnchor="middle">mostek</text>
+
+                {/* 12. Mostek do miseczki */}
+                <path d="M 458 410 C 470 395, 480 375, 488 350" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="454" y="424" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="middle">mostek do miseczki</text>
+
+                {/* 13. Rings - Kółka */}
+                <path d="M 720 140 L 655 140" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="728" y="144" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#334155">kółko (łącznik)</text>
+
+                {/* 14. Bust apex - Szczyt piersi */}
+                <path d="M 730 220 L 657 275" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="738" y="224" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="bold" fill="#334155">szczyt piersi (apex)</text>
+
+                {/* 15. Side Seam & Short Bones - Szew boczny / Fiszbiny krótkie */}
+                <text x="180" y="235" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="bold" fill="#1e293b" textAnchor="middle">szew boczny</text>
+                <text x="180" y="247" fontFamily="Montserrat, sans-serif" fontSize="10" fontWeight="600" fill="#475569" textAnchor="middle">fiszbiny krótkie</text>
+
+                <text x="820" y="235" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="bold" fill="#1e293b" textAnchor="middle">szew boczny</text>
+                <text x="820" y="247" fontFamily="Montserrat, sans-serif" fontSize="10" fontWeight="600" fill="#475569" textAnchor="middle">fiszbiny krótkie</text>
+
+                {/* 16. Sliders - Regulatory */}
+                <path d="M 175 33 L 230 35" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="168" y="36" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="end">regulatory</text>
+
+                <path d="M 825 33 L 785 35" fill="none" stroke="#475569" strokeWidth="1" markerEnd="url(#pointer-arrow)" />
+                <text x="832" y="36" fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" fill="#475569" textAnchor="start">regulatory</text>
+              </g>
+            )}
           </svg>
           <span className="view-label">Anatomia Biustonosza (Rysunek płaski)</span>
         </div>

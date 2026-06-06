@@ -100,3 +100,13 @@ W tym kroku wykonaliśmy:
 4. Powiązano wszystkie ścieżki i kształty rysunku z interaktywnymi zdarzeniami wyboru części (`onPartClick`) oraz dynamicznym bindowaniem kolorów wyrobów ze sklepu.
 5. Zbudowano i uruchomiono aplikację za pomocą `docker compose up --build -d` i zweryfikowano poprawność kompilacji kodu React przez Vite.
 
+## Krok 10: Pełna integracja i dopasowanie modelu wektorowego BraSvg.tsx
+**Data:** 2026-06-06
+
+W tym kroku wykonaliśmy:
+1. Zintegrowano lokalny stan podświetlenia `hoveredPartId` w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) za pomocą hooka `useState` z React.
+2. Dodano tabele kolorów wiodących oraz mapowanie identyfikatorów z pomocniczego projektu (`miseczki`/`material` -> `fabric`, `tiul_elastyczny` -> `tulle_elastic`, etc.), aby poprawnie łączyć zachowanie i bindować dane z głównym koszykiem i krokami konstruktora.
+3. Przepisano funkcję `renderBiustonosz()` w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx), przenosząc 1:1 oryginalne ścieżki SVG, koordinaty, siatkę pomocniczą, asymetryczne kółka i regulatory oraz 16 precyzyjnych etykiet tekstowych.
+4. Przekonwertowano klasy narzędziowe TailwindCSS wewnątrz SVG na czyste, standardowe atrybuty SVG (`fontFamily`, `fontSize`, `fontWeight`, `fill`), gwarantując poprawne renderowanie czcionek Montserrat/Playfair i kolorów Slate bez konieczności ładowania frameworka Tailwind w głównym projekcie.
+5. Uzupełniono style w [index.css](file:///c:/Users/m-win/Projects/konstructor/frontend/src/index.css) o klatki kluczowe `@keyframes pulse` oraz klasę `.pulse-dot` dla migającej różowej kropki w nagłówku interaktywnego obszaru roboczego (identycznie jak na screenie).
+6. Uruchomiono i przetestowano poprawność budowania obrazu Docker.
