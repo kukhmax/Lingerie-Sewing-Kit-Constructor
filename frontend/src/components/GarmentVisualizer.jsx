@@ -47,8 +47,14 @@ export default function GarmentVisualizer({
     switch (id) {
       case 'material':
       case 'miseczki':
+        if (selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable') {
+          return selectedPartId;
+        }
         return 'fabric';
       case 'koronka':
+        if (selectedPartId === 'lace_elastic' || selectedPartId === 'lace_stable') {
+          return selectedPartId;
+        }
         return 'lace';
       case 'tiul_elastyczny':
         return 'tulle_elastic';
@@ -76,12 +82,30 @@ export default function GarmentVisualizer({
   };
 
   const getGuidePartColor = (guideId) => {
+    if (guideId === 'koronka') {
+      return partColors.lace_elastic || partColors.lace_stable || partColors.lace || defaultGuideColors[guideId] || '#e2ded5';
+    }
+    if (guideId === 'material' || guideId === 'miseczki') {
+      return partColors.fabric_elastic || partColors.fabric_stable || partColors.fabric || defaultGuideColors[guideId] || '#e2ded5';
+    }
+    if (guideId === 'tiul_elastyczny') {
+      return partColors.tulle_elastic || defaultGuideColors[guideId] || '#e2ded5';
+    }
+    if (guideId === 'tiul_stabilny') {
+      return partColors.tulle_stable || defaultGuideColors[guideId] || '#e2ded5';
+    }
     const mainId = mapGuidePartIdToMainId(guideId);
     return partColors[mainId] || defaultGuideColors[guideId] || '#e2ded5';
   };
 
   const isPartActive = (id) => {
     if (hoveredPartId === id) return true;
+    if (id === 'koronka') {
+      return selectedPartId === 'lace_elastic' || selectedPartId === 'lace_stable' || selectedPartId === 'lace';
+    }
+    if (id === 'material' || id === 'miseczki') {
+      return selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable' || selectedPartId === 'fabric';
+    }
     return mapGuidePartIdToMainId(id) === selectedPartId;
   };
 
@@ -112,9 +136,13 @@ export default function GarmentVisualizer({
   const getPartName = (partId) => {
     switch (partId) {
       case 'fabric': return 'Miseczki (główny kształt)';
+      case 'fabric_elastic': return 'Tkanina elastyczna';
+      case 'fabric_stable': return 'Tkanina stabilna';
       case 'lace': return 'Koronka elastyczna';
-      case 'tulle_elastic': return 'Tiul elastyczny (obwód)';
-      case 'tulle_stable': return 'Tiul stabilny (mostek)';
+      case 'lace_elastic': return 'Koronka elastyczna';
+      case 'lace_stable': return 'Koronka stabilna';
+      case 'tulle_elastic': return 'Tiul elastyczny';
+      case 'tulle_stable': return 'Tiul stabilny';
       case 'elastic_trim': return 'Guma obszywkowa (obwód)';
       case 'elastic_strap': return 'Guma ramiączkowa';
       case 'ring': return 'Kółka metalowe';

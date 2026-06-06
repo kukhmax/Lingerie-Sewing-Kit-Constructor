@@ -7,10 +7,12 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || `${window.location.protocol
 // Part definitions for each garment
 const GARMENT_PARTS = {
   biustonosz: [
-    { id: 'fabric', name: 'Materiał główny (miseczki)', category: 'fabric', required: true, isMain: true, qty: 0.5 },
-    { id: 'lace', name: 'Koronka elastyczna', category: 'fabric', required: true, isMain: true, qty: 1.0 },
-    { id: 'tulle_elastic', name: 'Tiul elastyczny (obwód)', category: 'fabric', required: true, isMain: true, qty: 0.5 },
-    { id: 'tulle_stable', name: 'Tiul stabilny (mostek)', category: 'fabric', required: true, isMain: true, qty: 0.5 },
+    { id: 'lace_elastic', name: 'Koronka elastyczna', category: 'fabric', required: false, isMain: true, qty: 1.0 },
+    { id: 'lace_stable', name: 'Koronka stabilna', category: 'fabric', required: false, isMain: true, qty: 1.0 },
+    { id: 'fabric_elastic', name: 'Tkanina elastyczna', category: 'fabric', required: false, isMain: true, qty: 0.5 },
+    { id: 'fabric_stable', name: 'Tkanina stabilna', category: 'fabric', required: false, isMain: true, qty: 0.5 },
+    { id: 'tulle_elastic', name: 'Tiul elastyczny', category: 'fabric', required: false, isMain: true, qty: 0.5 },
+    { id: 'tulle_stable', name: 'Tiul stabilny', category: 'fabric', required: false, isMain: true, qty: 0.5 },
     { id: 'elastic_trim', name: 'Guma obszywkowa (obwód)', category: 'elastic_trim', required: true, isMain: false, qty: 1.5 },
     { id: 'elastic_strap', name: 'Guma ramiączkowa', category: 'elastic_strap', required: true, isMain: false, qty: 1.2 },
     { id: 'ring', name: 'Kółka metalowe', category: 'ring', required: true, isMain: false, qty: 2.0 },
@@ -45,7 +47,7 @@ const GARMENT_PARTS = {
 
 export default function App() {
   const [garment, setGarment] = useState('biustonosz');
-  const [selectedPartId, setSelectedPartId] = useState('fabric');
+  const [selectedPartId, setSelectedPartId] = useState('lace_elastic');
   const [selections, setSelections] = useState({});
   const [quantities, setQuantities] = useState({});
   const [primaryColor, setPrimaryColor] = useState(null);
@@ -108,6 +110,20 @@ export default function App() {
       let filteredData = data;
       if (garment === 'majtki' && partId === 'gusset') {
         filteredData = data.filter(p => p.id.includes('bawelna') || p.name.toLowerCase().includes('bawełna'));
+      } else if (garment === 'biustonosz') {
+        if (partId === 'lace_elastic') {
+          filteredData = data.filter(p => p.name.toLowerCase().includes('koronka') && !p.name.toLowerCase().includes('stabiln'));
+        } else if (partId === 'lace_stable') {
+          filteredData = data.filter(p => p.name.toLowerCase().includes('koronka') && p.name.toLowerCase().includes('stabiln'));
+        } else if (partId === 'fabric_elastic') {
+          filteredData = data.filter(p => (p.name.toLowerCase().includes('tkanina') || p.name.toLowerCase().includes('satyna')) && p.name.toLowerCase().includes('elastyczn') && !p.name.toLowerCase().includes('bawelna'));
+        } else if (partId === 'fabric_stable') {
+          filteredData = data.filter(p => p.name.toLowerCase().includes('tkanina') && p.name.toLowerCase().includes('stabiln'));
+        } else if (partId === 'tulle_elastic') {
+          filteredData = data.filter(p => p.name.toLowerCase().includes('tiul') && (p.name.toLowerCase().includes('elastyczn') || p.name.toLowerCase().includes('siatka')));
+        } else if (partId === 'tulle_stable') {
+          filteredData = data.filter(p => p.name.toLowerCase().includes('tiul') && p.name.toLowerCase().includes('stabiln'));
+        }
       }
 
       setModalProducts(filteredData);
@@ -175,8 +191,16 @@ export default function App() {
   // Calculate stats
   const selectedCount = activeParts.filter(p => selections[p.id]).length;
   const requiredParts = activeParts.filter(p => p.required);
-  const requiredCompleted = requiredParts.every(p => selections[p.id]);
+  
+  const hasMainMaterial = activeParts.some(p => p.isMain && selections[p.id]);
+  const requiredCompleted = garment === 'biustonosz'
+    ? (hasMainMaterial && requiredParts.every(p => selections[p.id]))
+    : requiredParts.every(p => selections[p.id]);
+    
   const progressPercent = Math.round((selectedCount / activeParts.length) * 100);
+
+  const selectedMainPart = activeParts.find(p => p.isMain && selections[p.id]);
+  const primaryColorHex = selectedMainPart ? selections[selectedMainPart.id].colorHex : null;
 
   const totalPrice = Object.entries(selections).reduce((sum, [partId, product]) => {
     const qty = quantities[partId] || product.standard_qty || 1.0;
@@ -275,47 +299,162 @@ export default function App() {
             </div>
 
             <div className="parts-list">
-              {activeParts.map((part) => {
-                const isLocked = isPartLocked(part);
-                const isSelected = !!selections[part.id];
-                const activeClass = selectedPartId === part.id ? 'active' : '';
-                const lockedClass = isLocked ? 'disabled' : '';
-
-                return (
-                  <div 
-                    key={part.id}
-                    className={`part-item ${activeClass} ${lockedClass}`}
-                    onClick={() => handlePartClick(part.id)}
-                  >
-                    <div className="part-item-info">
-                      <span className="part-name">
-                        {part.name} {part.required && <span style={{ color: 'var(--color-error)' }}>*</span>}
-                      </span>
-                      {isSelected ? (
-                        <span className="part-color-selected">
-                          {selections[part.id].colorName} • {(quantities[part.id] || part.qty)}{selections[part.id].unit}
-                        </span>
-                      ) : (
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                          {isLocked ? '🔒 Zablokowane (wybierz materiał)' : '✍️ Kliknij, aby wybrać'}
-                        </span>
-                      )}
+              {garment === 'biustonosz' ? (
+                <>
+                  {/* Sektor Materiał główny */}
+                  <div className="main-materials-group">
+                    <div className="main-materials-group-header">
+                      <div className="main-materials-title-row">
+                        <span className="main-materials-group-title">Materiał główny</span>
+                        {primaryColor && (
+                          <div className="primary-color-badge">
+                            <span className="primary-color-name">{primaryColor}</span>
+                            <span 
+                              className="color-indicator-dot" 
+                              style={{ 
+                                backgroundColor: primaryColorHex || '#ccc' 
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <p className="main-materials-group-desc">
+                        Wybierz materiał z proponowanych dla wyboru głównego koloru produktu.
+                      </p>
                     </div>
-                    <div className="display-flex align-items-center gap-2">
-                      {isSelected && (
-                        <span 
-                          className="modal-close-btn" 
-                          style={{ fontSize: '1rem', marginRight: '8px' }}
-                          onClick={(e) => handleRemoveSelection(part.id, e)}
-                        >
-                          ✕
-                        </span>
-                      )}
-                      <span className={`part-status-badge ${isSelected ? 'completed' : 'pending'}`}></span>
+
+                    <div className="main-materials-items">
+                      {activeParts.filter(p => p.isMain).map((part) => {
+                        const isLocked = isPartLocked(part);
+                        const isSelected = !!selections[part.id];
+                        const activeClass = selectedPartId === part.id ? 'active' : '';
+                        const lockedClass = isLocked ? 'disabled' : '';
+
+                        return (
+                          <div 
+                            key={part.id}
+                            className={`part-item ${activeClass} ${lockedClass}`}
+                            onClick={() => handlePartClick(part.id)}
+                          >
+                            <div className="part-item-info">
+                              <span className="part-name">
+                                {part.name} {part.required && <span style={{ color: 'var(--color-error)' }}>*</span>}
+                              </span>
+                              {isSelected ? (
+                                <span className="part-color-selected">
+                                  {selections[part.id].colorName} • {(quantities[part.id] || part.qty)}{selections[part.id].unit}
+                                </span>
+                              ) : (
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                                  ✍️ Kliknij, aby wybrać
+                                </span>
+                              )}
+                            </div>
+                            <div className="display-flex align-items-center gap-2">
+                              {isSelected && (
+                                <span 
+                                  className="modal-close-btn" 
+                                  style={{ fontSize: '1rem', marginRight: '8px' }}
+                                  onClick={(e) => handleRemoveSelection(part.id, e)}
+                                >
+                                  ✕
+                                </span>
+                              )}
+                              <span className={`part-status-badge ${isSelected ? 'completed' : 'pending'}`}></span>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                );
-              })}
+
+                  {/* Pozostałe akcesoria */}
+                  {activeParts.filter(p => !p.isMain).map((part) => {
+                    const isLocked = isPartLocked(part);
+                    const isSelected = !!selections[part.id];
+                    const activeClass = selectedPartId === part.id ? 'active' : '';
+                    const lockedClass = isLocked ? 'disabled' : '';
+
+                    return (
+                      <div 
+                        key={part.id}
+                        className={`part-item ${activeClass} ${lockedClass}`}
+                        onClick={() => handlePartClick(part.id)}
+                      >
+                        <div className="part-item-info">
+                          <span className="part-name">
+                            {part.name} {part.required && <span style={{ color: 'var(--color-error)' }}>*</span>}
+                          </span>
+                          {isSelected ? (
+                            <span className="part-color-selected">
+                              {selections[part.id].colorName} • {(quantities[part.id] || part.qty)}{selections[part.id].unit}
+                            </span>
+                          ) : (
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                              {isLocked ? '🔒 Zablokowane (wybierz materiał)' : '✍️ Kliknij, aby wybrać'}
+                            </span>
+                          )}
+                        </div>
+                        <div className="display-flex align-items-center gap-2">
+                          {isSelected && (
+                            <span 
+                              className="modal-close-btn" 
+                              style={{ fontSize: '1rem', marginRight: '8px' }}
+                              onClick={(e) => handleRemoveSelection(part.id, e)}
+                            >
+                              ✕
+                            </span>
+                          )}
+                          <span className={`part-status-badge ${isSelected ? 'completed' : 'pending'}`}></span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </>
+              ) : (
+                // Oryginalna płaska lista dla innych modeli
+                activeParts.map((part) => {
+                  const isLocked = isPartLocked(part);
+                  const isSelected = !!selections[part.id];
+                  const activeClass = selectedPartId === part.id ? 'active' : '';
+                  const lockedClass = isLocked ? 'disabled' : '';
+
+                  return (
+                    <div 
+                      key={part.id}
+                      className={`part-item ${activeClass} ${lockedClass}`}
+                      onClick={() => handlePartClick(part.id)}
+                    >
+                      <div className="part-item-info">
+                        <span className="part-name">
+                          {part.name} {part.required && <span style={{ color: 'var(--color-error)' }}>*</span>}
+                        </span>
+                        {isSelected ? (
+                          <span className="part-color-selected">
+                            {selections[part.id].colorName} • {(quantities[part.id] || part.qty)}{selections[part.id].unit}
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                            {isLocked ? '🔒 Zablokowane (wybierz materiał)' : '✍️ Kliknij, aby wybrać'}
+                          </span>
+                        )}
+                      </div>
+                      <div className="display-flex align-items-center gap-2">
+                        {isSelected && (
+                          <span 
+                            className="modal-close-btn" 
+                            style={{ fontSize: '1rem', marginRight: '8px' }}
+                            onClick={(e) => handleRemoveSelection(part.id, e)}
+                          >
+                            ✕
+                          </span>
+                        )}
+                        <span className={`part-status-badge ${isSelected ? 'completed' : 'pending'}`}></span>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         </section>

@@ -82,6 +82,84 @@ helper_products = [
         "standard_qty": 0.2
     },
     
+    # Koronka stabilna (Stable Lace)
+    {
+        "id": "koronka-stabilna-czarna-custom",
+        "name": "Koronka stabilna (Czarna)",
+        "url": "https://subtelnedetale.pl/sklep/",
+        "image": "https://subtelnedetale.pl/wp-content/uploads/21.jpg",
+        "price": 16.00,
+        "category": "fabric",
+        "colorName": "Czarny",
+        "colorHex": "#111827",
+        "unit": "m",
+        "standard_qty": 1.0
+    },
+    {
+        "id": "koronka-stabilna-cielista-custom",
+        "name": "Koronka stabilna (Cielista)",
+        "url": "https://subtelnedetale.pl/sklep/",
+        "image": "https://subtelnedetale.pl/wp-content/uploads/32.jpg",
+        "price": 16.00,
+        "category": "fabric",
+        "colorName": "Cielisty",
+        "colorHex": "#fbcfe8",
+        "unit": "m",
+        "standard_qty": 1.0
+    },
+    
+    # Tkanina elastyczna (Elastic Fabric)
+    {
+        "id": "tkanina-elastyczna-czarna-custom",
+        "name": "Tkanina elastyczna / Satyna (Czarna)",
+        "url": "https://subtelnedetale.pl/sklep/",
+        "image": "https://subtelnedetale.pl/wp-content/uploads/81.jpg",
+        "price": 22.00,
+        "category": "fabric",
+        "colorName": "Czarny",
+        "colorHex": "#111827",
+        "unit": "m",
+        "standard_qty": 0.5
+    },
+    {
+        "id": "tkanina-elastyczna-rozowa-custom",
+        "name": "Tkanina elastyczna / Satyna (Różowa)",
+        "url": "https://subtelnedetale.pl/sklep/",
+        "image": "https://subtelnedetale.pl/wp-content/uploads/12.jpg",
+        "price": 22.00,
+        "category": "fabric",
+        "colorName": "Pudrowy Róż",
+        "colorHex": "#fda4af",
+        "unit": "m",
+        "standard_qty": 0.5
+    },
+    
+    # Tkanina stabilna (Stable Fabric)
+    {
+        "id": "tkanina-stabilna-czarna-custom",
+        "name": "Tkanina stabilna (Czarna)",
+        "url": "https://subtelnedetale.pl/sklep/",
+        "image": "https://subtelnedetale.pl/wp-content/uploads/81.jpg",
+        "price": 25.00,
+        "category": "fabric",
+        "colorName": "Czarny",
+        "colorHex": "#111827",
+        "unit": "m",
+        "standard_qty": 0.5
+    },
+    {
+        "id": "tkanina-stabilna-cielista-custom",
+        "name": "Tkanina stabilna (Cielista)",
+        "url": "https://subtelnedetale.pl/sklep/",
+        "image": "https://subtelnedetale.pl/wp-content/uploads/80.jpg",
+        "price": 25.00,
+        "category": "fabric",
+        "colorName": "Cielisty",
+        "colorHex": "#fbcfe8",
+        "unit": "m",
+        "standard_qty": 0.5
+    },
+    
     # Kokardka (Bow)
     {
         "id": "kokardka-czarna-custom",

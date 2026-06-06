@@ -1,0 +1,6 @@
+{
+  "name": "Interaktywny Przewodnik po Anatomii Biustonosza",
+  "description": "Interaktywny model biustonosza w formacie SVG umożliwiający klikanie i podświetlanie poszczególnych elementów konstrukcyjnych, materiałów oraz akcesoriów gorseciarskich.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
