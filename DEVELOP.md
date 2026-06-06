@@ -76,3 +76,16 @@ W tym kroku wykonaliśmy:
    - Dodano fiszbiny boczne oraz dedykowany tunel dla braletu.
 2. Zaktualizowano komponent wizualizacji [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) w celu obsługi nowej struktury części (osobne bindowanie kolorów i kliknięć dla kółek, regulatorów, tiuli itp.).
 3. Ponownie zbudowano aplikację w kontenerach Docker za pomocą `docker compose up --build -d` i zweryfikowano pomyślną kompilację frontendu przez Vite.
+
+## Krok 8: Aktualizacja rysunku biustonosza na płaską projekcję anatomiczną
+**Data:** 2026-06-06
+
+W tym kroku wykonaliśmy:
+1. Zastąpiono podwójny widok (Przód i Tył) dla biustonosza pojedynczym rysunkiem technicznym w rzucie płaskim, wzorowanym na układzie anatomicznym z [media__1780697054315.png](file:///C:/Users/m-win/.gemini/antigravity/brain/8ec9039b-2c4d-4688-b99b-f5a11ebe8de4/media__1780697054315.png).
+2. Nowy rysunek SVG w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) łączy w jeden schemat:
+   - Części lewej i prawej miseczki (dolna miseczka `fabric`, górna koronka `lace`),
+   - Środkowy mostek (`tulle_stable`) oraz kokardkę ozdobną (`bow`),
+   - Obustronne pasy obwodu (`tulle_elastic`) zakończone panelami zapięć haftkowych (`closure`),
+   - Tunele (`tunnel`) z osadzonymi fiszbinami metalowymi (`underwire`),
+   - Ramiączka (`elastic_strap`) połączone z miseczkami i pasami za pomocą 4 kółek (`ring`) i 2 regulatorów (`slider`).
+3. Ponownie skompilowano projekt w kontenerach Docker i przetestowano poprawne dynamiczne kolorowanie wszystkich 13 elementów na jednym zunifikowanym rysunku.

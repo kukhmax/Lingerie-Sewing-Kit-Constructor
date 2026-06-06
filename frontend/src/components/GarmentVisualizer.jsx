@@ -24,7 +24,7 @@ export default function GarmentVisualizer({
     return selectedPartId === partId ? '2.5' : '1.2';
   };
 
-  // Render Bra SVGs
+  // Render Bra SVGs (Flat layout projection matching media__1780697054315.png, no separate front/back)
   const renderBiustonosz = () => {
     const cupColor = getPartColor('fabric');
     const laceColor = getPartColor('lace');
@@ -38,24 +38,52 @@ export default function GarmentVisualizer({
     const tunnelColor = getPartColor('tunnel');
     const bowColor = getPartColor('bow');
     const threadColor = getPartColor('threads', '#888');
+    const underwireColor = getPartColor('underwire', '#bfb5a8');
 
     return (
-      <div className="garment-visualizer">
-        {/* FRONT VIEW */}
-        <div className="view-section">
-          <svg width="240" height="240" viewBox="0 0 260 260" className="garment-svg">
-            <g transform="translate(0, 20)">
-              {/* Back Wings (tulle_elastic - visible from front sides) */}
+      <div className="garment-visualizer" style={{ flexDirection: 'column', padding: '1.5rem' }}>
+        <div className="view-section" style={{ width: '100%', maxWidth: '580px' }}>
+          <svg width="100%" height="220" viewBox="0 0 480 200" className="garment-svg">
+            <g transform="translate(0, 10)">
+              {/* Left Closure Hook Panel */}
               <path
-                d="M 25,130 C 45,135 70,140 90,141 L 90,154 C 65,152 45,145 25,136 Z"
+                d="M 25,115 L 40,115 L 40,135 L 25,135 Z"
+                fill={closureColor}
+                stroke={getPartStroke('closure')}
+                strokeWidth={getPartStrokeWidth('closure')}
+                className="interactive-part"
+                onClick={() => onPartClick('closure')}
+              />
+              <line x1="29" y1="120" x2="29" y2="130" stroke="#444" strokeWidth="1" />
+              <line x1="35" y1="120" x2="35" y2="130" stroke="#444" strokeWidth="1" />
+
+              {/* Right Closure Eye Panel */}
+              <path
+                d="M 440,115 L 455,115 L 455,135 L 440,135 Z"
+                fill={closureColor}
+                stroke={getPartStroke('closure')}
+                strokeWidth={getPartStrokeWidth('closure')}
+                className="interactive-part"
+                onClick={() => onPartClick('closure')}
+              />
+              <circle cx="445" cy="122" r="1.2" fill="#444" />
+              <circle cx="445" cy="128" r="1.2" fill="#444" />
+              <circle cx="450" cy="122" r="1.2" fill="#444" />
+              <circle cx="450" cy="128" r="1.2" fill="#444" />
+
+              {/* Left Band Wing (tulle_elastic) */}
+              <path
+                d="M 40,115 C 70,118 120,123 160,125 L 160,140 C 120,138 70,130 40,125 Z"
                 fill={tulleElasticColor}
                 stroke={getPartStroke('tulle_elastic')}
                 strokeWidth={getPartStrokeWidth('tulle_elastic')}
                 className="interactive-part"
                 onClick={() => onPartClick('tulle_elastic')}
               />
+
+              {/* Right Band Wing (tulle_elastic) */}
               <path
-                d="M 235,130 C 215,135 190,140 170,141 L 170,154 C 195,152 215,145 235,136 Z"
+                d="M 440,115 C 410,118 360,123 320,125 L 320,140 C 360,138 410,130 440,125 Z"
                 fill={tulleElasticColor}
                 stroke={getPartStroke('tulle_elastic')}
                 strokeWidth={getPartStrokeWidth('tulle_elastic')}
@@ -65,7 +93,7 @@ export default function GarmentVisualizer({
 
               {/* Cradle/Bridge (tulle_stable) */}
               <path
-                d="M 70,135 C 90,145 110,145 130,135 C 150,135 170,145 190,135 C 200,135 210,130 215,126 C 215,131 215,145 215,148 C 175,158 140,158 100,158 C 85,153 80,145 70,135 Z"
+                d="M 220,125 C 230,132 250,132 260,125 L 260,145 C 250,150 230,150 220,145 Z"
                 fill={tulleStableColor}
                 stroke={getPartStroke('tulle_stable')}
                 strokeWidth={getPartStrokeWidth('tulle_stable')}
@@ -73,9 +101,9 @@ export default function GarmentVisualizer({
                 onClick={() => onPartClick('tulle_stable')}
               />
 
-              {/* Left Cup Main Fabric */}
+              {/* Left Cup Lower Cup (fabric) */}
               <path
-                d="M 75,130 C 65,95 85,80 110,85 C 115,92 120,102 125,115 C 125,130 100,140 75,130 Z"
+                d="M 160,125 C 150,95 180,85 205,95 C 210,105 215,115 220,125 C 220,140 185,148 160,125 Z"
                 fill={cupColor}
                 stroke={getPartStroke('fabric')}
                 strokeWidth={getPartStrokeWidth('fabric')}
@@ -85,7 +113,7 @@ export default function GarmentVisualizer({
 
               {/* Left Cup Lace Panel */}
               <path
-                d="M 110,85 C 122,70 132,75 142,90 C 142,100 132,110 125,115 C 120,102 115,92 110,85 Z"
+                d="M 205,95 C 215,75 225,80 235,95 C 235,105 225,115 220,125 C 215,115 210,105 205,95 Z"
                 fill={laceColor}
                 stroke={getPartStroke('lace')}
                 strokeWidth={getPartStrokeWidth('lace')}
@@ -93,9 +121,9 @@ export default function GarmentVisualizer({
                 onClick={() => onPartClick('lace')}
               />
 
-              {/* Right Cup Main Fabric */}
+              {/* Right Cup Lower Cup (fabric) */}
               <path
-                d="M 185,130 C 195,95 175,80 150,85 C 145,92 140,102 135,115 C 135,130 160,140 185,130 Z"
+                d="M 320,125 C 330,95 300,85 275,95 C 270,105 265,115 260,125 C 260,140 295,148 320,125 Z"
                 fill={cupColor}
                 stroke={getPartStroke('fabric')}
                 strokeWidth={getPartStrokeWidth('fabric')}
@@ -105,7 +133,7 @@ export default function GarmentVisualizer({
 
               {/* Right Cup Lace Panel */}
               <path
-                d="M 150,85 C 138,70 128,75 118,90 C 118,100 128,110 135,115 C 140,102 145,92 150,85 Z"
+                d="M 275,95 C 265,75 255,80 245,95 C 245,105 255,115 260,125 C 265,115 270,105 275,95 Z"
                 fill={laceColor}
                 stroke={getPartStroke('lace')}
                 strokeWidth={getPartStrokeWidth('lace')}
@@ -113,17 +141,9 @@ export default function GarmentVisualizer({
                 onClick={() => onPartClick('lace')}
               />
 
-              {/* Underwire Channels / Tunnels (Front) */}
+              {/* Left Underwire Channel (tunnel) */}
               <path
-                d="M 75,130 C 90,141 120,132 125,115"
-                fill="none"
-                stroke={tunnelColor}
-                strokeWidth={selectedPartId === 'tunnel' ? '4' : '2.5'}
-                className="interactive-part"
-                onClick={() => onPartClick('tunnel')}
-              />
-              <path
-                d="M 185,130 C 170,141 140,132 135,115"
+                d="M 160,125 C 185,142 215,138 220,125"
                 fill="none"
                 stroke={tunnelColor}
                 strokeWidth={selectedPartId === 'tunnel' ? '4' : '2.5'}
@@ -131,37 +151,153 @@ export default function GarmentVisualizer({
                 onClick={() => onPartClick('tunnel')}
               />
 
-              {/* Straps (Front) */}
-              <rect
-                x="108" y="20" width="4" height="65"
-                fill={strapColor}
-                stroke={getPartStroke('elastic_strap')}
-                strokeWidth={getPartStrokeWidth('elastic_strap')}
+              {/* Left Underwire (underwire) */}
+              <path
+                d="M 162,123 C 187,140 213,136 218,123"
+                fill="none"
+                stroke={underwireColor}
+                strokeWidth={selectedPartId === 'underwire' ? '2.5' : '1.5'}
                 className="interactive-part"
-                onClick={() => onPartClick('elastic_strap')}
+                onClick={() => onPartClick('underwire')}
               />
-              <rect
-                x="148" y="20" width="4" height="65"
-                fill={strapColor}
-                stroke={getPartStroke('elastic_strap')}
+
+              {/* Right Underwire Channel (tunnel) */}
+              <path
+                d="M 320,125 C 295,142 265,138 260,125"
+                fill="none"
+                stroke={tunnelColor}
+                strokeWidth={selectedPartId === 'tunnel' ? '4' : '2.5'}
+                className="interactive-part"
+                onClick={() => onPartClick('tunnel')}
+              />
+
+              {/* Right Underwire (underwire) */}
+              <path
+                d="M 318,123 C 293,140 267,136 262,123"
+                fill="none"
+                stroke={underwireColor}
+                strokeWidth={selectedPartId === 'underwire' ? '2.5' : '1.5'}
+                className="interactive-part"
+                onClick={() => onPartClick('underwire')}
+              />
+
+              {/* Left Strap (elastic_strap) */}
+              <path
+                d="M 205,92 Q 150,30 100,120"
+                fill="none"
+                stroke={strapColor}
                 strokeWidth={getPartStrokeWidth('elastic_strap')}
                 className="interactive-part"
                 onClick={() => onPartClick('elastic_strap')}
               />
 
-              {/* Bottom Elastic Trim (Front cradle edge) */}
+              {/* Right Strap (elastic_strap) */}
               <path
-                d="M 70,137 C 90,147 110,147 130,137 C 150,137 170,147 190,137 C 202,137 215,131 215,131 L 215,133 C 215,133 202,139 190,139 C 170,149 150,139 130,139 C 110,139 90,149 70,139 Z"
-                fill={elasticColor}
-                stroke={getPartStroke('elastic_trim')}
+                d="M 275,92 Q 330,30 380,120"
+                fill="none"
+                stroke={strapColor}
+                strokeWidth={getPartStrokeWidth('elastic_strap')}
+                className="interactive-part"
+                onClick={() => onPartClick('elastic_strap')}
+              />
+
+              {/* Rings (ring) */}
+              <circle
+                cx="205"
+                cy="95"
+                r="4"
+                fill="none"
+                stroke={ringColor}
+                strokeWidth={getPartStrokeWidth('ring')}
+                className="interactive-part"
+                onClick={() => onPartClick('ring')}
+              />
+              <circle
+                cx="275"
+                cy="95"
+                r="4"
+                fill="none"
+                stroke={ringColor}
+                strokeWidth={getPartStrokeWidth('ring')}
+                className="interactive-part"
+                onClick={() => onPartClick('ring')}
+              />
+              <circle
+                cx="100"
+                cy="120"
+                r="4"
+                fill="none"
+                stroke={ringColor}
+                strokeWidth={getPartStrokeWidth('ring')}
+                className="interactive-part"
+                onClick={() => onPartClick('ring')}
+              />
+              <circle
+                cx="380"
+                cy="120"
+                r="4"
+                fill="none"
+                stroke={ringColor}
+                strokeWidth={getPartStrokeWidth('ring')}
+                className="interactive-part"
+                onClick={() => onPartClick('ring')}
+              />
+
+              {/* Sliders (slider) */}
+              <rect
+                x="148"
+                y="52"
+                width="6"
+                height="3"
+                transform="rotate(-30 151 53)"
+                fill={sliderColor}
+                stroke={getPartStroke('slider')}
+                strokeWidth={getPartStrokeWidth('slider')}
+                className="interactive-part"
+                onClick={() => onPartClick('slider')}
+              />
+              <rect
+                x="326"
+                y="52"
+                width="6"
+                height="3"
+                transform="rotate(30 329 53)"
+                fill={sliderColor}
+                stroke={getPartStroke('slider')}
+                strokeWidth={getPartStrokeWidth('slider')}
+                className="interactive-part"
+                onClick={() => onPartClick('slider')}
+              />
+
+              {/* Top and Bottom Elastic Trims (elastic_trim) */}
+              <path
+                d="M 40,115 C 70,118 120,123 160,125"
+                fill="none"
+                stroke={elasticColor}
+                strokeWidth={getPartStrokeWidth('elastic_trim')}
+                className="interactive-part"
+                onClick={() => onPartClick('elastic_trim')}
+              />
+              <path
+                d="M 440,115 C 410,118 360,123 320,125"
+                fill="none"
+                stroke={elasticColor}
+                strokeWidth={getPartStrokeWidth('elastic_trim')}
+                className="interactive-part"
+                onClick={() => onPartClick('elastic_trim')}
+              />
+              <path
+                d="M 40,125 C 70,130 120,138 160,140 L 320,140 C 360,138 410,130 440,125"
+                fill="none"
+                stroke={elasticColor}
                 strokeWidth={getPartStrokeWidth('elastic_trim')}
                 className="interactive-part"
                 onClick={() => onPartClick('elastic_trim')}
               />
 
-              {/* Bow at center bridge */}
+              {/* Bow (bow) */}
               <path
-                d="M 127,132 C 124,128 128,124 130,129 C 132,124 136,128 133,132 L 131,130 Z"
+                d="M 237,128 C 234,124 238,120 240,125 C 242,120 246,124 243,128 L 241,126 Z"
                 fill={bowColor}
                 stroke={getPartStroke('bow')}
                 strokeWidth={getPartStrokeWidth('bow')}
@@ -169,16 +305,16 @@ export default function GarmentVisualizer({
                 onClick={() => onPartClick('bow')}
               />
 
-              {/* Stitches/Threads details (Dotted representation) */}
+              {/* Thread stitches lines (threads) */}
               <path
-                d="M 80,133 C 98,143 120,135 125,120"
+                d="M 160,127 C 185,144 215,140 220,127"
                 fill="none"
                 stroke={threadColor}
                 strokeWidth="0.8"
                 strokeDasharray="2,2"
               />
               <path
-                d="M 180,133 C 162,143 140,135 135,120"
+                d="M 320,127 C 295,144 265,140 260,127"
                 fill="none"
                 stroke={threadColor}
                 strokeWidth="0.8"
@@ -186,138 +322,7 @@ export default function GarmentVisualizer({
               />
             </g>
           </svg>
-          <span className="view-label">Przód</span>
-        </div>
-
-        {/* BACK VIEW */}
-        <div className="view-section">
-          <svg width="240" height="240" viewBox="0 0 260 260" className="garment-svg">
-            <g transform="translate(0, 20)">
-              {/* Left Back Wing (tulle_elastic) */}
-              <path
-                d="M 30,130 C 55,134 95,136 120,136 L 120,154 C 95,154 55,148 30,140 Z"
-                fill={tulleElasticColor}
-                stroke={getPartStroke('tulle_elastic')}
-                strokeWidth={getPartStrokeWidth('tulle_elastic')}
-                className="interactive-part"
-                onClick={() => onPartClick('tulle_elastic')}
-              />
-
-              {/* Right Back Wing (tulle_elastic) */}
-              <path
-                d="M 230,130 C 205,134 165,136 140,136 L 140,154 C 165,154 205,148 230,140 Z"
-                fill={tulleElasticColor}
-                stroke={getPartStroke('tulle_elastic')}
-                strokeWidth={getPartStrokeWidth('tulle_elastic')}
-                className="interactive-part"
-                onClick={() => onPartClick('tulle_elastic')}
-              />
-
-              {/* Center Back Hook Closure */}
-              <rect
-                x="120" y="134" width="20" height="22"
-                fill={closureColor}
-                stroke={getPartStroke('closure')}
-                strokeWidth={getPartStrokeWidth('closure')}
-                className="interactive-part"
-                onClick={() => onPartClick('closure')}
-              />
-              {/* Hook details lines */}
-              <line x1="126" y1="139" x2="126" y2="151" stroke="#444" strokeWidth="1" />
-              <line x1="134" y1="139" x2="134" y2="151" stroke="#444" strokeWidth="1" />
-
-              {/* Left Back Strap */}
-              <rect
-                x="75" y="20" width="4" height="113"
-                fill={strapColor}
-                stroke={getPartStroke('elastic_strap')}
-                strokeWidth={getPartStrokeWidth('elastic_strap')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_strap')}
-              />
-
-              {/* Right Back Strap */}
-              <rect
-                x="181" y="20" width="4" height="113"
-                fill={strapColor}
-                stroke={getPartStroke('elastic_strap')}
-                strokeWidth={getPartStrokeWidth('elastic_strap')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_strap')}
-              />
-
-              {/* Rings (Hardware) */}
-              <circle
-                cx="77" cy="132" r="4"
-                fill="none"
-                stroke={ringColor}
-                strokeWidth={getPartStrokeWidth('ring')}
-                className="interactive-part"
-                onClick={() => onPartClick('ring')}
-              />
-              <circle
-                cx="183" cy="132" r="4"
-                fill="none"
-                stroke={ringColor}
-                strokeWidth={getPartStrokeWidth('ring')}
-                className="interactive-part"
-                onClick={() => onPartClick('ring')}
-              />
-
-              {/* Sliders (Hardware) */}
-              <rect
-                x="74" y="60" width="6" height="3"
-                fill={sliderColor}
-                stroke={getPartStroke('slider')}
-                strokeWidth={getPartStrokeWidth('slider')}
-                className="interactive-part"
-                onClick={() => onPartClick('slider')}
-              />
-              <rect
-                x="180" y="60" width="6" height="3"
-                fill={sliderColor}
-                stroke={getPartStroke('slider')}
-                strokeWidth={getPartStrokeWidth('slider')}
-                className="interactive-part"
-                onClick={() => onPartClick('slider')}
-              />
-
-              {/* Back Elastic Trims (Top and Bottom of wings) */}
-              <path
-                d="M 30,130 C 55,134 95,136 120,136 L 120,138 C 95,138 55,136 30,132 Z"
-                fill={elasticColor}
-                stroke={getPartStroke('elastic_trim')}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-              />
-              <path
-                d="M 30,140 C 55,148 95,154 120,154 L 120,156 C 95,156 55,150 30,142 Z"
-                fill={elasticColor}
-                stroke={getPartStroke('elastic_trim')}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-              />
-              <path
-                d="M 230,130 C 205,134 165,136 140,136 L 140,138 C 165,138 205,136 230,132 Z"
-                fill={elasticColor}
-                stroke={getPartStroke('elastic_trim')}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-              />
-              <path
-                d="M 230,140 C 205,148 165,154 140,154 L 140,156 C 165,156 205,150 230,142 Z"
-                fill={elasticColor}
-                stroke={getPartStroke('elastic_trim')}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-              />
-            </g>
-          </svg>
-          <span className="view-label">Tył</span>
+          <span className="view-label">Anatomia Biustonosza (Rysunek płaski)</span>
         </div>
       </div>
     );
