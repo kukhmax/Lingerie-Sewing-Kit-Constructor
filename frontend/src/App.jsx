@@ -59,6 +59,9 @@ export default function App() {
   // Cart submission state
   const [submitting, setSubmitting] = useState(false);
   const [cartResult, setCartResult] = useState(null);
+  
+  // Show/Hide labels state for Bra Anatomy
+  const [showLabels, setShowLabels] = useState(true);
 
   const activeParts = GARMENT_PARTS[garment];
 
@@ -328,11 +331,49 @@ export default function App() {
             </p>
           </div>
 
+          {garment === 'biustonosz' && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+              <button 
+                onClick={() => setShowLabels(!showLabels)}
+                className="btn-toggle-labels"
+                style={{
+                  padding: '0.6rem 1.2rem',
+                  fontSize: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  borderRadius: '25px',
+                  border: '1px solid #c9a236',
+                  background: 'rgba(250, 247, 242, 0.9)',
+                  cursor: 'pointer',
+                  color: '#222',
+                  fontWeight: '600',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                  transition: 'all 0.3s ease',
+                  fontFamily: 'Montserrat, sans-serif'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = '#c9a236';
+                  e.currentTarget.style.color = '#fff';
+                  e.currentTarget.style.boxShadow = '0 6px 15px rgba(201, 162, 54, 0.2)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(250, 247, 242, 0.9)';
+                  e.currentTarget.style.color = '#222';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.06)';
+                }}
+              >
+                <span>{showLabels ? '👁️ Ukryj opisy części' : '👁️ Pokaż opisy części'}</span>
+              </button>
+            </div>
+          )}
+
           <GarmentVisualizer 
             garmentType={garment}
             selectedPartId={selectedPartId}
             onPartClick={handlePartClick}
             partColors={partColorsForVisualizer}
+            showLabels={showLabels}
           />
         </section>
 

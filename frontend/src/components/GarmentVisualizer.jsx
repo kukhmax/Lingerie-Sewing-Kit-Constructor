@@ -10,7 +10,8 @@ export default function GarmentVisualizer({
   garmentType,
   selectedPartId,
   onPartClick,
-  partColors = {}
+  partColors = {},
+  showLabels = true
 }) {
   const getPartColor = (partId, defaultColor = '#e2ded5') => {
     return partColors[partId] || defaultColor;
@@ -41,285 +42,550 @@ export default function GarmentVisualizer({
     const underwireColor = getPartColor('underwire', '#bfb5a8');
 
     return (
-      <div className="garment-visualizer" style={{ flexDirection: 'column', padding: '1.5rem' }}>
-        <div className="view-section" style={{ width: '100%', maxWidth: '580px' }}>
-          <svg width="100%" height="220" viewBox="0 0 480 200" className="garment-svg">
+      <div className="garment-visualizer" style={{ flexDirection: 'column', padding: '1.5rem', alignItems: 'center' }}>
+        <div className="view-section" style={{ width: '100%', maxWidth: '950px' }}>
+          <svg width="100%" height="450" viewBox="0 0 1000 480" className="garment-svg" style={{ overflow: 'visible' }}>
+            <defs>
+              <marker 
+                id="arrow" 
+                viewBox="0 0 10 10" 
+                refX="6" 
+                refY="5" 
+                markerWidth="5" 
+                markerHeight="5" 
+                orient="auto-start-reverse"
+              >
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563" />
+              </marker>
+            </defs>
+
             <g transform="translate(0, 10)">
               {/* Left Closure Hook Panel */}
-              <path
-                d="M 25,115 L 40,115 L 40,135 L 25,135 Z"
+              <rect
+                x="185"
+                y="300"
+                width="15"
+                height="40"
+                rx="2"
                 fill={closureColor}
                 stroke={getPartStroke('closure')}
                 strokeWidth={getPartStrokeWidth('closure')}
                 className="interactive-part"
                 onClick={() => onPartClick('closure')}
+                style={{ cursor: 'pointer' }}
               />
-              <line x1="29" y1="120" x2="29" y2="130" stroke="#444" strokeWidth="1" />
-              <line x1="35" y1="120" x2="35" y2="130" stroke="#444" strokeWidth="1" />
+              <line x1="185" y1="310" x2="180" y2="310" stroke="#444" strokeWidth="1.2" />
+              <line x1="185" y1="320" x2="180" y2="320" stroke="#444" strokeWidth="1.2" />
+              <line x1="185" y1="330" x2="180" y2="330" stroke="#444" strokeWidth="1.2" />
 
               {/* Right Closure Eye Panel */}
-              <path
-                d="M 440,115 L 455,115 L 455,135 L 440,135 Z"
+              <rect
+                x="800"
+                y="300"
+                width="15"
+                height="40"
+                rx="2"
                 fill={closureColor}
                 stroke={getPartStroke('closure')}
                 strokeWidth={getPartStrokeWidth('closure')}
                 className="interactive-part"
                 onClick={() => onPartClick('closure')}
+                style={{ cursor: 'pointer' }}
               />
-              <circle cx="445" cy="122" r="1.2" fill="#444" />
-              <circle cx="445" cy="128" r="1.2" fill="#444" />
-              <circle cx="450" cy="122" r="1.2" fill="#444" />
-              <circle cx="450" cy="128" r="1.2" fill="#444" />
+              <circle cx="808" cy="310" r="1.5" fill="#444" />
+              <circle cx="808" cy="320" r="1.5" fill="#444" />
+              <circle cx="808" cy="330" r="1.5" fill="#444" />
 
               {/* Left Band Wing (tulle_elastic) */}
               <path
-                d="M 40,115 C 70,118 120,123 160,125 L 160,140 C 120,138 70,130 40,125 Z"
+                d="M 320,250 C 280,260 240,280 200,300 L 200,340 C 240,342 280,342 320,340 Z"
                 fill={tulleElasticColor}
                 stroke={getPartStroke('tulle_elastic')}
                 strokeWidth={getPartStrokeWidth('tulle_elastic')}
                 className="interactive-part"
                 onClick={() => onPartClick('tulle_elastic')}
+                style={{ cursor: 'pointer' }}
+              />
+              {/* Internal vertical seam on left wing */}
+              <line 
+                x1="250" 
+                y1="275" 
+                x2="250" 
+                y2="341" 
+                stroke={threadColor} 
+                strokeWidth="0.8" 
+                strokeDasharray="2,2" 
               />
 
               {/* Right Band Wing (tulle_elastic) */}
               <path
-                d="M 440,115 C 410,118 360,123 320,125 L 320,140 C 360,138 410,130 440,125 Z"
+                d="M 680,250 C 720,260 760,280 800,300 L 800,340 C 760,342 720,342 680,340 Z"
                 fill={tulleElasticColor}
                 stroke={getPartStroke('tulle_elastic')}
                 strokeWidth={getPartStrokeWidth('tulle_elastic')}
                 className="interactive-part"
                 onClick={() => onPartClick('tulle_elastic')}
+                style={{ cursor: 'pointer' }}
+              />
+              {/* Internal vertical seam on right wing */}
+              <line 
+                x1="750" 
+                y1="275" 
+                x2="750" 
+                y2="341" 
+                stroke={threadColor} 
+                strokeWidth="0.8" 
+                strokeDasharray="2,2" 
+              />
+
+              {/* Top and Bottom Elastic Trims (elastic_trim) on Wings */}
+              <path
+                d="M 320,250 C 280,260 240,280 200,300"
+                fill="none"
+                stroke={elasticColor}
+                strokeWidth={getPartStrokeWidth('elastic_trim')}
+                className="interactive-part"
+                onClick={() => onPartClick('elastic_trim')}
+                style={{ cursor: 'pointer' }}
+              />
+              <path
+                d="M 320,340 C 280,342 240,342 200,340"
+                fill="none"
+                stroke={elasticColor}
+                strokeWidth={getPartStrokeWidth('elastic_trim')}
+                className="interactive-part"
+                onClick={() => onPartClick('elastic_trim')}
+                style={{ cursor: 'pointer' }}
+              />
+              <path
+                d="M 680,250 C 720,260 760,280 800,300"
+                fill="none"
+                stroke={elasticColor}
+                strokeWidth={getPartStrokeWidth('elastic_trim')}
+                className="interactive-part"
+                onClick={() => onPartClick('elastic_trim')}
+                style={{ cursor: 'pointer' }}
+              />
+              <path
+                d="M 680,340 C 720,342 760,342 800,340"
+                fill="none"
+                stroke={elasticColor}
+                strokeWidth={getPartStrokeWidth('elastic_trim')}
+                className="interactive-part"
+                onClick={() => onPartClick('elastic_trim')}
+                style={{ cursor: 'pointer' }}
               />
 
               {/* Cradle/Bridge (tulle_stable) */}
               <path
-                d="M 220,125 C 230,132 250,132 260,125 L 260,145 C 250,150 230,150 220,145 Z"
+                d="M 475,240 L 525,240 C 520,270 520,300 525,340 C 510,320 490,320 475,340 C 480,300 480,270 475,240 Z"
                 fill={tulleStableColor}
                 stroke={getPartStroke('tulle_stable')}
                 strokeWidth={getPartStrokeWidth('tulle_stable')}
                 className="interactive-part"
                 onClick={() => onPartClick('tulle_stable')}
+                style={{ cursor: 'pointer' }}
+              />
+              {/* Vertical center stitch on bridge */}
+              <line 
+                x1="500" 
+                y1="240" 
+                x2="500" 
+                y2="328" 
+                stroke={threadColor} 
+                strokeWidth="1" 
+                strokeDasharray="2,2" 
               />
 
               {/* Left Cup Lower Cup (fabric) */}
               <path
-                d="M 160,125 C 150,95 180,85 205,95 C 210,105 215,115 220,125 C 220,140 185,148 160,125 Z"
+                d="M 320,250 C 342,342 453,342 475,240 C 450,250 420,260 397,260 C 370,260 340,250 320,250 Z"
                 fill={cupColor}
                 stroke={getPartStroke('fabric')}
                 strokeWidth={getPartStrokeWidth('fabric')}
                 className="interactive-part"
                 onClick={() => onPartClick('fabric')}
+                style={{ cursor: 'pointer' }}
               />
 
               {/* Left Cup Lace Panel */}
               <path
-                d="M 205,95 C 215,75 225,80 235,95 C 235,105 225,115 220,125 C 215,115 210,105 205,95 Z"
+                d="M 320,250 C 340,210 370,180 397,150 C 425,180 455,210 475,240 C 450,250 420,260 397,260 C 370,260 340,250 320,250 Z"
                 fill={laceColor}
                 stroke={getPartStroke('lace')}
                 strokeWidth={getPartStrokeWidth('lace')}
                 className="interactive-part"
                 onClick={() => onPartClick('lace')}
+                style={{ cursor: 'pointer' }}
               />
 
               {/* Right Cup Lower Cup (fabric) */}
               <path
-                d="M 320,125 C 330,95 300,85 275,95 C 270,105 265,115 260,125 C 260,140 295,148 320,125 Z"
+                d="M 680,250 C 658,342 547,342 525,240 C 550,250 580,260 603,260 C 630,260 660,250 680,250 Z"
                 fill={cupColor}
                 stroke={getPartStroke('fabric')}
                 strokeWidth={getPartStrokeWidth('fabric')}
                 className="interactive-part"
                 onClick={() => onPartClick('fabric')}
+                style={{ cursor: 'pointer' }}
               />
 
               {/* Right Cup Lace Panel */}
               <path
-                d="M 275,95 C 265,75 255,80 245,95 C 245,105 255,115 260,125 C 265,115 270,105 275,95 Z"
+                d="M 680,250 C 660,210 630,180 603,150 C 575,180 545,210 525,240 C 550,250 580,260 603,260 C 630,260 660,250 680,250 Z"
                 fill={laceColor}
                 stroke={getPartStroke('lace')}
                 strokeWidth={getPartStrokeWidth('lace')}
                 className="interactive-part"
                 onClick={() => onPartClick('lace')}
+                style={{ cursor: 'pointer' }}
+              />
+
+              {/* Dashed guidelines inside cups representing anatomy mapping */}
+              {/* Left vertical breast curve */}
+              <path
+                d="M 397,150 L 397,338"
+                fill="none"
+                stroke={threadColor}
+                strokeWidth="1"
+                strokeDasharray="3,3"
+              />
+              {/* Left apex cross marker */}
+              <line x1="392" y1="255" x2="402" y2="265" stroke="#444" strokeWidth="1.5" />
+              <line x1="402" y1="255" x2="392" y2="265" stroke="#444" strokeWidth="1.5" />
+
+              {/* Right vertical breast curve */}
+              <path
+                d="M 603,150 L 603,338"
+                fill="none"
+                stroke={threadColor}
+                strokeWidth="1"
+                strokeDasharray="3,3"
+              />
+              {/* Right apex cross marker */}
+              <line x1="598" y1="255" x2="608" y2="265" stroke="#444" strokeWidth="1.5" />
+              <line x1="608" y1="255" x2="598" y2="265" stroke="#444" strokeWidth="1.5" />
+
+              {/* Neckline double stitch detail lines */}
+              <path
+                d="M 397,150 C 425,180 455,210 475,240"
+                fill="none"
+                stroke={threadColor}
+                strokeWidth="0.8"
+                strokeDasharray="2,2"
+              />
+              <path
+                d="M 603,150 C 575,180 545,210 525,240"
+                fill="none"
+                stroke={threadColor}
+                strokeWidth="0.8"
+                strokeDasharray="2,2"
               />
 
               {/* Left Underwire Channel (tunnel) */}
               <path
-                d="M 160,125 C 185,142 215,138 220,125"
+                d="M 473,242 C 453,342 342,342 322,252"
                 fill="none"
                 stroke={tunnelColor}
-                strokeWidth={selectedPartId === 'tunnel' ? '4' : '2.5'}
+                strokeWidth={selectedPartId === 'tunnel' ? '8' : '5'}
                 className="interactive-part"
                 onClick={() => onPartClick('tunnel')}
+                style={{ cursor: 'pointer' }}
               />
 
               {/* Left Underwire (underwire) */}
               <path
-                d="M 162,123 C 187,140 213,136 218,123"
+                d="M 471,245 C 451,337 344,337 324,255"
                 fill="none"
                 stroke={underwireColor}
-                strokeWidth={selectedPartId === 'underwire' ? '2.5' : '1.5'}
+                strokeWidth={selectedPartId === 'underwire' ? '3' : '1.8'}
                 className="interactive-part"
                 onClick={() => onPartClick('underwire')}
+                style={{ cursor: 'pointer' }}
               />
 
               {/* Right Underwire Channel (tunnel) */}
               <path
-                d="M 320,125 C 295,142 265,138 260,125"
+                d="M 527,242 C 547,342 658,342 678,252"
                 fill="none"
                 stroke={tunnelColor}
-                strokeWidth={selectedPartId === 'tunnel' ? '4' : '2.5'}
+                strokeWidth={selectedPartId === 'tunnel' ? '8' : '5'}
                 className="interactive-part"
                 onClick={() => onPartClick('tunnel')}
+                style={{ cursor: 'pointer' }}
               />
 
               {/* Right Underwire (underwire) */}
               <path
-                d="M 318,123 C 293,140 267,136 262,123"
+                d="M 529,245 C 549,337 656,337 676,255"
                 fill="none"
                 stroke={underwireColor}
-                strokeWidth={selectedPartId === 'underwire' ? '2.5' : '1.5'}
+                strokeWidth={selectedPartId === 'underwire' ? '3' : '1.8'}
                 className="interactive-part"
                 onClick={() => onPartClick('underwire')}
+                style={{ cursor: 'pointer' }}
               />
+
+              {/* Side seam / bones (szew boczny / fiszbiny krótkie) */}
+              {/* Left side seam */}
+              <rect
+                x="317"
+                y="250"
+                width="6"
+                height="90"
+                fill={tunnelColor}
+                stroke={getPartStroke('tunnel')}
+                strokeWidth={getPartStrokeWidth('tunnel')}
+                className="interactive-part"
+                onClick={() => onPartClick('tunnel')}
+                style={{ cursor: 'pointer' }}
+              />
+              <line x1="320" y1="250" x2="320" y2="340" stroke={threadColor} strokeWidth="1" strokeDasharray="3,3" />
+
+              {/* Right side seam */}
+              <rect
+                x="677"
+                y="250"
+                width="6"
+                height="90"
+                fill={tunnelColor}
+                stroke={getPartStroke('tunnel')}
+                strokeWidth={getPartStrokeWidth('tunnel')}
+                className="interactive-part"
+                onClick={() => onPartClick('tunnel')}
+                style={{ cursor: 'pointer' }}
+              />
+              <line x1="680" y1="250" x2="680" y2="340" stroke={threadColor} strokeWidth="1" strokeDasharray="3,3" />
 
               {/* Left Strap (elastic_strap) */}
               <path
-                d="M 205,92 Q 150,30 100,120"
+                d="M 230,288 C 210,130 310,35 397,150"
                 fill="none"
                 stroke={strapColor}
                 strokeWidth={getPartStrokeWidth('elastic_strap')}
                 className="interactive-part"
                 onClick={() => onPartClick('elastic_strap')}
+                style={{ cursor: 'pointer', strokeWidth: '6px' }}
               />
 
               {/* Right Strap (elastic_strap) */}
+              {/* Connected to ring at right apex */}
               <path
-                d="M 275,92 Q 330,30 380,120"
+                d="M 770,288 C 790,130 690,35 603,143"
                 fill="none"
                 stroke={strapColor}
                 strokeWidth={getPartStrokeWidth('elastic_strap')}
                 className="interactive-part"
                 onClick={() => onPartClick('elastic_strap')}
+                style={{ cursor: 'pointer', strokeWidth: '6px' }}
               />
 
-              {/* Rings (ring) */}
-              <circle
-                cx="205"
-                cy="95"
-                r="4"
-                fill="none"
-                stroke={ringColor}
-                strokeWidth={getPartStrokeWidth('ring')}
+              {/* Left Apex Attachment Seam (represented as small band) */}
+              <rect
+                x="389"
+                y="147"
+                width="16"
+                height="5"
+                fill={elasticColor}
+                stroke={getPartStroke('elastic_trim')}
+                strokeWidth="1"
                 className="interactive-part"
-                onClick={() => onPartClick('ring')}
+                onClick={() => onPartClick('elastic_trim')}
+                style={{ cursor: 'pointer' }}
               />
+
+              {/* Right Apex Ring (ring) */}
               <circle
-                cx="275"
-                cy="95"
-                r="4"
+                cx="603"
+                cy="150"
+                r="7"
                 fill="none"
                 stroke={ringColor}
-                strokeWidth={getPartStrokeWidth('ring')}
+                strokeWidth={selectedPartId === 'ring' ? '3.5' : '2'}
                 className="interactive-part"
                 onClick={() => onPartClick('ring')}
+                style={{ cursor: 'pointer' }}
               />
-              <circle
-                cx="100"
-                cy="120"
-                r="4"
-                fill="none"
-                stroke={ringColor}
-                strokeWidth={getPartStrokeWidth('ring')}
-                className="interactive-part"
-                onClick={() => onPartClick('ring')}
-              />
-              <circle
-                cx="380"
-                cy="120"
-                r="4"
-                fill="none"
-                stroke={ringColor}
-                strokeWidth={getPartStrokeWidth('ring')}
-                className="interactive-part"
-                onClick={() => onPartClick('ring')}
+              {/* Loop of lace holding the ring */}
+              <path
+                d="M 603,157 L 603,161"
+                stroke={threadColor}
+                strokeWidth="1.5"
               />
 
               {/* Sliders (slider) */}
+              {/* Left Slider */}
               <rect
-                x="148"
-                y="52"
-                width="6"
-                height="3"
-                transform="rotate(-30 151 53)"
+                x="270"
+                y="58"
+                width="14"
+                height="8"
+                rx="1"
                 fill={sliderColor}
                 stroke={getPartStroke('slider')}
                 strokeWidth={getPartStrokeWidth('slider')}
                 className="interactive-part"
                 onClick={() => onPartClick('slider')}
+                style={{ cursor: 'pointer' }}
               />
+              <line x1="277" y1="58" x2="277" y2="66" stroke="#444" strokeWidth="1" />
+
+              {/* Right Slider */}
               <rect
-                x="326"
-                y="52"
-                width="6"
-                height="3"
-                transform="rotate(30 329 53)"
+                x="716"
+                y="58"
+                width="14"
+                height="8"
+                rx="1"
                 fill={sliderColor}
                 stroke={getPartStroke('slider')}
                 strokeWidth={getPartStrokeWidth('slider')}
                 className="interactive-part"
                 onClick={() => onPartClick('slider')}
+                style={{ cursor: 'pointer' }}
               />
+              <line x1="723" y1="58" x2="723" y2="66" stroke="#444" strokeWidth="1" />
 
-              {/* Top and Bottom Elastic Trims (elastic_trim) */}
-              <path
-                d="M 40,115 C 70,118 120,123 160,125"
-                fill="none"
-                stroke={elasticColor}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-              />
-              <path
-                d="M 440,115 C 410,118 360,123 320,125"
-                fill="none"
-                stroke={elasticColor}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-              />
-              <path
-                d="M 40,125 C 70,130 120,138 160,140 L 320,140 C 360,138 410,130 440,125"
-                fill="none"
-                stroke={elasticColor}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-              />
-
-              {/* Bow (bow) */}
-              <path
-                d="M 237,128 C 234,124 238,120 240,125 C 242,120 246,124 243,128 L 241,126 Z"
-                fill={bowColor}
-                stroke={getPartStroke('bow')}
-                strokeWidth={getPartStrokeWidth('bow')}
-                className="interactive-part"
+              {/* Decorative Bow (bow) on Center Bridge */}
+              <g 
+                className="interactive-part" 
                 onClick={() => onPartClick('bow')}
-              />
+                style={{ cursor: 'pointer' }}
+              >
+                {/* Left bow loop */}
+                <path
+                  d="M 500,245 C 490,235 480,245 500,245 Z"
+                  fill={bowColor}
+                  stroke={getPartStroke('bow')}
+                  strokeWidth={getPartStrokeWidth('bow')}
+                />
+                {/* Right bow loop */}
+                <path
+                  d="M 500,245 C 510,235 520,245 500,245 Z"
+                  fill={bowColor}
+                  stroke={getPartStroke('bow')}
+                  strokeWidth={getPartStrokeWidth('bow')}
+                />
+                {/* Bow center knot */}
+                <circle cx="500" cy="245" r="2.5" fill={bowColor} stroke={getPartStroke('bow')} strokeWidth="0.8" />
+                {/* Bow tails */}
+                <path d="M 500,245 L 493,258" stroke={getPartStroke('bow')} strokeWidth="1.2" />
+                <path d="M 500,245 L 507,258" stroke={getPartStroke('bow')} strokeWidth="1.2" />
+              </g>
 
-              {/* Thread stitches lines (threads) */}
-              <path
-                d="M 160,127 C 185,144 215,140 220,127"
-                fill="none"
-                stroke={threadColor}
-                strokeWidth="0.8"
-                strokeDasharray="2,2"
-              />
-              <path
-                d="M 320,127 C 295,144 265,140 260,127"
-                fill="none"
-                stroke={threadColor}
-                strokeWidth="0.8"
-                strokeDasharray="2,2"
-              />
+              {/* Interactive Labels & Arrows Layer */}
+              <g 
+                className="labels-layer" 
+                style={{ 
+                  display: showLabels ? 'inline' : 'none', 
+                  pointerEvents: 'none',
+                  transition: 'opacity 0.3s ease'
+                }}
+              >
+                {/* 1. Left regulatory */}
+                <text x="140" y="54" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">regulatory</text>
+                <line x1="205" y1="50" x2="265" y2="58" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 2. Left guma ramiączkowa */}
+                <text x="240" y="114" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">guma ramiączkowa</text>
+                <line x1="290" y1="100" x2="260" y2="85" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 3. Left zapięcie (haftki) */}
+                <text x="80" y="325" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">zapięcie (haftki)</text>
+                <line x1="172" y1="321" x2="182" y2="321" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 4. Left guma obszywkowa (dół) */}
+                <text x="80" y="420" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">guma obszywkowa (dół)</text>
+                <line x1="120" y1="405" x2="230" y2="338" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 5. Left szew boczny / fiszbiny krótkie */}
+                <text x="180" y="240" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold">szew boczny</text>
+                <text x="180" y="253" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">fiszbiny krótkie</text>
+                <line x1="260" y1="248" x2="313" y2="272" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 6. Left skrzydełko obwodu */}
+                <text x="180" y="355" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">skrzydełko obwodu</text>
+                <line x1="230" y1="340" x2="255" y2="320" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 7. Left tunel gorseciarski */}
+                <text x="200" y="450" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold">tunel gorseciarski</text>
+                <line x1="280" y1="438" x2="348" y2="328" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 8. Left fiszbiny */}
+                <text x="380" y="450" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">fiszbiny</text>
+                <line x1="380" y1="435" x2="385" y2="330" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* Right Side Etykiety */}
+                {/* 9. Right regulatory */}
+                <text x="860" y="54" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">regulatory</text>
+                <line x1="795" y1="50" x2="735" y2="58" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 10. Right guma ramiączkowa */}
+                <text x="760" y="114" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">guma ramiączkowa</text>
+                <line x1="710" y1="100" x2="740" y2="85" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 11. Right kółko (łącznik) */}
+                <text x="750" y="154" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">kółko (łącznik)</text>
+                <line x1="745" y1="150" x2="612" y2="150" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 12. Right szczyt piersi (apex) */}
+                <text x="800" y="215" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">szczyt piersi (apex)</text>
+                <line x1="795" y1="218" x2="612" y2="258" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 13. Right szew boczny / fiszbiny krótkie */}
+                <text x="820" y="240" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold">szew boczny</text>
+                <text x="820" y="253" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">fiszbiny krótkie</text>
+                <line x1="740" y1="248" x2="687" y2="272" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 14. Right skrzydełko obwodu */}
+                <text x="820" y="355" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">skrzydełko obwodu</text>
+                <line x1="770" y1="340" x2="745" y2="320" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 15. Right haftki */}
+                <text x="920" y="325" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">haftki</text>
+                <line x1="828" y1="321" x2="818" y2="321" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 16. Right guma obszywkowa */}
+                <text x="920" y="420" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">guma obszywkowa</text>
+                <line x1="880" y1="405" x2="770" y2="338" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 17. Right tunel gorseciarski */}
+                <text x="800" y="450" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold">tunel gorseciarski</text>
+                <line x1="720" y1="438" x2="652" y2="328" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 18. Right fiszbiny */}
+                <text x="620" y="450" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">fiszbiny</text>
+                <line x1="620" y1="435" x2="615" y2="330" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* Center / Common Etykiety */}
+                {/* 19. Center guma obszywkowa */}
+                <text x="500" y="150" textAnchor="middle" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">guma obszywkowa</text>
+                <line x1="450" y1="150" x2="408" y2="150" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 20. Center guma obszywkowa (dekolt) */}
+                <text x="500" y="185" textAnchor="middle" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold">guma obszywkowa (dekolt)</text>
+                <line x1="450" y1="185" x2="415" y2="195" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+                <line x1="550" y1="185" x2="585" y2="195" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 21. Left/Right tkanina lub koronka */}
+                <text x="320" y="195" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">tkanina lub koronka</text>
+                <line x1="320" y1="185" x2="355" y2="175" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+                <text x="680" y="195" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">tkanina lub koronka</text>
+                <line x1="680" y1="185" x2="645" y2="175" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 22. Left/Right dolna część miseczki */}
+                <text x="310" y="295" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">dolna część miseczki</text>
+                <line x1="330" y1="280" x2="360" y2="275" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+                <text x="690" y="295" textAnchor="end" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">dolna część miseczki</text>
+                <line x1="670" y1="280" x2="640" y2="275" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+
+                {/* 23. mostek do miseczki */}
+                <text x="500" y="420" textAnchor="middle" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#4b5563">mostek do miseczki</text>
+                <line x1="500" y1="405" x2="500" y2="330" stroke="#4b5563" strokeWidth="1" markerEnd="url(#arrow)" />
+              </g>
+
+              {/* 24. mostek text - always visible inside the bridge */}
+              <text x="500" y="290" textAnchor="middle" fontFamily="Montserrat, sans-serif" fontSize="11" fill="#1f2937" fontWeight="bold" style={{ pointerEvents: 'none' }}>mostek</text>
             </g>
           </svg>
           <span className="view-label">Anatomia Biustonosza (Rysunek płaski)</span>

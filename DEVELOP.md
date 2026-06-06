@@ -89,3 +89,14 @@ W tym kroku wykonaliśmy:
    - Tunele (`tunnel`) z osadzonymi fiszbinami metalowymi (`underwire`),
    - Ramiączka (`elastic_strap`) połączone z miseczkami i pasami za pomocą 4 kółek (`ring`) i 2 regulatorów (`slider`).
 3. Ponownie skompilowano projekt w kontenerach Docker i przetestowano poprawne dynamiczne kolorowanie wszystkich 13 elementów na jednym zunifikowanym rysunku.
+
+## Krok 9: Szczegółowy rysunek anatomii biustonosza z przełączanymi etykietami
+**Data:** 2026-06-06
+
+W tym kroku wykonaliśmy:
+1. Zaimplementowano precyzyjny wektorowy rysunek płaski biustonosza w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) (viewBox `0 0 1000 480`), dokładnie odwzorowujący dostarczony schemat z aplikacji AI Studio.
+2. Dodano warstwę 17 etykiet tekstowych w języku polskim z liniami wskazującymi i strzałkami (np. *regulatory*, *guma ramiączkowa*, *mostek*, *tunel gorseciarski*, *fiszbiny*, *szew boczny / fiszbiny krótkie*, *szczyt piersi (apex)*, *dolna część miseczki*, *skrzydełko obwodu*, *haftki*, *guma obszywkowa*).
+3. Dodano stan `showLabels` oraz elegancki, interaktywny przycisk-przełącznik w [App.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/App.jsx) (stylowany z efektem glassmorphism i złotym obramowaniem), który umożliwia użytkownikowi dynamiczne ukrywanie i pokazywanie podpisów części na rysunku.
+4. Powiązano wszystkie ścieżki i kształty rysunku z interaktywnymi zdarzeniami wyboru części (`onPartClick`) oraz dynamicznym bindowaniem kolorów wyrobów ze sklepu.
+5. Zbudowano i uruchomiono aplikację za pomocą `docker compose up --build -d` i zweryfikowano poprawność kompilacji kodu React przez Vite.
+
