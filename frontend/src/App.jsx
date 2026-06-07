@@ -212,7 +212,7 @@ export default function App() {
 
   // Submit kit to cart
   const handleAddToCart = async () => {
-    if (!requiredCompleted) return;
+    if (selectedCount === 0) return;
 
     setSubmitting(true);
     setCartResult(null);
@@ -341,13 +341,9 @@ export default function App() {
                           <span className="part-name">
                             {part.name} {part.required && <span style={{ color: 'var(--color-error)' }}>*</span>}
                           </span>
-                          {isSelected ? (
+                          {isSelected && (
                             <span className="part-color-selected">
                               {selections[part.id].colorName} • {(quantities[part.id] || part.qty)}{selections[part.id].unit}
-                            </span>
-                          ) : (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                              ✍️ Kliknij, aby wybrać
                             </span>
                           )}
                         </div>
@@ -390,11 +386,11 @@ export default function App() {
                         <span className="part-color-selected">
                           {selections[part.id].colorName} • {(quantities[part.id] || part.qty)}{selections[part.id].unit}
                         </span>
-                      ) : (
+                      ) : isLocked ? (
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                          {isLocked ? '🔒 Zablokowane (wybierz materiał)' : '✍️ Kliknij, aby wybrać'}
+                          🔒 Zablokowane (wybierz materiał)
                         </span>
-                      )}
+                      ) : null}
                     </div>
                     <div className="display-flex align-items-center gap-2">
                       {isSelected && (
@@ -514,6 +510,13 @@ export default function App() {
                             </span>
                           </div>
                         </div>
+                        <button 
+                          className="cart-item-remove-btn" 
+                          onClick={(e) => handleRemoveSelection(part.id, e)}
+                          title="Usuń z zestawu"
+                        >
+                          ✕
+                        </button>
                       </div>
                     );
                   })}
@@ -529,15 +532,15 @@ export default function App() {
 
               <button 
                 className="btn-gold"
-                disabled={!requiredCompleted || submitting}
+                disabled={selectedCount === 0 || submitting}
                 onClick={handleAddToCart}
               >
                 {submitting ? 'Dodawanie...' : 'Dodaj zestaw do koszyka'}
               </button>
 
-              {!requiredCompleted && (
-                <p style={{ fontSize: '0.75rem', color: 'var(--color-error)', marginTop: '0.5rem', textAlign: 'center' }}>
-                  * Aby zamówić, wybierz wszystkie wymagane elementy.
+              {selectedCount > 0 && (
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.5rem', textAlign: 'center' }}>
+                  * Możesz zamówić kompletny zestaw lub pojedyncze elementy.
                 </p>
               )}
             </div>

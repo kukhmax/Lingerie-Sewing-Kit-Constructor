@@ -147,3 +147,15 @@ W tym kroku wykonaliśmy:
 5. Przypisano zdarzenia kliknięcia (`onClick`) wewnątrz `renderBralet()` w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) do dynamicznego mapowania za pomocą `mapGuidePartIdToMainId` dla `'lace'` i `'fabric'`.
 6. Przebudowano aplikację w kontenerach Docker za pomocą `docker compose up --build -d` i zweryfikowano poprawność kompilacji kodu React przez Vite.
 
+## Krok 14: Dodanie możliwości usuwania z koszyka, elastyczna walidacja zamówień i oczyszczenie interfejsu
+**Data:** 2026-06-07
+
+W tym kroku wykonaliśmy:
+1. Zaimplementowano przycisk usuwania pozycji (symbol "✕") bezpośrednio w wierszach koszyka (`cart-item-row`) w prawym panelu podsumowania, powiązany z funkcją `handleRemoveSelection`.
+2. Dodano dedykowane style w [index.css](file:///c:/Users/m-win/Projects/konstructor/frontend/src/index.css) dla klasy `.cart-item-remove-btn` z subtelną animacją powiększenia (hover scale) i podświetleniem kolorem błędu (`--color-error`).
+3. Zmodyfikowano warunek blokady przycisku "Dodaj zestaw do koszyka" (`btn-gold`): przycisk staje się aktywny natychmiast po wybraniu chociaż jednego produktu (`selectedCount > 0`), co umożliwia użytkownikom elastyczne dokupywanie pojedynczych akcesoriów.
+4. Zaktualizowano powiadomienie pod przyciskiem dodawania do koszyka: zastąpiono czerwoną etykietę błędu pomocniczą szarą informacją o możliwości zamawiania pojedynczych elementów.
+5. Usunięto tekst podpowiedzi *"✍️ Kliknij, aby wybrać"* dla niewybranych i odblokowanych elementów na liście wyboru, co optycznie wyszczupliło karty kroków konstrukcyjnych i uczyniło interfejs bardziej przejrzystym.
+6. Przebudowano aplikację w Dockerze za pomocą `docker compose up --build -d` i przetestowano poprawność kompilacji kodu.
+
+

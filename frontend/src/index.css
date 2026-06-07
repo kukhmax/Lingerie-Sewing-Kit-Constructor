@@ -588,6 +588,25 @@ a:hover {
   color: var(--text-primary);
 }
 
+.cart-item-remove-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.cart-item-remove-btn:hover {
+  color: var(--color-error);
+  transform: scale(1.15);
+}
+
+
 .cart-total-section {
   margin-top: 1.5rem;
   padding-top: 1rem;
