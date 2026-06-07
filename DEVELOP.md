@@ -158,4 +158,11 @@ W tym kroku wykonaliśmy:
 5. Usunięto tekst podpowiedzi *"✍️ Kliknij, aby wybrać"* dla niewybranych i odblokowanych elementów na liście wyboru, co optycznie wyszczupliło karty kroków konstrukcyjnych i uczyniło interfejs bardziej przejrzystym.
 6. Przebudowano aplikację w Dockerze za pomocą `docker compose up --build -d` i przetestowano poprawność kompilacji kodu.
 
+## Krok 15: Integracja szczegółowego rysunku wektorowego biustonosza na bazie biustonosz.svg
+**Data:** 2026-06-07
 
+W tym kroku wykonaliśmy:
+1. Wyodrębniono 185 ścieżek konturowych z pliku `biustonosz .svg` do nowego, dedykowanego komponentu [BraOutlines.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/BraOutlines.jsx), co zapobiega zanieczyszczeniu kodu głównego komponentu olbrzymią ilością surowych koordynatów wektorowych.
+2. Zaimplementowano warstwę interaktywnych wielokątów i linii pod spodem konturów w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx), reprezentującą wszystkie elementy konstrukcyjne (miseczki dolne i górne, mostek, skrzydełka obwodu, ramiączka, regulatory, kółka, zapięcia i fiszbiny) w nowej rozdzielczości `3000 x 2121`.
+3. Zsynchronizowano stany najechania myszką (`hoveredPartId`) oraz kliknięcia w części modelu z mechanizmem wyboru produktów i kolorowania na froncie.
+4. Przeskalowano i wyrównano 16 etykiet tekstowych w języku polskim oraz linii wskazujących do nowej siatki współrzędnych wektora, zwiększając rozmiar fontu do `28-30` pikseli dla zachowania pełnej ostrości tekstu na dużych ekranach.
