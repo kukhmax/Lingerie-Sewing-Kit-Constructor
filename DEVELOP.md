@@ -166,3 +166,20 @@ W tym kroku wykonaliśmy:
 2. Zaimplementowano warstwę interaktywnych wielokątów i linii pod spodem konturów w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx), reprezentującą wszystkie elementy konstrukcyjne (miseczki dolne i górne, mostek, skrzydełka obwodu, ramiączka, regulatory, kółka, zapięcia i fiszbiny) w nowej rozdzielczości `3000 x 2121`.
 3. Zsynchronizowano stany najechania myszką (`hoveredPartId`) oraz kliknięcia w części modelu z mechanizmem wyboru produktów i kolorowania na froncie.
 4. Przeskalowano i wyrównano 16 etykiet tekstowych w języku polskim oraz linii wskazujących do nowej siatki współrzędnych wektora, zwiększając rozmiar fontu do `28-30` pikseli dla zachowania pełnej ostrości tekstu na dużych ekranach.
+
+## Krok 16: Dokładne dopasowanie kształtów organicznych i symetria
+**Data:** 2026-06-07
+
+W tym kroku wykonaliśmy:
+1. Wyodrębniono dokładne ścieżki (sub-paths) dla skrzydełek obwodu, dolnych miseczek, górnej prawej miseczki oraz mostka z wektora outline.
+2. Wykonano matematyczne odbicie lustrzane prawej górnej miseczki względem osi symetrii w celu odtworzenia lewej miseczki.
+3. Skorygowano pozycje ramiączek, zapięć, kółek, regulatorów oraz kokardki.
+
+## Krok 17: Integracja szczegółowego makiety z pojedynczych plików SVG (biustonosz anotomia)
+**Data:** 2026-06-08
+
+W tym kroku wykonaliśmy:
+1. Zastąpiono makietę rysunku w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) na zunifikowany model oparty na plikach z folderu `biustonosz anotomia` w przestrzeni roboczej `2304 x 1628`.
+2. Zaimportowano masowo outlines (`OUTLINES`) oraz wypełnienia (`[PART]_FILLS`) z wygenerowanego pliku [BraPathData.js](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/BraPathData.js).
+3. Przeliczono pozycje i linie wskazujące wszystkich 13 etykiet technicznych z faktorem skali `0.768` (dla X) i `0.7676` (dla Y) względem nowej osi symetrii `X = 1120.3`.
+4. Usunięto nieużywany komponent `BraOutlines.jsx` w celu uproszczenia struktury.
