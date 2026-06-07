@@ -183,3 +183,12 @@ W tym kroku wykonaliśmy:
 2. Zaimportowano masowo outlines (`OUTLINES`) oraz wypełnienia (`[PART]_FILLS`) z wygenerowanego pliku [BraPathData.js](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/BraPathData.js).
 3. Przeliczono pozycje i linie wskazujące wszystkich 13 etykiet technicznych z faktorem skali `0.768` (dla X) i `0.7676` (dla Y) względem nowej osi symetrii `X = 1120.3`.
 4. Usunięto nieużywany komponent `BraOutlines.jsx` w celu uproszczenia struktury.
+
+## Krok 18: Очистка и пересборка интерактивного вектора, исправление искаженных заполнений и скрытие контуров текста
+**Data:** 2026-06-08
+
+В этом кроке выполнено:
+1. Исправлен баг со смещенными и искаженными фоновыми заполнениями (`_FILLS`) в [BraPathData.js](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/BraPathData.js). Ранее используемый алгоритм деления точек пополам (`pts[:len(pts)//2]`) заменен на надежное извлечение внешнего замкнутого контура по первой подотрезке `d` (поиск первого `M`/`m` до следующего `M`/`m` с добавлением `Z`). Заполнения теперь идеально совпадают с линиями швов без каких-либо деформаций.
+2. Реализована фильтрация мусорных векторных путей. Удалены все векторные буквы подписей (например, "tory", "regu", "mostek") и стрелки указателей, которые векторизатор распознавал как детали. Это сделано с помощью фильтра площади (площадь < 25000) и пространственных рамок.
+3. Протестирована сборка React с помощью `npm run build` во фронтенде и перезапущены контейнеры `docker compose up --build -d`. Все области наведения, подсветки и клика на макете теперь точно совпадают с визуальными элементами чертежа.
+
