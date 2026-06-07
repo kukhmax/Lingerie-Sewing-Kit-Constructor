@@ -15,7 +15,7 @@ export default function GarmentVisualizer({
 }) {
   const [hoveredPartId, setHoveredPartId] = useState(null);
 
-  const getPartColor = (partId, defaultColor = '#e2ded5') => {
+  const getPartColor = (partId, defaultColor = '#ffffff') => {
     if (partId === 'fabric') {
       return partColors.fabric_elastic || partColors.fabric_stable || partColors.tulle_elastic || partColors.tulle_stable || partColors.fabric || defaultColor;
     }
@@ -95,6 +95,13 @@ export default function GarmentVisualizer({
     }
   };
 
+  const isPartSelected = (guideId) => {
+    const mainId = mapGuidePartIdToMainId(guideId);
+    return !!partColors[mainId] || 
+      (guideId === 'koronka' && (partColors.lace_elastic || partColors.lace_stable || partColors.lace)) ||
+      ((guideId === 'material' || guideId === 'miseczki') && (partColors.fabric_elastic || partColors.fabric_stable || partColors.tulle_elastic || partColors.tulle_stable || partColors.fabric));
+  };
+
   const getGuidePartColor = (guideId) => {
     if (guideId === 'koronka') {
       return partColors.lace_elastic || partColors.lace_stable || partColors.lace || defaultGuideColors[guideId] || '#e2ded5';
@@ -125,10 +132,25 @@ export default function GarmentVisualizer({
 
   const getPartStyle = (id) => {
     const active = isPartActive(id);
+    const selected = isPartSelected(id);
     const color = getGuidePartColor(id);
+    
+    let fill = '#ffffff';
+    if (selected) {
+      fill = color;
+    } else if (active) {
+      const guideColor = defaultGuideColors[id] || '#c9a236';
+      fill = `${guideColor}35`;
+    }
+    
+    let stroke = '#1e293b';
+    if (active || selected) {
+      stroke = color;
+    }
+    
     return {
-      fill: active ? `${color}35` : '#ffffff',
-      stroke: active ? color : '#1e293b',
+      fill,
+      stroke,
       strokeWidth: active ? '3.5' : '1.8',
       transition: 'all 0.25s ease-in-out',
       cursor: 'pointer',
@@ -137,9 +159,16 @@ export default function GarmentVisualizer({
 
   const getLineStyle = (id, thickness = 1.8) => {
     const active = isPartActive(id);
+    const selected = isPartSelected(id);
     const color = getGuidePartColor(id);
+    
+    let stroke = '#1e293b';
+    if (selected || active) {
+      stroke = color;
+    }
+    
     return {
-      stroke: active ? color : '#1e293b',
+      stroke,
       strokeWidth: active ? thickness + 2 : thickness,
       fill: 'none',
       transition: 'all 0.25s ease-in-out',
@@ -283,9 +312,9 @@ export default function GarmentVisualizer({
                   width="18"
                   height="50"
                   rx="2"
-                  fill={isPartActive('haftka') ? `${getGuidePartColor('haftka')}35` : '#ffffff'}
-                  stroke={isPartActive('haftka') ? getGuidePartColor('haftka') : '#1e293b'}
-                  strokeWidth="1.8"
+                  fill={isPartSelected('haftka') ? getGuidePartColor('haftka') : (isPartActive('haftka') ? `${getGuidePartColor('haftka')}35` : '#ffffff')}
+                  stroke={(isPartActive('haftka') || isPartSelected('haftka')) ? getGuidePartColor('haftka') : '#1e293b'}
+                  strokeWidth={isPartActive('haftka') ? '3.5' : '1.8'}
                   style={{ transition: 'all 0.2s' }}
                 />
                 <circle cx="9" cy="12" r="2.5" fill="#1e293b" />
@@ -301,9 +330,9 @@ export default function GarmentVisualizer({
                   width="18"
                   height="50"
                   rx="2"
-                  fill={isPartActive('haftka') ? `${getGuidePartColor('haftka')}35` : '#ffffff'}
-                  stroke={isPartActive('haftka') ? getGuidePartColor('haftka') : '#1e293b'}
-                  strokeWidth="1.8"
+                  fill={isPartSelected('haftka') ? getGuidePartColor('haftka') : (isPartActive('haftka') ? `${getGuidePartColor('haftka')}35` : '#ffffff')}
+                  stroke={(isPartActive('haftka') || isPartSelected('haftka')) ? getGuidePartColor('haftka') : '#1e293b'}
+                  strokeWidth={isPartActive('haftka') ? '3.5' : '1.8'}
                   style={{ transition: 'all 0.2s' }}
                 />
                 <path d="M 0 12 Q -5 12, -5 15 Q -5 18, 0 18" fill="none" stroke="#1e293b" strokeWidth="1.8" />
@@ -604,15 +633,15 @@ export default function GarmentVisualizer({
               <path
                 d="M 360 140 C 352 90, 275 36, 175 51 C 115 63, 80 137, 85 300"
                 fill="none"
-                stroke={isPartActive('guma_ramiackowa') ? getGuidePartColor('guma_ramiackowa') : '#1e293b'}
-                strokeWidth="9"
+                stroke={(isPartActive('guma_ramiackowa') || isPartSelected('guma_ramiackowa')) ? getGuidePartColor('guma_ramiackowa') : '#1e293b'}
+                strokeWidth={isPartActive('guma_ramiackowa') ? 11 : 9}
                 style={{ transition: 'all 0.2s' }}
               />
               <path
                 d="M 360 140 C 352 90, 275 36, 175 51 C 115 63, 80 137, 85 300"
                 fill="none"
-                stroke={isPartActive('guma_ramiackowa') ? `${getGuidePartColor('guma_ramiackowa')}20` : '#ffffff'}
-                strokeWidth="6"
+                stroke={isPartSelected('guma_ramiackowa') ? getGuidePartColor('guma_ramiackowa') : (isPartActive('guma_ramiackowa') ? `${getGuidePartColor('guma_ramiackowa')}20` : '#ffffff')}
+                strokeWidth={isPartActive('guma_ramiackowa') ? 7 : 6}
                 style={{ transition: 'all 0.2s' }}
               />
 
@@ -620,15 +649,15 @@ export default function GarmentVisualizer({
               <path
                 d="M 640 130 C 648 80, 725 36, 825 51 C 885 63, 920 137, 915 300"
                 fill="none"
-                stroke={isPartActive('guma_ramiackowa') ? getGuidePartColor('guma_ramiackowa') : '#1e293b'}
-                strokeWidth="9"
+                stroke={(isPartActive('guma_ramiackowa') || isPartSelected('guma_ramiackowa')) ? getGuidePartColor('guma_ramiackowa') : '#1e293b'}
+                strokeWidth={isPartActive('guma_ramiackowa') ? 11 : 9}
                 style={{ transition: 'all 0.2s' }}
               />
               <path
                 d="M 640 130 C 648 80, 725 36, 825 51 C 885 63, 920 137, 915 300"
                 fill="none"
-                stroke={isPartActive('guma_ramiackowa') ? `${getGuidePartColor('guma_ramiackowa')}20` : '#ffffff'}
-                strokeWidth="6"
+                stroke={isPartSelected('guma_ramiackowa') ? getGuidePartColor('guma_ramiackowa') : (isPartActive('guma_ramiackowa') ? `${getGuidePartColor('guma_ramiackowa')}20` : '#ffffff')}
+                strokeWidth={isPartActive('guma_ramiackowa') ? 7 : 6}
                 style={{ transition: 'all 0.2s' }}
               />
 
@@ -656,7 +685,7 @@ export default function GarmentVisualizer({
                 cy="140"
                 r="11"
                 fill="#ffffff"
-                stroke={isPartActive('kolka') ? getGuidePartColor('kolka') : '#1e293b'}
+                stroke={(isPartActive('kolka') || isPartSelected('kolka')) ? getGuidePartColor('kolka') : '#1e293b'}
                 strokeWidth={isPartActive('kolka') ? '3.5' : '1.8'}
                 style={{ transition: 'all 0.2s' }}
               />
@@ -665,7 +694,7 @@ export default function GarmentVisualizer({
                 cy="140"
                 r="7.5"
                 fill="none"
-                stroke={isPartActive('kolka') ? getGuidePartColor('kolka') : '#1e293b'}
+                stroke={(isPartActive('kolka') || isPartSelected('kolka')) ? getGuidePartColor('kolka') : '#1e293b'}
                 strokeWidth="1"
               />
             </g>
@@ -688,7 +717,7 @@ export default function GarmentVisualizer({
                   width="18"
                   height="10"
                   rx="1.5"
-                  fill={isPartActive('regulatory') ? getGuidePartColor('regulatory') : '#ffffff'}
+                  fill={isPartSelected('regulatory') ? getGuidePartColor('regulatory') : (isPartActive('regulatory') ? getGuidePartColor('regulatory') : '#ffffff')}
                   stroke="#1e293b"
                   strokeWidth="1.8"
                   style={{ transition: 'all 0.25s' }}
@@ -704,7 +733,7 @@ export default function GarmentVisualizer({
                   width="18"
                   height="10"
                   rx="1.5"
-                  fill={isPartActive('regulatory') ? getGuidePartColor('regulatory') : '#ffffff'}
+                  fill={isPartSelected('regulatory') ? getGuidePartColor('regulatory') : (isPartActive('regulatory') ? getGuidePartColor('regulatory') : '#ffffff')}
                   stroke="#1e293b"
                   strokeWidth="1.8"
                   style={{ transition: 'all 0.25s' }}
@@ -727,19 +756,19 @@ export default function GarmentVisualizer({
               <g transform="translate(500, 252)">
                 <path
                   d="M 0 0 C -12 -12, -15 8, 0 0 Z"
-                  fill={isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#f43f5e'}
+                  fill={isPartSelected('kokardka') ? getGuidePartColor('kokardka') : (isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#f43f5e')}
                   stroke="#be123c"
                   strokeWidth="0.8"
                 />
                 <path
                   d="M 0 0 C 12 -12, 15 8, 0 0 Z"
-                  fill={isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#f43f5e'}
+                  fill={isPartSelected('kokardka') ? getGuidePartColor('kokardka') : (isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#f43f5e')}
                   stroke="#be123c"
                   strokeWidth="0.8"
                 />
-                <path d="M 0 0 Q -4 12, -8 18" fill="none" stroke={isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#be123c'} strokeWidth="1.8" />
-                <path d="M 0 0 Q 4 12, 8 18" fill="none" stroke={isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#be123c'} strokeWidth="1.8" />
-                <circle cx="0" cy="0" r="3.2" fill={isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#be123c'} />
+                <path d="M 0 0 Q -4 12, -8 18" fill="none" stroke={isPartSelected('kokardka') ? getGuidePartColor('kokardka') : (isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#be123c')} strokeWidth="1.8" />
+                <path d="M 0 0 Q 4 12, 8 18" fill="none" stroke={isPartSelected('kokardka') ? getGuidePartColor('kokardka') : (isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#be123c')} strokeWidth="1.8" />
+                <circle cx="0" cy="0" r="3.2" fill={isPartSelected('kokardka') ? getGuidePartColor('kokardka') : (isPartActive('kokardka') ? getGuidePartColor('kokardka') : '#be123c')} />
               </g>
             </g>
 
