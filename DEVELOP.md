@@ -238,3 +238,16 @@ W tym kroku wykonaliśmy:
 2. Zmieniono priorytety w `getPartColor`: sprawdzenie stanu najechania myszką (`hoveredPartId === partId`) zostało przeniesione na sam początek funkcji, co gwarantuje natychmiastowe podświetlanie wszystkich materiałów głównych (tkanina, koronka, tiule) na złoto przy najechaniu.
 3. Usunięto automatyczne podświetlanie i złoty blask (`drop-shadow` i złota obwódka) dla elementów aktywnych/wybranych w lewej kolumnie, które nie są aktualnie wskazywane kursorem myszy (`isHovered`). Zapobiega to ciągłemu świeceniu miseczek na starcie aplikacji i pozwala na pełną kontrolę wizualną wyłącznie za pomocą kursora.
 4. Przeprowadzono pomyślną kompilację produkcyjną frontendu i przetestowano działanie modelu.
+
+## Krok 23: Poprawki interaktywnego podświetlania materiałów głównych #1 i #2 oraz eliminacja problemu buforowania makiety
+**Data:** 2026-06-09
+
+W tym kroku wykonaliśmy:
+1. **Rozwiązanie problemu braku podświetlania "materiał główny #1" oraz "materiał główny #2"**:
+   Analiza nakładania się pikseli (pixel overlaps) wykazała, że warstwy tiulu stabilnego (`material_glowny_2.svg`) oraz tiulu elastycznego (`material_glowny_1.svg`) były w 99% blokowane w teście trafień (hit-test) przez mniejsze detale o wyższym priorytecie (zwłaszcza `elastic_trim`/guma obszywkowa, `underwire`/fiszbiny metalowe oraz `tunnel`/tunel gorseciarski), ze względu na to, że rysunki konturowe tych elementów pokrywają się z ich krawędziami.
+   Zreorganizowano kolejność tablicy `BRA_SVG_PARTS` w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx), przenosząc warstwy materiałów głównych (`tulle_stable`, `tulle_elastic`, `fabric`, `lace`) bezpośrednio po detalach takich jak zapięcie czy kokardka, a przed fiszbinami, tunelem i gumą obszywkową. Zmiana ta zwolniła tysiące pikseli na makietach tiulu stabilnego i elastycznego, co umożliwiło bezbłędne podświetlanie tych elementów przy najeżdżaniu myszką bez zakłócania interakcji z innymi częściami.
+2. **Rozwiązanie problemu ze znikaniem makiety biustonosza przy włączeniu opisów części**:
+   Zdiagnozowano, że przeglądarka buforowała (cache) starą wersję pliku `nazwy.svg` z białym tłem, które po nałożeniu jako warstwa całkowicie zasłaniało rysunek biustonosza. Aby to wyeliminować, dodano mechanizm cache-bustera (`?v=20260609`) do wszystkich ścieżek plików SVG w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx), wymuszając pobranie najnowszych (przeźroczystych) plików z serwera.
+3. **Kompilacja i Wdrożenie**:
+   Przeprowadzono pomyślną kompilację produkcyjną frontendu (`npm run build`).
+

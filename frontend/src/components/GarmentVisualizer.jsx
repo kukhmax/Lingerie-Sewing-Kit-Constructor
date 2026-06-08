@@ -29,28 +29,10 @@ const BRA_SVG_PARTS = [
     mainIds: ['closure'],
   },
   {
-    id: 'underwire',
-    file: 'fiszbiny.svg',
-    label: 'Fiszbiny metalowe',
-    mainIds: ['underwire'],
-  },
-  {
-    id: 'tunnel',
-    file: 'tunel_gorseciarski.svg',
-    label: 'Tunel gorseciarski',
-    mainIds: ['tunnel'],
-  },
-  {
     id: 'elastic_strap',
     file: 'guma_ramiackowa.svg',
     label: 'Guma ramiączkowa',
     mainIds: ['elastic_strap'],
-  },
-  {
-    id: 'elastic_trim',
-    file: 'gumy.svg',
-    label: 'Guma obszywkowa (obwód)',
-    mainIds: ['elastic_trim'],
   },
   {
     id: 'tulle_stable',
@@ -75,6 +57,24 @@ const BRA_SVG_PARTS = [
     file: 'material_glowny_4.svg',
     label: 'Koronka',
     mainIds: ['lace_elastic', 'lace_stable'],
+  },
+  {
+    id: 'underwire',
+    file: 'fiszbiny.svg',
+    label: 'Fiszbiny metalowe',
+    mainIds: ['underwire'],
+  },
+  {
+    id: 'tunnel',
+    file: 'tunel_gorseciarski.svg',
+    label: 'Tunel gorseciarski',
+    mainIds: ['tunnel'],
+  },
+  {
+    id: 'elastic_trim',
+    file: 'gumy.svg',
+    label: 'Guma obszywkowa (obwód)',
+    mainIds: ['elastic_trim'],
   },
 ];
 
@@ -117,7 +117,7 @@ export default function GarmentVisualizer({
         if (!active) return;
         try {
           const img = new Image();
-          img.src = `/bra/${part.file}`;
+          img.src = `/bra/${part.file}?v=20260609`;
           await new Promise((resolve, reject) => {
             img.onload = resolve;
             img.onerror = () => reject(new Error(`Failed to load ${part.file}`));
@@ -482,7 +482,7 @@ export default function GarmentVisualizer({
               </defs>
 
               {/* LAYER 0: Reference Base Outline */}
-              <image href="/bra/biustonosz_caly.svg" x="0" y="0" width="1536" height="1085.25" />
+              <image href="/bra/biustonosz_caly.svg?v=20260609" x="0" y="0" width="1536" height="1085.25" />
 
               {/* LAYER 1: Colorized/Hovered Active Parts */}
               {BRA_SVG_PARTS.map(part => {
@@ -502,7 +502,7 @@ export default function GarmentVisualizer({
                 return (
                   <image
                     key={part.id}
-                    href={`/bra/${part.file}`}
+                    href={`/bra/${part.file}?v=20260609`}
                     x="0"
                     y="0"
                     width="1536"
@@ -518,7 +518,7 @@ export default function GarmentVisualizer({
 
               {/* LAYER 2: Arrows / Labels (Dynamic Toggle) */}
               <image
-                href="/bra/nazwy.svg"
+                href="/bra/nazwy.svg?v=20260609"
                 x="0"
                 y="0"
                 width="1536"
