@@ -1,19 +1,6 @@
 import React, { useState } from 'react';
-import {
-  OUTLINES,
-  ELASTIC_TRIM_FILLS,
-  LACE_FILLS,
-  TULLE_ELASTIC_FILLS,
-  FABRIC_FILLS,
-  CLOSURE_FILLS,
-  ELASTIC_STRAP_FILLS,
-  BOW_FILLS,
-  TULLE_STABLE_FILLS,
-  RING_FILLS,
-  SLIDER_FILLS,
-  TUNNEL_FILLS,
-  UNDERWIRE_FILLS
-} from './BraPathData';
+import { BRA_PARTS_DATA, ARROWS_DATA } from './BraPathData';
+import braBackground from './bra_background.png';
 
 // GarmentVisualizer renders Front and Back SVGs side-by-side
 // Props:
@@ -215,6 +202,92 @@ export default function GarmentVisualizer({
   };
 
   const renderBiustonosz = () => {
+    const mapPartIdToMainId = (id) => {
+      if (id.includes('material_glowny_3_left_outer') || id.includes('material_glowny_3_right_outer')) {
+        return selectedPartId === 'fabric_stable' ? 'fabric_stable' : 'fabric_elastic';
+      }
+      if (id.includes('material_glowny_3_left_center') || id.includes('material_glowny_3_right_center')) {
+        return selectedPartId === 'fabric_elastic' ? 'fabric_elastic' : 'fabric_stable';
+      }
+      if (id.includes('material_glowny_3_left_inner') || id.includes('material_glowny_3_right_inner')) {
+        return selectedPartId === 'lace_stable' ? 'lace_stable' : 'lace_elastic';
+      }
+      if (id === 'material_glowny_1') return 'tulle_elastic';
+      if (id === 'material_glowny_2') return 'tulle_stable';
+      if (id === 'kolardka') return 'fabric_stable';
+      if (id === 'guma_ramiackowa') return 'elastic_strap';
+      if (id === 'kolka') return 'ring';
+      if (id === 'regulatory') return 'slider';
+      if (id === 'haftka') return 'closure';
+      if (id === 'fiszbiny_krotkie') return 'underwire';
+      if (id === 'tunel_gorseciarski') return 'tunnel';
+      if (id === 'guma_obszywkowa') return 'elastic_trim';
+      return id;
+    };
+
+    const getPairedId = (id) => {
+      if (id.includes('left')) {
+        return id.replace('left', 'right');
+      }
+      if (id.includes('right')) {
+        return id.replace('right', 'left');
+      }
+      return null;
+    };
+
+    const getPartColorForCategory = (cat, defaultColor = '#ffffff') => {
+      if (cat.includes('material_glowny_3_left_outer') || cat.includes('material_glowny_3_right_outer') ||
+          cat.includes('material_glowny_3_left_center') || cat.includes('material_glowny_3_right_center')) {
+        return partColors.fabric_stable || partColors.fabric_elastic || partColors.fabric || defaultColor;
+      }
+      if (cat.includes('material_glowny_3_left_inner') || cat.includes('material_glowny_3_right_inner')) {
+        return partColors.lace_elastic || partColors.lace_stable || partColors.lace || defaultColor;
+      }
+      if (cat === 'material_glowny_1') {
+        return partColors.tulle_elastic || partColors.fabric_elastic || defaultColor;
+      }
+      if (cat === 'material_glowny_2') {
+        return partColors.tulle_stable || defaultColor;
+      }
+      if (cat === 'kolardka') {
+        return partColors.fabric_stable || partColors.tulle_stable || defaultColor;
+      }
+      
+      const mainId = mapPartIdToMainId(cat);
+      return partColors[mainId] || defaultColor;
+    };
+
+    const isPartSelected = (cat) => {
+      const mainId = mapPartIdToMainId(cat);
+      return !!partColors[mainId];
+    };
+
+    const isPartActive = (cat) => {
+      const mainId = mapPartIdToMainId(cat);
+      if (hoveredPartId === cat || getPairedId(cat) === hoveredPartId) {
+        return true;
+      }
+      if (selectedPartId === mainId) {
+        return true;
+      }
+      if ((selectedPartId === 'lace_elastic' || selectedPartId === 'lace_stable') && 
+          (cat.includes('material_glowny_3_left_inner') || cat.includes('material_glowny_3_right_inner'))) {
+        return true;
+      }
+      if ((selectedPartId === 'fabric_elastic' || selectedPartId === 'fabric_stable') && 
+          (cat.includes('material_glowny_3_left_center') || cat.includes('material_glowny_3_right_center') ||
+           cat.includes('material_glowny_3_left_outer') || cat.includes('material_glowny_3_right_outer'))) {
+        return true;
+      }
+      if (selectedPartId === 'tulle_elastic' && cat === 'material_glowny_1') {
+        return true;
+      }
+      if (selectedPartId === 'tulle_stable' && cat === 'material_glowny_2') {
+        return true;
+      }
+      return false;
+    };
+
     return (
       <div className="garment-visualizer" style={{ flexDirection: 'column', padding: '1.5rem', alignItems: 'center' }}>
         <div className="view-section" style={{ width: '100%', maxWidth: '950px' }}>
@@ -252,7 +325,7 @@ export default function GarmentVisualizer({
 
           <svg
             id="interactive-bra-svg"
-            viewBox="0 0 2304 1628"
+            viewBox="0 0 1536 1085.25"
             className="garment-svg"
             style={{ width: '100%', height: 'auto', userSelect: 'none', overflow: 'visible' }}
             xmlns="http://www.w3.org/2000/svg"
@@ -272,257 +345,83 @@ export default function GarmentVisualizer({
               </marker>
             </defs>
 
-            {/* Ambient drafting board style background grid */}
-            <g stroke="#e2e8f0" strokeWidth="1.5" strokeDasharray="10 10" opacity="0.65">
-              <line x1="1120.3" y1="35" x2="1120.3" y2="1590" />
-              <line x1="75" y1="1060" x2="2228" y2="1060" />
-              <line x1="345" y1="150" x2="1958" y2="1475" opacity="0.4" />
-              <line x1="1958" y1="150" x2="345" y2="1475" opacity="0.4" />
+            {/* LAYER 0: The high-resolution bra background PNG drawing */}
+            <g transform="matrix(0.511397, 0, 0, 0.511316, 1.026503, 0.0000399724)">
+              <image href={braBackground} x="0" y="0" width="3000" height="2121" />
             </g>
 
-            {/* ========================================================= */}
-            {/* LAYER 1: INTERACTIVE BACKGROUND FILLS                      */}
-            {/* ========================================================= */}
-            <g transform="translate(0, 1628) scale(0.1, -0.1)">
-              {/* 1. Back wings / elastic powernet (tiul_elastyczny) */}
-              <g
-                id="wing-panels"
-                onMouseEnter={() => setHoveredPartId('tiul_elastyczny')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('tiul_elastyczny'))}
-              >
-                {TULLE_ELASTIC_FILLS.map((d, idx) => (
-                  <path key={`tulle-elastic-fill-${idx}`} d={d} style={getPartStyle('tiul_elastyczny')} />
-                ))}
-              </g>
+            {/* LAYER 1: Interactive Background Fills & Outlines for each Category */}
+            {Object.keys(BRA_PARTS_DATA).map((cat) => {
+              const mainId = mapPartIdToMainId(cat);
+              const color = getPartColorForCategory(cat);
+              const active = isPartActive(cat);
+              
+              const isHovered = hoveredPartId === cat || getPairedId(cat) === hoveredPartId;
+              const hasColor = !!partColors[mainId];
+              
+              let fillOpacity = 0.0;
+              if (hasColor) {
+                fillOpacity = 0.55; // blend overlay opacity
+              } else if (isHovered || active) {
+                fillOpacity = 0.25; // hover overlay opacity
+              }
+              
+              let fillStyle = {
+                transition: 'fill-opacity 0.2s ease, fill 0.2s ease',
+                mixBlendMode: 'multiply', // blend mode to keep seams and shading visible underneath
+                cursor: 'pointer'
+              };
+              
+              return (
+                <g
+                  key={`part-group-${cat}`}
+                  onMouseEnter={() => setHoveredPartId(cat)}
+                  onMouseLeave={() => setHoveredPartId(null)}
+                  onClick={() => onPartClick(mainId)}
+                >
+                  {/* Closed Fill Paths (blend color & handle hover fill) */}
+                  {BRA_PARTS_DATA[cat].fills.map((d, fIdx) => (
+                    <path
+                      key={`fill-${cat}-${fIdx}`}
+                      d={d}
+                      fill={hasColor ? color : active ? '#c9a236' : '#ffffff'}
+                      fillOpacity={fillOpacity}
+                      style={fillStyle}
+                    />
+                  ))}
+                  
+                  {/* Highlight Outlines (po konturu) when active/hovered */}
+                  {active && BRA_PARTS_DATA[cat].fills.map((d, oIdx) => (
+                    <path
+                      key={`contour-highlight-${cat}-${oIdx}`}
+                      d={d}
+                      fill="none"
+                      stroke="#c9a236"
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                      style={{ pointerEvents: 'none' }}
+                    />
+                  ))}
+                </g>
+              );
+            })}
 
-              {/* 2. Closures (haftka) */}
-              <g
-                id="closure-panels"
-                onMouseEnter={() => setHoveredPartId('haftka')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('haftka'))}
-              >
-                {CLOSURE_FILLS.map((d, idx) => (
-                  <path key={`closure-fill-${idx}`} d={d} style={getPartStyle('haftka')} />
-                ))}
-              </g>
-
-              {/* 3. Center bridge (tiul_stabilny) */}
-              <g
-                id="bridge-panels"
-                onMouseEnter={() => setHoveredPartId('tiul_stabilny')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('tiul_stabilny'))}
-              >
-                {TULLE_STABLE_FILLS.map((d, idx) => (
-                  <path key={`tulle-stable-fill-${idx}`} d={d} style={getPartStyle('tiul_stabilny')} />
-                ))}
-              </g>
-
-              {/* 4. Lower Cups (material) */}
-              <g
-                id="lower-cup-panels"
-                onMouseEnter={() => setHoveredPartId('material')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('material'))}
-              >
-                {FABRIC_FILLS.map((d, idx) => (
-                  <path key={`fabric-fill-${idx}`} d={d} style={getPartStyle('material')} />
-                ))}
-              </g>
-
-              {/* 5. Upper Cups (koronka) */}
-              <g
-                id="upper-cup-panels"
-                onMouseEnter={() => setHoveredPartId('koronka')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('koronka'))}
-              >
-                {LACE_FILLS.map((d, idx) => (
-                  <path key={`lace-fill-${idx}`} d={d} style={getPartStyle('koronka')} />
-                ))}
-              </g>
-
-              {/* 6. Edge elastics (guma_obszywkowa) */}
-              <g
-                id="elastic-trim-panels"
-                onMouseEnter={() => setHoveredPartId('guma_obszywkowa')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('guma_obszywkowa'))}
-              >
-                {ELASTIC_TRIM_FILLS.map((d, idx) => (
-                  <path key={`elastic-trim-fill-${idx}`} d={d} style={getPartStyle('guma_obszywkowa')} />
-                ))}
-              </g>
-
-              {/* 7. Shoulder straps (guma_ramiackowa) */}
-              <g
-                id="elastic-strap-panels"
-                onMouseEnter={() => setHoveredPartId('guma_ramiackowa')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('guma_ramiackowa'))}
-              >
-                {ELASTIC_STRAP_FILLS.map((d, idx) => (
-                  <path key={`elastic-strap-fill-${idx}`} d={d} style={getPartStyle('guma_ramiackowa')} />
-                ))}
-              </g>
-
-              {/* 8. Rings (kolka) */}
-              <g
-                id="ring-panels"
-                onMouseEnter={() => setHoveredPartId('kolka')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('kolka'))}
-              >
-                {RING_FILLS.map((d, idx) => (
-                  <path key={`ring-fill-${idx}`} d={d} style={getPartStyle('kolka')} />
-                ))}
-              </g>
-
-              {/* 9. Sliders (regulatory) */}
-              <g
-                id="slider-panels"
-                onMouseEnter={() => setHoveredPartId('regulatory')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('regulatory'))}
-              >
-                {SLIDER_FILLS.map((d, idx) => (
-                  <path key={`slider-fill-${idx}`} d={d} style={getPartStyle('regulatory')} />
-                ))}
-              </g>
-
-              {/* 10. Decorative Bow (kokardka) */}
-              <g
-                id="bow-panels"
-                onMouseEnter={() => setHoveredPartId('kokardka')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('kokardka'))}
-              >
-                {BOW_FILLS.map((d, idx) => (
-                  <path key={`bow-fill-${idx}`} d={d} style={getPartStyle('kokardka')} />
-                ))}
-              </g>
-
-              {/* 11. Wire casing tunnels (tunel_gorseciarski) */}
-              <g
-                id="tunnel-panels"
-                onMouseEnter={() => setHoveredPartId('tunel_gorseciarski')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('tunel_gorseciarski'))}
-              >
-                {TUNNEL_FILLS.map((d, idx) => (
-                  <path key={`tunnel-fill-${idx}`} d={d} style={getPartStyle('tunel_gorseciarski')} />
-                ))}
-              </g>
-
-              {/* 12. Underwires (fiszbiny) */}
-              <g
-                id="underwire-panels"
-                onMouseEnter={() => setHoveredPartId('fiszbiny')}
-                onMouseLeave={() => setHoveredPartId(null)}
-                onClick={() => onPartClick(mapGuidePartIdToMainId('fiszbiny'))}
-              >
-                {UNDERWIRE_FILLS.map((d, idx) => (
-                  <path key={`underwire-fill-${idx}`} d={d} style={getPartStyle('fiszbiny')} />
-                ))}
-              </g>
-            </g>
-
-            {/* ========================================================= */}
-            {/* LAYER 2: THE OUTLINE OVERLAY (Assembled from anatomia)     */}
-            {/* ========================================================= */}
-            <g transform="translate(0, 1628) scale(0.1, -0.1)" pointerEvents="none">
-              {OUTLINES.map((d, idx) => (
-                <path
-                  key={`outline-${idx}`}
-                  d={d}
-                  fill="#1e293b"
-                  stroke="none"
-                />
-              ))}
-            </g>
-
-            {/* ========================================================= */}
-            {/* LAYER 3: TECHNICAL LABELS AND POINTERS (Scaled 2304x1628)  */}
-            {/* ========================================================= */}
+            {/* LAYER 3: Vector labels and pointers from arrows.svg */}
             {showLabels && (
               <g id="technical-annotations" style={{ pointerEvents: 'none', transition: 'all 0.3s' }}>
-                {/* 1. Strap Elastic - Guma ramiączkowa */}
-                <path d="M 537.6 307.0 L 353.3 399.1" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="549.1" y="314.7" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="start">guma ramiączkowa</text>
-
-                <path d="M 1700.4 307.0 L 1884.7 399.1" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="1688.8" y="314.7" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="end">guma ramiączkowa</text>
-
-                {/* 2. Top cup neckline elastic - Guma obszywkowa (dekolt) */}
-                <path d="M 1119.0 598.7 Q 983.0 637.1 829.4 783.0" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <path d="M 1119.0 598.7 Q 1254.9 637.1 1408.5 783.0" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="1119.0" y="568.0" fontFamily="Montserrat, sans-serif" fontSize="26" fontWeight="bold" fill="#1e293b" textAnchor="middle">guma obszywkowa (dekolt)</text>
-
-                {/* 3. Upper Cup - Tkanina lub koronka */}
-                <text x="652.8" y="844.3" fontFamily="Montserrat, sans-serif" fontSize="22" fontWeight="bold" fill="#475569" textAnchor="middle">tkanina lub koronka</text>
-                <text x="1582.1" y="844.3" fontFamily="Montserrat, sans-serif" fontSize="22" fontWeight="bold" fill="#475569" textAnchor="middle">tkanina lub koronka</text>
-
-                {/* 4. Lower Cup - Dolna część miseczki */}
-                <text x="652.8" y="1113.0" fontFamily="Montserrat, sans-serif" fontSize="22" fontWeight="600" fill="#475569" textAnchor="middle">dolna część miseczki</text>
-                <text x="1582.1" y="1113.0" fontFamily="Montserrat, sans-serif" fontSize="22" fontWeight="600" fill="#475569" textAnchor="middle">dolna część miseczki</text>
-
-                {/* 5. Hook and eye closure - Haftka */}
-                <path d="M 169.0 1013.2 L 60.7 1070.8" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="180.5" y="1005.6" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="start">haftka (zapięcie)</text>
-
-                <path d="M 2065.9 1013.2 L 2188.8 1070.8" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="2054.4" y="1005.6" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="end">haftka (zapięcie)</text>
-
-                {/* 6. Wings - Skrzydełko obwodu */}
-                <path d="M 334.1 1013.2 L 268.8 1059.3" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="341.8" y="1005.6" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="start">skrzydełko obwodu</text>
-
-                <path d="M 1904.6 1013.2 L 1969.2 1059.3" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="1893.0" y="1005.6" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="end">skrzydełko obwodu</text>
-
-                {/* 7. Underband - Dolna guma obszywkowa */}
-                <path d="M 192.0 1366.3 L 268.8 1136.0" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="180.5" y="1389.4" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="start">guma obszywkowa (dół)</text>
-
-                <path d="M 2045.9 1366.3 L 1969.2 1136.0" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="2057.5" y="1389.4" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="end">guma obszywkowa (dół)</text>
-
-                {/* 8. Underwire casing - Tunel gorseciarski */}
-                <path d="M 506.9 1443.1 L 652.8 1197.5" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="499.2" y="1466.1" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="bold" fill="#334155" textAnchor="middle">tunel gorseciarski</text>
-
-                <path d="M 1731.1 1443.1 L 1585.1 1197.5" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="1738.7" y="1466.1" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="bold" fill="#334155" textAnchor="middle">tunel gorseciarski</text>
-
-                {/* 9. Underwires - Fiszbiny */}
-                <path d="M 844.8 1443.1 L 752.6 1212.8" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="844.8" y="1466.1" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="middle">fiszbiny</text>
-
-                <path d="M 1393.2 1443.1 L 1485.3 1212.8" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="1393.2" y="1466.1" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="middle">fiszbiny</text>
-
-                {/* 10. Center Gore - Mostek */}
-                <text x="1119.0" y="1013.2" fontFamily="Montserrat, sans-serif" fontSize="26" fontWeight="bold" fill="#1e293b" textAnchor="middle">mostek</text>
-
-                {/* 11. Mostek do miseczki */}
-                <path d="M 1013.8 1404.7 L 1059.8 1136.0" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="1013.8" y="1427.7" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="middle">mostek do miseczki</text>
-
-                {/* 12. Rings - Kółka */}
-                <path d="M 460.8 629.4 L 248.1 634.8" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="472.3" y="621.8" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#334155" textAnchor="start">kółko (łącznik)</text>
-
-                <path d="M 1777.2 629.4 L 1989.9 634.8" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="1765.6" y="621.8" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#334155" textAnchor="end">kółko (łącznik)</text>
-
-                {/* 13. Sliders - Regulatory */}
-                <path d="M 399.4 445.2 L 583.7 525.8" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="410.9" y="460.6" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="start">regulatory</text>
-
-                <path d="M 1838.6 445.2 L 1654.3 525.8" fill="none" stroke="#475569" strokeWidth="2.5" markerEnd="url(#pointer-arrow)" />
-                <text x="1827.1" y="460.6" fontFamily="Montserrat, sans-serif" fontSize="24" fontWeight="600" fill="#475569" textAnchor="end">regulatory</text>
+                {ARROWS_DATA.map((el, idx) => (
+                  <path
+                    key={`arrow-path-${idx}`}
+                    d={el.d}
+                    fill={el.fill}
+                    stroke={el.stroke}
+                    strokeWidth={el.strokeWidth}
+                    transform={el.transform}
+                    fillOpacity={el.fillOpacity}
+                    strokeOpacity={el.strokeOpacity}
+                  />
+                ))}
               </g>
             )}
           </svg>
