@@ -390,17 +390,17 @@ export default function GarmentVisualizer({
                     />
                   ))}
                   
-                  {/* Highlight Outlines (po konturu) when active/hovered */}
-                  {active && BRA_PARTS_DATA[cat].fills.map((d, oIdx) => (
+                  {/* Vector outlines of the component details (drawing lines) */}
+                  {BRA_PARTS_DATA[cat].outlines.map((d, oIdx) => (
                     <path
-                      key={`contour-highlight-${cat}-${oIdx}`}
+                      key={`outline-${cat}-${oIdx}`}
                       d={d}
                       fill="none"
-                      stroke="#c9a236"
-                      strokeWidth="2.5"
+                      stroke={active ? '#c9a236' : '#334155'}
+                      strokeWidth={active ? '2.5' : '0.8'}
                       strokeLinejoin="round"
                       strokeLinecap="round"
-                      style={{ pointerEvents: 'none' }}
+                      style={{ pointerEvents: 'none', transition: 'stroke 0.2s, stroke-width 0.2s' }}
                     />
                   ))}
                 </g>

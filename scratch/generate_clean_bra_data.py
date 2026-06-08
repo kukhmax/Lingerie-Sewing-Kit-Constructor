@@ -267,6 +267,10 @@ def get_category(f, xmin, ymin, xmax, ymax, cx, cy, w, h):
     if ymin > 410 and ymax < 560 and (xmin < 220 or xmax > 1310) and w < 70 and h < 70:
         return 'regulatory'
         
+    # Bottom elastic (guma_obszywkowa)
+    if ymin > 750 and h < 85 and w > 100:
+        return 'guma_obszywkowa'
+        
     # Shoulder straps (guma_ramiaczkowa)
     if f == "3.svg" or (ymax < 660 and (ymin < 550 or w < 50 or (w > 100 and h < 100))):
         return 'guma_ramiackowa'
@@ -282,10 +286,6 @@ def get_category(f, xmin, ymin, xmax, ymax, cx, cy, w, h):
     # Lower Gore (material_glowny_2)
     if ymin > 630 and ymax < 815 and abs(cx - 768) < 60:
         return 'material_glowny_2'
-        
-    # Bottom elastic (guma_obszywkowa)
-    if ymin > 700 and ymax < 875 and w > 400:
-        return 'guma_obszywkowa'
         
     # Cups (material_glowny_3)
     if ymin > 150 and ymax < 900 and (200 < cx < 1330):
@@ -376,7 +376,15 @@ def main():
                         
                         if cat != 'unknown':
                             d_str = commands_to_string(tx_cmds)
-                            is_closed = d.lower().endswith('z')
+                            is_closed_z = 'z' in d.lower() or 'z' in d_str.lower()
+                            is_closed_dist = False
+                            if len(coords) >= 3:
+                                start = coords[0]
+                                end = coords[-1]
+                                dist = ((start[0] - end[0])**2 + (start[1] - end[1])**2)**0.5
+                                if dist < 0.5:
+                                    is_closed_dist = True
+                            is_closed = is_closed_z or is_closed_dist
                             outlines[cat].append(d_str)
                             if is_closed:
                                 fills[cat].append(d_str)
