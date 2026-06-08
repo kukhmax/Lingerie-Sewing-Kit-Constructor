@@ -193,8 +193,14 @@ export default function GarmentVisualizer({
   };
 
   const getPartColor = (partId, defaultColor = '#ffffff') => {
+    // 1. Hover has the absolute highest priority for highlighting
+    if (hoveredPartId === partId) {
+      return '#c9a236'; // Gold highlight
+    }
+
+    // 2. Otherwise return selected product color if assigned
     if (partId === 'fabric') {
-      return partColors.fabric_elastic || partColors.fabric_stable || partColors.tulle_elastic || partColors.tulle_stable || partColors.fabric || defaultColor;
+      return partColors.fabric_elastic || partColors.fabric_stable || partColors.fabric || defaultColor;
     }
     if (partId === 'lace') {
       return partColors.lace_elastic || partColors.lace_stable || partColors.lace || defaultColor;
@@ -202,11 +208,6 @@ export default function GarmentVisualizer({
     const assigned = getAssignedColor(partId);
     if (assigned) return assigned;
 
-    const part = BRA_SVG_PARTS.find(p => p.id === partId);
-    const isActive = part && part.mainIds.includes(selectedPartId);
-    if (hoveredPartId === partId || isActive) {
-      return '#c9a236'; // Gold highlight
-    }
     return defaultColor;
   };
 
@@ -485,17 +486,16 @@ export default function GarmentVisualizer({
 
               {/* LAYER 1: Colorized/Hovered Active Parts */}
               {BRA_SVG_PARTS.map(part => {
-                const active = isPartActive(part);
                 const colored = hasPartColor(part);
                 const isHovered = hoveredPartId === part.id;
-                const isVisible = isHovered || active || colored;
+                const isVisible = isHovered || colored;
 
                 if (!isVisible) return null;
 
                 let filterEffect = `url(#colorize-${part.id})`;
 
-                // Add gold glow outline for hover or selection states
-                if (isHovered || active) {
+                // Add gold glow outline ONLY on hover
+                if (isHovered) {
                   filterEffect += ' drop-shadow(0 0 4px #c9a236) drop-shadow(0 0 8px rgba(201,162,54,0.4))';
                 }
 

@@ -229,3 +229,12 @@ W tym kroku wykonaliśmy:
 3. Podczas ruchu myszką po niewidocznej nakładce (overlay) w `GarmentVisualizer.jsx`, współrzędne są przeliczane na siatkę canvas, a funkcja sprawdza pozycje pikseli na maskach detali według kolejności priorytetowej (od najmniejszych na wierzchu do największych pod spodem). Dzięki temu kliknięcia i hovery są w 100% dokładne i nie blokują się nawzajem.
 4. Zaimplementowano zaawansowane filtry kolorystyczne SVG w locie. Filtry te przekształcają biały tło na przezroczysty, a wybrany kolor produktu mieszają z oryginalnym cieniowaniem szarości detalu w trybie `multiply`, co pozwala zachować wszystkie linie rysunku, tekstury i cienie, dając efekt trójwymiarowości klasy premium.
 5. Pomyślnie zweryfikowano kompilację React za pomocą `npm run build`.
+
+## Krok 22: Poprawka interaktywnego podświetlania materiałów głównych i stanów aktywnych
+**Data:** 2026-06-09
+
+W tym kroku wykonaliśmy:
+1. Rozwiązano błąd w funkcji `getPartColor` w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx), gdzie warunki dla `'fabric'` i `'lace'` powodowały wczesne wyjście z funkcji (early return) i uniemożliwiały ich podświetlanie (hover) na złoto.
+2. Zmieniono priorytety w `getPartColor`: sprawdzenie stanu najechania myszką (`hoveredPartId === partId`) zostało przeniesione na sam początek funkcji, co gwarantuje natychmiastowe podświetlanie wszystkich materiałów głównych (tkanina, koronka, tiule) na złoto przy najechaniu.
+3. Usunięto automatyczne podświetlanie i złoty blask (`drop-shadow` i złota obwódka) dla elementów aktywnych/wybranych w lewej kolumnie, które nie są aktualnie wskazywane kursorem myszy (`isHovered`). Zapobiega to ciągłemu świeceniu miseczek na starcie aplikacji i pozwala na pełną kontrolę wizualną wyłącznie za pomocą kursora.
+4. Przeprowadzono pomyślną kompilację produkcyjną frontendu i przetestowano działanie modelu.
