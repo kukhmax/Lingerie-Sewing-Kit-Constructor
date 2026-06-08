@@ -192,3 +192,15 @@ W tym kroku wykonaliśmy:
 2. Реализована фильтрация мусорных векторных путей. Удалены все векторные буквы подписей (например, "tory", "regu", "mostek") и стрелки указателей, которые векторизатор распознавал как детали. Это сделано с помощью фильтра площади (площадь < 25000) и пространственных рамок.
 3. Протестирована сборка React с помощью `npm run build` во фронтенде и перезапущены контейнеры `docker compose up --build -d`. Все области наведения, подсветки и клика на макете теперь точно совпадают с визуальными элементами чертежа.
 
+## Krok 19: Implementacja trójwarstwowej architektury inline SVG i precyzyjnego pozycjonowania interakcji
+**Data:** 2026-06-08
+
+W tym kroku wykonaliśmy:
+1. Zastąpiono statyczne i nieprecyzyjne nakładki obrazkowe `<img>` w pełni dynamicznie pobieranymi i wbudowywanymi w kod dokumentu wektorami inline SVG (`dangerouslySetInnerHTML`), co otworzyło możliwość manipulowania bezpośrednio ścieżkami (paths).
+2. Rozwiązano problem nakładania się prostokątnych obszarów klikań poprzez precyzyjne sterowanie zdarzeniami wskaźnika w CSS: kontener `<svg>` ignoruje interakcje (`pointer-events: none`), podczas gdy wewnętrzna grupa z rysunkiem reaguje wyłącznie na obszarach faktycznie narysowanych wektorów (`pointer-events: auto`).
+3. Zaimplementowano dynamiczne i izolowane stylowanie kolorów za pomocą generowanych w locie bloków `<style>` (selektor `.part-svg-${part.id} path` z modyfikatorem `!important`). Gwarantuje to perfekcyjne nadpisywanie oryginalnych barw bez utraty cieniowania i detali z warstwy tła (`biustonosz.svg`).
+4. Dodano efekt wizualny premium w postaci złotej poświaty (`drop-shadow` w filtrach CSS) wokół krawędzi aktualnie wskazanych (hovered/active) elementów.
+5. Zintegrowano warstwę podpisów technicznych (`arrows.svg`) jako płynnie gasnący i pojawiający się element (`transition: opacity 0.3s ease, visibility 0.3s ease`) w oparciu o stan `showLabels`.
+6. Pomyślnie przeprowadzono testową kompilację produkcyjną (`npm run build`).
+
+
