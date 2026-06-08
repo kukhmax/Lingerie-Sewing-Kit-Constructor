@@ -198,9 +198,12 @@ W tym kroku wykonaliśmy:
 W tym kroku wykonaliśmy:
 1. Zastąpiono statyczne i nieprecyzyjne nakładki obrazkowe `<img>` w pełni dynamicznie pobieranymi i wbudowywanymi w kod dokumentu wektorami inline SVG (`dangerouslySetInnerHTML`), co otworzyło możliwość manipulowania bezpośrednio ścieżkami (paths).
 2. Rozwiązano problem nakładania się prostokątnych obszarów klikań poprzez precyzyjne sterowanie zdarzeniami wskaźnika w CSS: kontener `<svg>` ignoruje interakcje (`pointer-events: none`), podczas gdy wewnętrzna grupa z rysunkiem reaguje wyłącznie na obszarach faktycznie narysowanych wektorów (`pointer-events: auto`).
-3. Zaimplementowano dynamiczne i izolowane stylowanie kolorów za pomocą generowanych w locie bloków `<style>` (selektor `.part-svg-${part.id} path` z modyfikatorem `!important`). Gwarantuje to perfekcyjne nadpisywanie oryginalnych barw bez utraty cieniowania i detali z warstwy tła (`biustonosz.svg`).
-4. Dodano efekt wizualny premium w postaci złotej poświaty (`drop-shadow` w filtrach CSS) wokół krawędzi aktualnie wskazanych (hovered/active) elementów.
-5. Zintegrowano warstwę podpisów technicznych (`arrows.svg`) jako płynnie gasnący i pojawiający się element (`transition: opacity 0.3s ease, visibility 0.3s ease`) w oparciu o stan `showLabels`.
-6. Pomyślnie przeprowadzono testową kompilację produkcyjną (`npm run build`).
+3. Zoptymalizowano proces ładowania SVG: usunięto nieużywane pobieranie ciężkich plików (`biustonosz.svg` o rozmiarze 4.4MB oraz `arrows.svg` o rozmiarze 307KB) za pomocą `fetch`, serwując je bezpośrednio przez przeglądarkę jako standardowe tagi `<img>` (co w pełni wykorzystuje cache HTTP).
+4. Usunięto funkcję `extractPaths` opartą na regularnych wyrażeniach (`match`), która przy przetwarzaniu wielomegabajtowych ciągów znaków (takich jak spakowane wektory detali) powodowała błąd przekroczenia stosu wywołań (catastrophic regex backtracking) i zamrażała wątek UI przeglądarki. Dane SVG są teraz ładowane w czystej postaci tekstowej bezpośrednio do stanu React, co eliminuje opóźnienia i gwarantuje błyskawiczne renderowanie.
+5. Zaimplementowano dynamiczne i izolowane stylowanie kolorów za pomocą generowanych w locie bloków `<style>` (selektor `.part-svg-${part.id} path` z modyfikatorem `!important`). Gwarantuje to perfekcyjne nadpisywanie oryginalnych barw bez utraty cieniowania i detali z warstwy tła.
+6. Dodano efekt wizualny premium w postaci złotej poświaty (`drop-shadow` w filtrach CSS) wokół krawędzi aktualnie wskazanych (hovered/active) elementów.
+7. Zintegrowano warstwę podpisów technicznych (`arrows.svg`) jako płynnie gasnący i pojawiający się element (`transition: opacity 0.3s ease, visibility 0.3s ease`) w oparciu o stan `showLabels`.
+8. Pomyślnie przeprowadzono testową kompilację produkcyjną (`npm run build`).
+
 
 

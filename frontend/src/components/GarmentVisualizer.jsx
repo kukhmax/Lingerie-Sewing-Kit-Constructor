@@ -70,8 +70,6 @@ export default function GarmentVisualizer({
 }) {
   const [hoveredPartId, setHoveredPartId] = useState(null);
   const [svgContents, setSvgContents] = useState({});
-  const [baseSvg, setBaseSvg] = useState(null);
-  const [arrowsSvg, setArrowsSvg] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // ---- SVG Loader ----
@@ -93,44 +91,19 @@ export default function GarmentVisualizer({
       }
     };
 
-    const extractPaths = (svgText, removeWhiteBg = false) => {
-      if (!svgText) return '';
-      // Extract everything between <svg> and </svg> tags
-      const match = svgText.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i);
-      if (!match) return '';
-      let inner = match[1];
-      // Optionally remove white background paths
-      if (removeWhiteBg) {
-        inner = inner.replace(/<path[^>]*fill="#FEFEFE"[^/]*\/>/gi, '');
-      }
-      return inner;
-    };
-
     const loadAll = async () => {
       setLoading(true);
 
-      // Load base biustonosz.svg
-      const baseText = await fetchSvg('/bra/biustonosz.svg');
-      if (!cancelled && baseText) {
-        setBaseSvg(extractPaths(baseText, false));
-      }
-
-      // Load part SVGs
+      // Load part SVGs directly without regex extraction
       const partContents = {};
       for (const part of BRA_SVG_PARTS) {
         const text = await fetchSvg(`/bra/${part.file}`);
         if (!cancelled && text) {
-          partContents[part.id] = extractPaths(text, true);
+          partContents[part.id] = text;
         }
       }
       if (!cancelled) {
         setSvgContents(partContents);
-      }
-
-      // Load arrows SVG
-      const arrowsText = await fetchSvg('/bra/arrows.svg');
-      if (!cancelled && arrowsText) {
-        setArrowsSvg(extractPaths(arrowsText, true));
       }
 
       if (!cancelled) setLoading(false);
