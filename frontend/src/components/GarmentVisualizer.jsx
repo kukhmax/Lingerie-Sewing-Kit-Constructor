@@ -1,96 +1,89 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 // ============================================================================
-// SVG Bra Parts Configuration
-// Maps SVG file names to constructor part IDs for interactive behavior
+// SVG Bra Parts Configuration (Hit-test priority from top to bottom)
 // ============================================================================
 const BRA_SVG_PARTS = [
   {
-    id: 'lace',
-    file: 'part_lace.svg',
-    label: 'Koronka',
-    mainIds: ['lace_elastic', 'lace_stable'],
-  },
-  {
-    id: 'fabric',
-    file: 'part_fabric.svg',
-    label: 'Tkanina',
-    mainIds: ['fabric_elastic', 'fabric_stable'],
-  },
-  {
-    id: 'tulle_elastic',
-    file: 'part_tulle_elastic.svg',
-    label: 'Tiul elastyczny',
-    mainIds: ['tulle_elastic'],
-  },
-  {
-    id: 'tulle_stable',
-    file: 'part_tulle_stable.svg',
-    label: 'Tiul stabilny',
-    mainIds: ['tulle_stable'],
-  },
-  {
-    id: 'elastic_trim',
-    file: 'part_elastic_trim.svg',
-    label: 'Guma obszywkowa (obwód)',
-    mainIds: ['elastic_trim'],
-  },
-  {
-    id: 'elastic_strap',
-    file: 'part_elastic_strap.svg',
-    label: 'Guma ramiączkowa',
-    mainIds: ['elastic_strap'],
+    id: 'bow',
+    file: 'kokardka.svg',
+    label: 'Kokardka ozdobna',
+    mainIds: ['bow'],
   },
   {
     id: 'ring',
-    file: 'part_ring.svg',
+    file: 'kolka.svg',
     label: 'Kółka metalowe',
     mainIds: ['ring'],
   },
   {
     id: 'slider',
-    file: 'part_slider.svg',
+    file: 'regulatory.svg',
     label: 'Regulatory metalowe',
     mainIds: ['slider'],
   },
   {
     id: 'closure',
-    file: 'part_closure.svg',
+    file: 'haftki.svg',
     label: 'Zapięcie haftkowe',
     mainIds: ['closure'],
   },
   {
     id: 'underwire',
-    file: 'part_underwire.svg',
+    file: 'fiszbiny.svg',
     label: 'Fiszbiny metalowe',
     mainIds: ['underwire'],
   },
   {
     id: 'tunnel',
-    file: 'part_tunnel.svg',
+    file: 'tunel_gorseciarski.svg',
     label: 'Tunel gorseciarski',
     mainIds: ['tunnel'],
   },
   {
-    id: 'bow',
-    file: 'part_bow.svg',
-    label: 'Kokardka ozdobna',
-    mainIds: ['bow'],
+    id: 'elastic_strap',
+    file: 'guma_ramiackowa.svg',
+    label: 'Guma ramiączkowa',
+    mainIds: ['elastic_strap'],
+  },
+  {
+    id: 'elastic_trim',
+    file: 'gumy.svg',
+    label: 'Guma obszywkowa (obwód)',
+    mainIds: ['elastic_trim'],
+  },
+  {
+    id: 'tulle_stable',
+    file: 'material_glowny_2.svg',
+    label: 'Tiul stabilny',
+    mainIds: ['tulle_stable'],
+  },
+  {
+    id: 'tulle_elastic',
+    file: 'material_glowny_1.svg',
+    label: 'Tiul elastyczny',
+    mainIds: ['tulle_elastic'],
+  },
+  {
+    id: 'fabric',
+    file: 'material_glowny_3.svg',
+    label: 'Tkanina',
+    mainIds: ['fabric_elastic', 'fabric_stable'],
+  },
+  {
+    id: 'lace',
+    file: 'material_glowny_4.svg',
+    label: 'Koronka',
+    mainIds: ['lace_elastic', 'lace_stable'],
   },
 ];
 
-// SVG content cache (module-level to persist across re-renders)
-const svgCache = {};
+// Global cache for preprocessed pixel hit-test grids
+const hitTestCache = {};
 
 // ============================================================================
 // GarmentVisualizer Component
 // ============================================================================
-// Props:
-// - garmentType: 'biustonosz', 'majtki', 'bralet'
-// - selectedPartId: string (e.g. 'fabric_elastic', 'elastic_trim')
-// - onPartClick: function(partId)
-// - partColors: object mapping partId -> hex color string
-// - showLabels: boolean (toggle arrows/labels layer)
 export default function GarmentVisualizer({
   garmentType,
   selectedPartId,
@@ -99,51 +92,106 @@ export default function GarmentVisualizer({
   showLabels = true
 }) {
   const [hoveredPartId, setHoveredPartId] = useState(null);
-  const [svgContents, setSvgContents] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loadingHitTest, setLoadingHitTest] = useState(false);
+  const hitTestGridsRef = useRef({});
+  const containerRef = useRef(null);
 
-  // ---- SVG Loader ----
+  // ---- Hit Test Grid Preprocessing ----
   useEffect(() => {
     if (garmentType !== 'biustonosz') return;
 
-    let cancelled = false;
+    if (Object.keys(hitTestCache).length > 0) {
+      hitTestGridsRef.current = hitTestCache;
+      return;
+    }
 
-    const fetchSvg = async (url) => {
-      if (svgCache[url]) return svgCache[url];
-      try {
-        const response = await fetch(url);
-        const text = await response.text();
-        svgCache[url] = text;
-        return text;
-      } catch (err) {
-        console.error(`Failed to load SVG: ${url}`, err);
-        return null;
-      }
-    };
+    let active = true;
+    setLoadingHitTest(true);
 
-    const loadAll = async () => {
-      setLoading(true);
+    const loadGrids = async () => {
+      const grids = {};
+      const width = 512;
+      const height = 362; // 1/4 of 2048x1447
 
-      // Load part SVGs directly without regex extraction
-      const partContents = {};
       for (const part of BRA_SVG_PARTS) {
-        const text = await fetchSvg(`/bra/${part.file}`);
-        if (!cancelled && text) {
-          partContents[part.id] = text;
+        if (!active) return;
+        try {
+          const img = new Image();
+          img.src = `/bra/${part.file}`;
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = () => reject(new Error(`Failed to load ${part.file}`));
+          });
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const imgData = ctx.getImageData(0, 0, width, height);
+          const pixels = imgData.data;
+          const grid = new Uint8Array(width * height);
+
+          // 1. Thresholding: non-white pixels (luminance < 250) are part of the detail
+          for (let i = 0; i < pixels.length; i += 4) {
+            const r = pixels[i];
+            const g = pixels[i + 1];
+            const b = pixels[i + 2];
+            if (r < 250 || g < 250 || b < 250) {
+              grid[i / 4] = 1;
+            }
+          }
+
+          // 2. 2D Dilation with radius 2 to expand clickable bounds and close gaps
+          const dilatedGrid = new Uint8Array(width * height);
+          const radius = 2;
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+              if (grid[y * width + x] === 1) {
+                for (let dy = -radius; dy <= radius; dy++) {
+                  for (let dx = -radius; dx <= radius; dx++) {
+                    const ny = y + dy;
+                    const nx = x + dx;
+                    if (ny >= 0 && ny < height && nx >= 0 && nx < width) {
+                      dilatedGrid[ny * width + nx] = 1;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          grids[part.id] = dilatedGrid;
+        } catch (e) {
+          console.error(`Error loading hit-test grid for ${part.id}:`, e);
         }
       }
-      if (!cancelled) {
-        setSvgContents(partContents);
-      }
 
-      if (!cancelled) setLoading(false);
+      if (active) {
+        Object.assign(hitTestCache, grids);
+        hitTestGridsRef.current = grids;
+        setLoadingHitTest(false);
+      }
     };
 
-    loadAll();
-    return () => { cancelled = true; };
+    loadGrids();
+
+    return () => {
+      active = false;
+    };
   }, [garmentType]);
 
-  // ---- Helper Functions (shared) ----
+  // ---- Helper Functions ----
+  const getAssignedColor = (partId) => {
+    const part = BRA_SVG_PARTS.find(p => p.id === partId);
+    if (!part) return null;
+    for (const id of part.mainIds) {
+      if (partColors[id]) return partColors[id];
+    }
+    return null;
+  };
+
   const getPartColor = (partId, defaultColor = '#ffffff') => {
     if (partId === 'fabric') {
       return partColors.fabric_elastic || partColors.fabric_stable || partColors.tulle_elastic || partColors.tulle_stable || partColors.fabric || defaultColor;
@@ -151,7 +199,15 @@ export default function GarmentVisualizer({
     if (partId === 'lace') {
       return partColors.lace_elastic || partColors.lace_stable || partColors.lace || defaultColor;
     }
-    return partColors[partId] || defaultColor;
+    const assigned = getAssignedColor(partId);
+    if (assigned) return assigned;
+
+    const part = BRA_SVG_PARTS.find(p => p.id === partId);
+    const isActive = part && part.mainIds.includes(selectedPartId);
+    if (hoveredPartId === partId || isActive) {
+      return '#c9a236'; // Gold highlight
+    }
+    return defaultColor;
   };
 
   const getPartStroke = (partId) => {
@@ -231,43 +287,79 @@ export default function GarmentVisualizer({
     }
   };
 
-  // ---- Bra Visualizer ----
-  const renderBiustonosz = () => {
-    // Check if a part's mainIds overlap with selectedPartId
-    const isPartActive = (part) => {
-      if (hoveredPartId === part.id) return true;
-      return part.mainIds.includes(selectedPartId);
-    };
+  const isPartActive = (part) => {
+    return part.mainIds.includes(selectedPartId);
+  };
 
-    // Check if any mainId has a color assigned
-    const hasPartColor = (part) => {
-      return part.mainIds.some(id => !!partColors[id]);
-    };
+  const hasPartColor = (part) => {
+    return part.mainIds.some(id => !!partColors[id]);
+  };
 
-    // Get the first assigned color for a part
-    const getAssignedColor = (part) => {
-      for (const id of part.mainIds) {
-        if (partColors[id]) return partColors[id];
-      }
+  const getPrimaryMainId = (part) => {
+    if (part.mainIds.includes(selectedPartId)) return selectedPartId;
+    return part.mainIds[0];
+  };
+
+  const getHoverLabel = () => {
+    if (!hoveredPartId) return null;
+    const part = BRA_SVG_PARTS.find(p => p.id === hoveredPartId);
+    return part ? part.label : null;
+  };
+
+  // ---- Pixel Hit Testing ----
+  const handleHitTest = useCallback((clientX, clientY) => {
+    if (!containerRef.current) return null;
+    const rect = containerRef.current.getBoundingClientRect();
+    const localX = clientX - rect.left;
+    const localY = clientY - rect.top;
+
+    // Map local coordinates to 512x362 grid space
+    const gridX = Math.round((localX / rect.width) * 512);
+    const gridY = Math.round((localY / rect.height) * 362);
+
+    if (gridX < 0 || gridX >= 512 || gridY < 0 || gridY >= 362) {
       return null;
-    };
+    }
 
-    // Get the primary mainId to pass to onPartClick
-    const getPrimaryMainId = (part) => {
-      // If selectedPartId matches one of this part's mainIds, use it
-      if (part.mainIds.includes(selectedPartId)) return selectedPartId;
-      // Otherwise use the first mainId
-      return part.mainIds[0];
-    };
+    const index = gridY * 512 + gridX;
 
-    // Get hover label for the currently hovered part
-    const getHoverLabel = () => {
-      if (!hoveredPartId) return null;
-      const part = BRA_SVG_PARTS.find(p => p.id === hoveredPartId);
-      return part ? part.label : null;
-    };
+    // Check grids in priority order (front/topmost first)
+    for (const part of BRA_SVG_PARTS) {
+      const grid = hitTestGridsRef.current[part.id];
+      if (grid && grid[index] === 1) {
+        return part.id;
+      }
+    }
+    return null;
+  }, []);
 
-    if (loading) {
+  const onMouseMove = (e) => {
+    const hoveredPart = handleHitTest(e.clientX, e.clientY);
+    setHoveredPartId(hoveredPart);
+    if (hoveredPart) {
+      e.currentTarget.style.cursor = 'pointer';
+    } else {
+      e.currentTarget.style.cursor = 'default';
+    }
+  };
+
+  const onMouseLeave = () => {
+    setHoveredPartId(null);
+  };
+
+  const onOverlayClick = (e) => {
+    const clickedPartId = handleHitTest(e.clientX, e.clientY);
+    if (clickedPartId) {
+      const part = BRA_SVG_PARTS.find(p => p.id === clickedPartId);
+      if (part) {
+        onPartClick(getPrimaryMainId(part));
+      }
+    }
+  };
+
+  // ---- Bra Visualizer Rendering ----
+  const renderBiustonosz = () => {
+    if (loadingHitTest) {
       return (
         <div className="garment-visualizer" style={{ flexDirection: 'column', padding: '1.5rem', alignItems: 'center' }}>
           <div style={{
@@ -287,7 +379,7 @@ export default function GarmentVisualizer({
               backgroundColor: '#ec4899',
               marginRight: '8px',
             }} />
-            Ładowanie modelu wektorowego...
+            Wczytywanie makiety interaktywnej...
           </div>
         </div>
       );
@@ -297,7 +389,7 @@ export default function GarmentVisualizer({
       <div className="garment-visualizer" style={{ flexDirection: 'column', padding: '1.5rem', alignItems: 'center' }}>
         <div className="view-section" style={{ width: '100%', maxWidth: '950px' }}>
           
-          {/* SVG Interaction Guides */}
+          {/* Header Info Panel */}
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -330,125 +422,129 @@ export default function GarmentVisualizer({
             </div>
           </div>
 
-          {/* Interactive SVG Container */}
-          <div style={{
-            position: 'relative',
-            width: '100%',
-            backgroundColor: '#ffffff',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            border: '1px solid rgba(0,0,0,0.06)',
-          }}>
-            {/* LAYER 0: Base biustonosz.svg (always visible, non-interactive) */}
-            <img 
-              src="/bra/biustonosz.svg" 
-              alt="Anatomia biustonosza" 
-              style={{
-                display: 'block',
-                width: '100%',
-                height: 'auto',
-                pointerEvents: 'none',
-                userSelect: 'none',
-              }}
-            />
-
-            {/* LAYER 1: Interactive Part Overlays */}
-            {BRA_SVG_PARTS.map((part) => {
-              const active = isPartActive(part);
-              const colored = hasPartColor(part);
-              const assignedColor = getAssignedColor(part);
-              const isHovered = hoveredPartId === part.id;
-
-              // Part is visible when hovered, active (selected), or has assigned color
-              const isVisible = isHovered || active || colored;
-
-              // Determine fill color for the paths of this SVG
-              let pathFill = 'transparent';
-              if (colored && assignedColor) {
-                pathFill = assignedColor;
-              } else if (active || isHovered) {
-                pathFill = '#c9a236'; // Premium Gold highlight
-              }
-
-              // Determine mix blend mode and opacity for rendering
-              let mixBlendMode = 'normal';
-              let opacity = 0;
-
-              if (isVisible) {
-                if (colored && assignedColor) {
-                  mixBlendMode = 'multiply';
-                  opacity = isHovered ? 0.65 : active ? 0.6 : 0.45;
-                } else {
-                  // If just active/hovered (not colored), show gold overlay
-                  mixBlendMode = 'multiply';
-                  opacity = isHovered ? 0.45 : 0.35;
-                }
-              }
-
-              const svgInnerHtml = svgContents[part.id];
-
-              // Skip rendering if not loaded yet
-              if (!svgInnerHtml) return null;
-
-              return (
-                <div key={part.id}>
-                  <style dangerouslySetInnerHTML={{ __html: `
-                    .part-svg-${part.id} path {
-                      fill: ${pathFill} !important;
-                      transition: fill 0.25s ease;
-                    }
-                  `}} />
-                  <svg
-                    viewBox="0 0 2048 1447"
-                    className={`part-svg-${part.id}`}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      pointerEvents: 'none', // SVG container ignores clicks
-                      zIndex: isHovered ? 10 : active ? 5 : 1,
-                      opacity: opacity,
-                      mixBlendMode: mixBlendMode,
-                      transition: 'opacity 0.25s ease, filter 0.25s ease',
-                      filter: active || isHovered 
-                        ? 'drop-shadow(0 0 4px #c9a236) drop-shadow(0 0 8px rgba(201,162,54,0.4))'
-                        : 'none',
-                    }}
-                  >
-                    <g
-                      style={{
-                        pointerEvents: 'auto', // Paths catch mouse moves/clicks
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => onPartClick(getPrimaryMainId(part))}
-                      onMouseEnter={() => setHoveredPartId(part.id)}
-                      onMouseLeave={() => setHoveredPartId(null)}
-                      dangerouslySetInnerHTML={{ __html: svgInnerHtml }}
-                    />
-                  </svg>
-                </div>
-              );
-            })}
-
-            {/* LAYER 2: Arrows / Labels */}
-            <img
-              src="/bra/arrows.svg"
-              alt="Opisy części"
+          {/* Interactive SVG Stacking Container */}
+          <div 
+            ref={containerRef}
+            style={{
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '1536 / 1085.25',
+              backgroundColor: '#ffffff',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: '1px solid rgba(0,0,0,0.06)',
+            }}
+          >
+            <svg
+              viewBox="0 0 1536 1085.25"
               style={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 width: '100%',
                 height: '100%',
-                pointerEvents: 'none',
-                userSelect: 'none',
-                transition: 'opacity 0.3s ease, visibility 0.3s ease',
-                opacity: showLabels ? 1 : 0,
-                visibility: showLabels ? 'visible' : 'hidden',
-                zIndex: 20,
+                pointerEvents: 'none'
               }}
+            >
+              <defs>
+                {/* Dynamically generated colorization filters for each part */}
+                {BRA_SVG_PARTS.map(part => {
+                  const color = getPartColor(part.id);
+                  return (
+                    <filter key={part.id} id={`colorize-${part.id}`} colorInterpolationFilters="sRGB">
+                      {/* Step 1: Make white background transparent.
+                           Alpha = 3 - R - G - B
+                      */}
+                      <feColorMatrix type="matrix" values="
+                        1 0 0 0 0
+                        0 1 0 0 0
+                        0 0 1 0 0
+                        -1 -1 -1 0 3
+                      " result="transmask"/>
+
+                      {/* Step 2: Steep threshold to keep lines solid and remove background noise */}
+                      <feComponentTransfer in="transmask" result="alpha-mask">
+                        <feFuncA type="linear" slope="20" intercept="-1"/>
+                      </feComponentTransfer>
+
+                      {/* Step 3: Flood with selected color */}
+                      <feFlood flood-color={color} flood-opacity="1" result="floodColor"/>
+
+                      {/* Step 4: Multiply color over grayscale texture (preserves lines/shading) */}
+                      <feBlend mode="multiply" in="SourceGraphic" in2="floodColor" result="multiplied"/>
+
+                      {/* Step 5: Composite back onto transparent alpha mask */}
+                      <feComposite in="multiplied" in2="alpha-mask" operator="in"/>
+                    </filter>
+                  );
+                })}
+              </defs>
+
+              {/* LAYER 0: Reference Base Outline */}
+              <image href="/bra/biustonosz_caly.svg" x="0" y="0" width="1536" height="1085.25" />
+
+              {/* LAYER 1: Colorized/Hovered Active Parts */}
+              {BRA_SVG_PARTS.map(part => {
+                const active = isPartActive(part);
+                const colored = hasPartColor(part);
+                const isHovered = hoveredPartId === part.id;
+                const isVisible = isHovered || active || colored;
+
+                if (!isVisible) return null;
+
+                let filterEffect = `url(#colorize-${part.id})`;
+
+                // Add gold glow outline for hover or selection states
+                if (isHovered || active) {
+                  filterEffect += ' drop-shadow(0 0 4px #c9a236) drop-shadow(0 0 8px rgba(201,162,54,0.4))';
+                }
+
+                return (
+                  <image
+                    key={part.id}
+                    href={`/bra/${part.file}`}
+                    x="0"
+                    y="0"
+                    width="1536"
+                    height="1085.25"
+                    style={{
+                      opacity: 1.0,
+                      filter: filterEffect,
+                      transition: 'filter 0.25s ease'
+                    }}
+                  />
+                );
+              })}
+
+              {/* LAYER 2: Arrows / Labels (Dynamic Toggle) */}
+              <image
+                href="/bra/nazwy.svg"
+                x="0"
+                y="0"
+                width="1536"
+                height="1085.25"
+                style={{
+                  transition: 'opacity 0.3s ease, visibility 0.3s ease',
+                  opacity: showLabels ? 1 : 0,
+                  visibility: showLabels ? 'visible' : 'hidden'
+                }}
+              />
+            </svg>
+
+            {/* LAYER 3: Invisible Hit Test Capture Overlay */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 100,
+                cursor: 'default'
+              }}
+              onMouseMove={onMouseMove}
+              onMouseLeave={onMouseLeave}
+              onClick={onOverlayClick}
             />
           </div>
           

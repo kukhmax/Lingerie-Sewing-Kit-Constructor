@@ -220,5 +220,12 @@ W tym kroku wykonaliśmy:
 6. Pomyślnie przebudowano kontenery za pomocą `docker compose up --build -d`.
 
 
+## Krok 21: Przepisanie makiety biustonosza od podstaw i wdrożenie hit-testu opartego o piksele
+**Data:** 2026-06-08
 
-
+W tym kroku wykonaliśmy:
+1. Usunięto stare pliki rysunków i skopiowano nowe pliki SVG z katalogu `biustonosz_svg/` do `frontend/public/bra/`.
+2. Zaimplementowano detekcję najazdu myszką (hit-testing) w oparciu o piksele. Przy uruchomieniu komponentu, wszystkie 12 obrazów detali ładowanych jest na ukryty canvas o rozmiarze 512x362, gdzie piksele tła (białe/zbliżone do białego) są zerowane, a detale zamieniane w maskę binarną. Na masce wykonywana jest dylatacja (dilation) o promieniu 2 pikseli, aby ułatwić klikanie w cienkie linie i zlikwidować luki.
+3. Podczas ruchu myszką po niewidocznej nakładce (overlay) w `GarmentVisualizer.jsx`, współrzędne są przeliczane na siatkę canvas, a funkcja sprawdza pozycje pikseli na maskach detali według kolejności priorytetowej (od najmniejszych na wierzchu do największych pod spodem). Dzięki temu kliknięcia i hovery są w 100% dokładne i nie blokują się nawzajem.
+4. Zaimplementowano zaawansowane filtry kolorystyczne SVG w locie. Filtry te przekształcają biały tło na przezroczysty, a wybrany kolor produktu mieszają z oryginalnym cieniowaniem szarości detalu w trybie `multiply`, co pozwala zachować wszystkie linie rysunku, tekstury i cienie, dając efekt trójwymiarowości klasy premium.
+5. Pomyślnie zweryfikowano kompilację React za pomocą `npm run build`.
