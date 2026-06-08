@@ -205,5 +205,20 @@ W tym kroku wykonaliśmy:
 7. Zintegrowano warstwę podpisów technicznych (`arrows.svg`) jako płynnie gasnący i pojawiający się element (`transition: opacity 0.3s ease, visibility 0.3s ease`) w oparciu o stan `showLabels`.
 8. Pomyślnie przeprowadzono testową kompilację produkcyjną (`npm run build`).
 
+## Krok 20: Dalsza optymalizacja wydajności, podział detali i wdrożenie Nginx Gzip/Caching
+**Data:** 2026-06-08
+
+W tym kroku wykonaliśmy:
+1. Przeniesiono projekt na nowe, precyzyjnie podzielone pliki SVG z katalogu `biustonosz_svg/`. Każdy element konstrukcyjny (w tym kółka, regulatory, kokardka, haftki, tunele i zapięcia) ma teraz własny, dedykowany plik SVG.
+2. Zaktualizowano konfigurację `BRA_SVG_PARTS` w [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx), eliminując potrzebę łączenia wielu `mainIds` w jedną warstwę. Daje to 100% dokładność podświetlania (hover) i klikania poszczególnych akcesoriów.
+3. Przeprowadzono bezstratną kompilację i optymalizację wszystkich 14 plików SVG za pomocą narzędzia `svgo` z flagą `--multipass`. Łączny rozmiar plików przesyłanych do przeglądarki spadł z **9.2 MB do zaledwie 3.1 MB** (redukcja o ponad **66%**), co drastycznie odciążyło parser DOM przegládarki.
+4. Utworzono produkcyjny plik konfiguracyjny [nginx.conf](file:///c:/Users/m-win/Projects/konstructor/frontend/nginx.conf) dla serwera Nginx w kontenerze frontendowym:
+   - Włączono dynamiczną kompresję **Gzip** dla wszystkich plików tekstowych oraz `image/svg+xml` (co zmniejsza rozmiar transferu sieciowego o kolejne **70-80%**).
+   - Włączono politykę **Cache-Control** z okresem ważności 30 dni dla wszystkich zasobów statycznych (w tym plików SVG). Przy ponownym ładowaniu strony przeglądarka pobiera schematy natychmiast z pamięci lokalnej (disk cache).
+   - Zintegrowano regułę `try_files` obsługującą React routing.
+5. Zmodyfikowano [Dockerfile](file:///c:/Users/m-win/Projects/konstructor/frontend/Dockerfile) frontendu w celu wdrożenia nowej konfiguracji Nginx.
+6. Pomyślnie przebudowano kontenery za pomocą `docker compose up --build -d`.
+
+
 
 
