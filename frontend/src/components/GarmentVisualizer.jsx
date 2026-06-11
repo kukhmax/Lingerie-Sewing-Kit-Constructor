@@ -361,11 +361,27 @@ export default function GarmentVisualizer({
 
     const index = gridY * 512 + gridX;
 
-    // Check grids in priority order (front/topmost first)
-    for (const part of BRA_SVG_PARTS) {
-      const grid = hitTestGridsRef.current[part.id];
+    // Check grids in hit-test priority order (narrow details first, then background/fabrics)
+    const HIT_TEST_PRIORITY = [
+      'bow',
+      'ring',
+      'slider',
+      'closure',
+      'edge_elastic',
+      'elastic_strap',
+      'underwire',
+      'tunnel',
+      'elastic_trim',
+      'tulle_stable',
+      'tulle_elastic',
+      'fabric',
+      'lace'
+    ];
+
+    for (const partId of HIT_TEST_PRIORITY) {
+      const grid = hitTestGridsRef.current[partId];
       if (grid && grid[index] === 1) {
-        return part.id;
+        return partId;
       }
     }
     return null;
@@ -535,9 +551,8 @@ export default function GarmentVisualizer({
               {/* LAYER 1: Colorized/Hovered Active Parts (except edge_elastic) */}
               {BRA_SVG_PARTS.filter(p => p.id !== 'edge_elastic').map(part => {
                 const hasColor = hasPartColor(part);
-                const isSelected = selectedPartId === part.id || part.mainIds.includes(selectedPartId);
                 const isHovered = hoveredPartId === part.id;
-                const isVisible = isHovered || hasColor || isSelected;
+                const isVisible = isHovered || hasColor;
 
                 if (!isVisible) return null;
 
@@ -562,9 +577,8 @@ export default function GarmentVisualizer({
               {/* LAYER 2: Special placement for edge_elastic on top of other parts, but under outline */}
               {BRA_SVG_PARTS.filter(p => p.id === 'edge_elastic').map(part => {
                 const hasColor = hasPartColor(part);
-                const isSelected = selectedPartId === part.id || part.mainIds.includes(selectedPartId);
                 const isHovered = hoveredPartId === part.id;
-                const isVisible = isHovered || hasColor || isSelected;
+                const isVisible = isHovered || hasColor;
 
                 if (!isVisible) return null;
 
