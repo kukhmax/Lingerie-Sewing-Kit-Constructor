@@ -423,7 +423,7 @@ export default function App() {
             </p>
           </div>
 
-          {garment === 'biustonosz' && (
+          {(garment === 'biustonosz' || garment === 'bralet') && (
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
               <button 
                 onClick={() => setShowLabels(!showLabels)}

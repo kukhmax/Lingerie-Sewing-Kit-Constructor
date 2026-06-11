@@ -354,4 +354,16 @@ W tym kroku wykonaliśmy:
    - Проверена успешная компиляция React-приложения (`npm run build`).
    - Запущен Docker Desktop, выполнена пересборка контейнеров Docker без кэша (`docker compose build --no-cache`) и их запуск с флагом `--force-recreate`.
 
+## Krok 30: Poprawka wyróżniania tła braletu, dynamiczne filtry oraz wdrożenie przycisku opisu części
+**Data:** 2026-06-11
 
+W tym kroku wykonaliśmy:
+1. **Naprawa błędu wyróżniania tła braletu**:
+   - Wykryto, że szczegółowe warstwy SVG dla braletu (`miseczki.svg`, `pas_obwodu.svg` itp.) są natywnie przezroczyste (posiadają własne maski/clipPath), w przeciwieństwie do warstw dla biustonosza, które mają białe tło. Z tego powodu zastosowanie filtra opierającego się na przeliczeniu `Alpha = 3 - R - G - B` powodowało, że piksele przezroczyste (gdzie R=0, G=0, B=0) stawały się w 100% nieprzezroczystym złotym tłem, barwiąc cały prostokąt płótna przy najechaniu.
+   - W [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) wdrożono logikę `useSimpleFilter = part.isVector || part.id !== 'closure'`. Dzięki temu wszystkie przezroczyste detale braletu używają prostego filtra kompozycji `SourceGraphic` jako maski dla koloru zalewu (`floodColor`). Jedynie haftki (`closure`), będące plikiem JPEG o białym tle, korzystają z filtra przekształcającego biel w przezroczystość. Usunęło to błąd i przywróciło perfekcyjne, punktowe podświetlanie elementów braletu.
+2. **Dodanie przycisku „Pokaż opisy części” dla braletu**:
+   - W [App.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/App.jsx) rozszerzono warunek wyświetlania przycisku przełączania etykiet na `(garment === 'biustonosz' || garment === 'bralet')`.
+   - Przycisk z napisem i ikoną `👁️ Pokaż opisy części` jest nowo renderowany również we wbudowanej zakładce braletu, z tą samą funkcjonalnością, umożliwiając włączenie/wyłączenie warstwy `nazwy.svg` ze strzałkami technicznymi.
+3. **Aktualizacja wersji Cache-Busting i dystrybucja**:
+   - Zaktualizowano `CACHE_VERSION` do `'20260611_v11'` w celu zresetowania pamięci podręcznej przeglądarki.
+   - Skompilowano kod frontendowy za pomocą `npm run build` i przebudowano kontenery Docker bez pamięci podręcznej.

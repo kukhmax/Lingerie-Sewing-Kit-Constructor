@@ -140,7 +140,7 @@ const hitTestCache = {
 };
 
 // Cache version string for SVG resources to prevent browser caching old outline/contour files
-const CACHE_VERSION = '20260611_v10';
+const CACHE_VERSION = '20260611_v11';
 
 // ============================================================================
 // GarmentVisualizer Component
@@ -1036,8 +1036,9 @@ export default function GarmentVisualizer({
                   const useOriginalColor = !isHovered && !assignedColor;
                   const floodColor = isHovered ? '#c9a236' : (assignedColor || '#ffffff');
                   
-                  if (part.isVector) {
-                    // Vector parts do not have white background and are already transparent
+                  const useSimpleFilter = part.isVector || part.id !== 'closure';
+                  if (useSimpleFilter) {
+                    // Natively transparent parts do not have white background and are already transparent
                     return (
                       <filter key={part.id} id={`colorize-${part.id}`} colorInterpolationFilters="sRGB">
                         <feFlood flood-color={floodColor} flood-opacity="1" result="floodColor"/>
