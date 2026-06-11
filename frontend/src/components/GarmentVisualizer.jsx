@@ -140,7 +140,7 @@ const hitTestCache = {
 };
 
 // Cache version string for SVG resources to prevent browser caching old outline/contour files
-const CACHE_VERSION = '20260611_v9';
+const CACHE_VERSION = '20260611_v10';
 
 // ============================================================================
 // GarmentVisualizer Component

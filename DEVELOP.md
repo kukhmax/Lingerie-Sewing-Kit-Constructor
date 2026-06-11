@@ -340,3 +340,18 @@ W tym kroku wykonaliśmy:
    - Проверена успешная компиляция React-приложения (`npm run build`).
    - Выполнена пересборка контейнеров Docker без кэша (`docker compose build --no-cache`) и перезапуск контейнеров (`docker compose up -d --force-recreate`).
 
+## Krok 29: Обновление измененных SVG деталей бралетта и сброс кэша
+**Data:** 2026-06-11
+
+В этом шаге выполнено:
+1. **Обновление ассетов**:
+   - Пользователь скорректировал файлы деталей в папке `bralett_svg` для более точного совпадения границ деталей с общим контуром бралетта.
+   - Три файла были переименованы в источнике (использование нижнего подчеркивания вместо пробелов): `guma_pod_biustem.svg`, `guma_ramiączkowa.svg`, `pas_obwodu.svg`.
+   - Запущен обновленный скрипт автокопирования `copy_bralet_svgs.py`, скопировавший все измененные детали из `bralett_svg` в `/frontend/public/bralet/` с корректной структурой имен.
+2. **Сброс кэша браузера**:
+   - В [GarmentVisualizer.jsx](file:///c:/Users/m-win/Projects/konstructor/frontend/src/components/GarmentVisualizer.jsx) константа `CACHE_VERSION` обновлена до `'20260611_v10'`, принудительно сбросив устаревший браузерный кэш для новых версий SVG.
+3. **Сборка и деплой**:
+   - Проверена успешная компиляция React-приложения (`npm run build`).
+   - Запущен Docker Desktop, выполнена пересборка контейнеров Docker без кэша (`docker compose build --no-cache`) и их запуск с флагом `--force-recreate`.
+
+
