@@ -14,6 +14,7 @@ const GARMENT_PARTS = {
     { id: 'tulle_elastic', name: 'Tiul elastyczny', category: 'fabric', required: false, isMain: true, qty: 0.5 },
     { id: 'tulle_stable', name: 'Tiul stabilny', category: 'fabric', required: false, isMain: true, qty: 0.5 },
     { id: 'elastic_trim', name: 'Guma obszywkowa (obwód)', category: 'elastic_trim', required: true, isMain: false, qty: 1.5 },
+    { id: 'edge_elastic', name: 'Guma stabilizująca krawędź', category: 'elastic_trim', required: true, isMain: false, qty: 1.0 },
     { id: 'elastic_strap', name: 'Guma ramiączkowa', category: 'elastic_strap', required: true, isMain: false, qty: 1.2 },
     { id: 'ring', name: 'Kółka metalowe', category: 'ring', required: true, isMain: false, qty: 2.0 },
     { id: 'slider', name: 'Regulatory metalowe', category: 'slider', required: true, isMain: false, qty: 2.0 },

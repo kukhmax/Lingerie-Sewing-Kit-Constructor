@@ -29,6 +29,12 @@ const BRA_SVG_PARTS = [
     mainIds: ['closure'],
   },
   {
+    id: 'edge_elastic',
+    file: 'guma_stabilizujaca_krawedz.svg',
+    label: 'Guma stabilizująca krawędź',
+    mainIds: ['edge_elastic'],
+  },
+  {
     id: 'elastic_strap',
     file: 'guma_ramiackowa.svg',
     label: 'Guma ramiączkowa',
@@ -134,18 +140,26 @@ export default function GarmentVisualizer({
           const grid = new Uint8Array(width * height);
 
           // 1. Thresholding: non-white pixels (luminance < 250) are part of the detail
-          for (let i = 0; i < pixels.length; i += 4) {
-            const r = pixels[i];
-            const g = pixels[i + 1];
-            const b = pixels[i + 2];
-            if (r < 250 || g < 250 || b < 250) {
-              grid[i / 4] = 1;
+          // Skip outer boundary pixels to prevent border highlighting
+          const borderMargin = 8;
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+              if (x < borderMargin || x >= width - borderMargin || y < borderMargin || y >= height - borderMargin) {
+                continue;
+              }
+              const idx = (y * width + x) * 4;
+              const r = pixels[idx];
+              const g = pixels[idx + 1];
+              const b = pixels[idx + 2];
+              if (r < 250 || g < 250 || b < 250) {
+                grid[y * width + x] = 1;
+              }
             }
           }
 
-          // 2. 2D Dilation with radius 2 to expand clickable bounds and close gaps
+          // 2. 2D Dilation with radius 1 to expand clickable bounds slightly and close minor gaps
           const dilatedGrid = new Uint8Array(width * height);
-          const radius = 2;
+          const radius = 1;
           for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
               if (grid[y * width + x] === 1) {
@@ -246,6 +260,8 @@ export default function GarmentVisualizer({
         return 'tulle_stable';
       case 'guma_obszywkowa':
         return 'elastic_trim';
+      case 'guma_stabilizujaca_krawedz':
+        return 'edge_elastic';
       case 'guma_ramiackowa':
         return 'elastic_strap';
       case 'kolka':
@@ -276,6 +292,7 @@ export default function GarmentVisualizer({
       case 'tulle_elastic': return 'Tiul elastyczny';
       case 'tulle_stable': return 'Tiul stabilny';
       case 'elastic_trim': return 'Guma obszywkowa (obwód)';
+      case 'edge_elastic': return 'Guma stabilizująca krawędź';
       case 'elastic_strap': return 'Guma ramiączkowa';
       case 'ring': return 'Kółka metalowe';
       case 'slider': return 'Regulatory metalowe';
@@ -436,6 +453,7 @@ export default function GarmentVisualizer({
               border: '1px solid rgba(0,0,0,0.06)',
             }}
           >
+            {/* SVG: Drawings & Colors */}
             <svg
               viewBox="0 0 1536 1085.25"
               style={{
@@ -444,13 +462,22 @@ export default function GarmentVisualizer({
                 left: 0,
                 width: '100%',
                 height: '100%',
-                pointerEvents: 'none'
+                pointerEvents: 'none',
+                zIndex: 1
               }}
             >
               <defs>
+                {/* Clip path to ignore any vignettes or scanner shadows near JPEG borders */}
+                <clipPath id="ignore-borders">
+                  <rect x="25" y="25" width="1486" height="1035.25" />
+                </clipPath>
+                
                 {/* Dynamically generated colorization filters for each part */}
                 {BRA_SVG_PARTS.map(part => {
-                  const color = getPartColor(part.id);
+                  const assignedColor = getAssignedColor(part.id);
+                  const isHovered = hoveredPartId === part.id;
+                  const useOriginalColor = !isHovered && !assignedColor;
+                  const floodColor = isHovered ? '#c9a236' : (assignedColor || '#ffffff');
                   return (
                     <filter key={part.id} id={`colorize-${part.id}`} colorInterpolationFilters="sRGB">
                       {/* Step 1: Make white background transparent.
@@ -469,35 +496,30 @@ export default function GarmentVisualizer({
                       </feComponentTransfer>
 
                       {/* Step 3: Flood with selected color */}
-                      <feFlood flood-color={color} flood-opacity="1" result="floodColor"/>
+                      <feFlood flood-color={floodColor} flood-opacity="1" result="floodColor"/>
 
-                      {/* Step 4: Multiply color over grayscale texture (preserves lines/shading) */}
-                      <feBlend mode="multiply" in="SourceGraphic" in2="floodColor" result="multiplied"/>
+                      {/* Step 4: Composite color or source graphic based on useOriginalColor */}
+                      <feComposite in={useOriginalColor ? "SourceGraphic" : "floodColor"} in2="alpha-mask" operator="in" result="colored-graphic"/>
 
-                      {/* Step 5: Composite back onto transparent alpha mask */}
-                      <feComposite in="multiplied" in2="alpha-mask" operator="in"/>
+                      {/* Step 5: GPU-accelerated glow shadow on the masked graphics (ignores borders!) */}
+                      {isHovered ? (
+                        <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#c9a236" flood-opacity="1" />
+                      ) : (
+                        <feOffset in="colored-graphic" />
+                      )}
                     </filter>
                   );
                 })}
               </defs>
 
-              {/* LAYER 0: Reference Base Outline */}
-              <image href="/bra/biustonosz_caly.svg?v=20260609" x="0" y="0" width="1536" height="1085.25" />
-
-              {/* LAYER 1: Colorized/Hovered Active Parts */}
-              {BRA_SVG_PARTS.map(part => {
-                const colored = hasPartColor(part);
+              {/* LAYER 1: Colorized/Hovered Active Parts (except edge_elastic) */}
+              {BRA_SVG_PARTS.filter(p => p.id !== 'edge_elastic').map(part => {
+                const hasColor = hasPartColor(part);
+                const isSelected = selectedPartId === part.id || part.mainIds.includes(selectedPartId);
                 const isHovered = hoveredPartId === part.id;
-                const isVisible = isHovered || colored;
+                const isVisible = isHovered || hasColor || isSelected;
 
                 if (!isVisible) return null;
-
-                let filterEffect = `url(#colorize-${part.id})`;
-
-                // Add gold glow outline ONLY on hover
-                if (isHovered) {
-                  filterEffect += ' drop-shadow(0 0 4px #c9a236) drop-shadow(0 0 8px rgba(201,162,54,0.4))';
-                }
 
                 return (
                   <image
@@ -507,31 +529,83 @@ export default function GarmentVisualizer({
                     y="0"
                     width="1536"
                     height="1085.25"
+                    clipPath="url(#ignore-borders)"
                     style={{
                       opacity: 1.0,
-                      filter: filterEffect,
+                      filter: `url(#colorize-${part.id})`,
                       transition: 'filter 0.25s ease'
                     }}
                   />
                 );
               })}
 
-              {/* LAYER 2: Arrows / Labels (Dynamic Toggle) */}
+              {/* LAYER 2: Special placement for edge_elastic on top of other parts, but under outline */}
+              {BRA_SVG_PARTS.filter(p => p.id === 'edge_elastic').map(part => {
+                const hasColor = hasPartColor(part);
+                const isSelected = selectedPartId === part.id || part.mainIds.includes(selectedPartId);
+                const isHovered = hoveredPartId === part.id;
+                const isVisible = isHovered || hasColor || isSelected;
+
+                if (!isVisible) return null;
+
+                return (
+                  <image
+                    key={part.id}
+                    href={`/bra/${part.file}?v=20260609`}
+                    x="0"
+                    y="0"
+                    width="1536"
+                    height="1085.25"
+                    clipPath="url(#ignore-borders)"
+                    style={{
+                      opacity: 1.0,
+                      filter: `url(#colorize-${part.id})`,
+                      transition: 'filter 0.25s ease'
+                    }}
+                  />
+                );
+              })}
+
+              {/* LAYER 3: Contour Reference Outline (mixBlendMode: multiply makes white background transparent) */}
+              <image 
+                href="/bra/biustonosz_caly.svg?v=20260609" 
+                x="0" 
+                y="0" 
+                width="1536" 
+                height="1085.25" 
+                clipPath="url(#ignore-borders)"
+                style={{
+                  mixBlendMode: 'multiply'
+                }}
+              />
+            </svg>
+
+            {/* SVG 2: Labels and Arrows (On top of outline) */}
+            <svg
+              viewBox="0 0 1536 1085.25"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                pointerEvents: 'none',
+                zIndex: 3,
+                transition: 'opacity 0.3s ease, visibility 0.3s ease',
+                opacity: showLabels ? 1 : 0,
+                visibility: showLabels ? 'visible' : 'hidden'
+              }}
+            >
               <image
                 href="/bra/nazwy.svg?v=20260609"
                 x="0"
                 y="0"
                 width="1536"
                 height="1085.25"
-                style={{
-                  transition: 'opacity 0.3s ease, visibility 0.3s ease',
-                  opacity: showLabels ? 1 : 0,
-                  visibility: showLabels ? 'visible' : 'hidden'
-                }}
               />
             </svg>
 
-            {/* LAYER 3: Invisible Hit Test Capture Overlay */}
+            {/* LAYER 4: Invisible Hit Test Capture Overlay */}
             <div
               style={{
                 position: 'absolute',
