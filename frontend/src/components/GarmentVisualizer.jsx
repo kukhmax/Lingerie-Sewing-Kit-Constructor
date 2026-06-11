@@ -84,11 +84,63 @@ const BRA_SVG_PARTS = [
   },
 ];
 
-// Global cache for preprocessed pixel hit-test grids
-const hitTestCache = {};
+// ============================================================================
+// SVG Bralet Parts Configuration (Hit-test priority and rendering order)
+// ============================================================================
+const BRALET_SVG_PARTS = [
+  {
+    id: 'band',
+    file: 'pas_obwodu.svg',
+    label: 'Pas obwodu',
+    mainIds: ['fabric_elastic', 'fabric_stable', 'tulle_elastic', 'tulle_stable'],
+  },
+  {
+    id: 'cups',
+    file: 'miseczki.svg',
+    label: 'Miseczki',
+    mainIds: ['lace_elastic', 'lace_stable'],
+  },
+  {
+    id: 'elastic_trim',
+    file: 'guma_pod_biustem.svg',
+    label: 'Guma pod biust',
+    mainIds: ['elastic_trim'],
+    isVector: true,
+  },
+  {
+    id: 'elastic_strap',
+    file: 'guma_ramiackowa.svg',
+    label: 'Guma ramiączkowa',
+    mainIds: ['elastic_strap'],
+  },
+  {
+    id: 'closure',
+    file: 'haftki.svg',
+    label: 'Zapięcie haftkowe',
+    mainIds: ['closure'],
+  },
+  {
+    id: 'ring',
+    file: 'kolka.svg',
+    label: 'Kółka metalowe',
+    mainIds: ['ring'],
+  },
+  {
+    id: 'slider',
+    file: 'regulatory.svg',
+    label: 'Regulatory metalowe',
+    mainIds: ['slider'],
+  },
+];
+
+// Global cache for preprocessed pixel hit-test grids per garment type
+const hitTestCache = {
+  biustonosz: null,
+  bralet: null,
+};
 
 // Cache version string for SVG resources to prevent browser caching old outline/contour files
-const CACHE_VERSION = '20260611_v8';
+const CACHE_VERSION = '20260611_v9';
 
 // ============================================================================
 // GarmentVisualizer Component
@@ -107,10 +159,11 @@ export default function GarmentVisualizer({
 
   // ---- Hit Test Grid Preprocessing ----
   useEffect(() => {
-    if (garmentType !== 'biustonosz') return;
+    if (garmentType !== 'biustonosz' && garmentType !== 'bralet') return;
 
-    if (Object.keys(hitTestCache).length > 0) {
-      hitTestGridsRef.current = hitTestCache;
+    if (hitTestCache[garmentType]) {
+      hitTestGridsRef.current = hitTestCache[garmentType];
+      setLoadingHitTest(false);
       return;
     }
 
@@ -119,14 +172,17 @@ export default function GarmentVisualizer({
 
     const loadGrids = async () => {
       const grids = {};
-      const width = 512;
-      const height = 362; // 1/4 of 2048x1447
+      const isBralet = garmentType === 'bralet';
+      const width = isBralet ? 480 : 512;
+      const height = isBralet ? 320 : 362;
+      const parts = isBralet ? BRALET_SVG_PARTS : BRA_SVG_PARTS;
+      const subDir = isBralet ? 'bralet' : 'bra';
 
-      for (const part of BRA_SVG_PARTS) {
+      for (const part of parts) {
         if (!active) return;
         try {
           const img = new Image();
-          img.src = `/bra/${part.file}?v=${CACHE_VERSION}`;
+          img.src = `/${subDir}/${part.file}?v=${CACHE_VERSION}`;
           await new Promise((resolve, reject) => {
             img.onload = resolve;
             img.onerror = () => reject(new Error(`Failed to load ${part.file}`));
@@ -203,7 +259,7 @@ export default function GarmentVisualizer({
       }
 
       if (active) {
-        Object.assign(hitTestCache, grids);
+        hitTestCache[garmentType] = grids;
         hitTestGridsRef.current = grids;
         setLoadingHitTest(false);
       }
@@ -218,7 +274,9 @@ export default function GarmentVisualizer({
 
   // ---- Helper Functions ----
   const getAssignedColor = (partId) => {
-    const part = BRA_SVG_PARTS.find(p => p.id === partId);
+    const part = garmentType === 'bralet'
+      ? BRALET_SVG_PARTS.find(p => p.id === partId)
+      : BRA_SVG_PARTS.find(p => p.id === partId);
     if (!part) return null;
     for (const id of part.mainIds) {
       if (partColors[id]) return partColors[id];
@@ -340,7 +398,9 @@ export default function GarmentVisualizer({
 
   const getHoverLabel = () => {
     if (!hoveredPartId) return null;
-    const part = BRA_SVG_PARTS.find(p => p.id === hoveredPartId);
+    const part = garmentType === 'bralet'
+      ? BRALET_SVG_PARTS.find(p => p.id === hoveredPartId)
+      : BRA_SVG_PARTS.find(p => p.id === hoveredPartId);
     return part ? part.label : null;
   };
 
@@ -351,41 +411,64 @@ export default function GarmentVisualizer({
     const localX = clientX - rect.left;
     const localY = clientY - rect.top;
 
-    // Map local coordinates to 512x362 grid space
-    const gridX = Math.round((localX / rect.width) * 512);
-    const gridY = Math.round((localY / rect.height) * 362);
+    const isBralet = garmentType === 'bralet';
+    const gridWidth = isBralet ? 480 : 512;
+    const gridHeight = isBralet ? 320 : 362;
 
-    if (gridX < 0 || gridX >= 512 || gridY < 0 || gridY >= 362) {
+    // Map local coordinates to grid space
+    const gridX = Math.round((localX / rect.width) * gridWidth);
+    const gridY = Math.round((localY / rect.height) * gridHeight);
+
+    if (gridX < 0 || gridX >= gridWidth || gridY < 0 || gridY >= gridHeight) {
       return null;
     }
 
-    const index = gridY * 512 + gridX;
+    const index = gridY * gridWidth + gridX;
 
-    // Check grids in hit-test priority order (narrow details first, then background/fabrics)
-    const HIT_TEST_PRIORITY = [
-      'bow',
-      'ring',
-      'slider',
-      'closure',
-      'edge_elastic',
-      'elastic_strap',
-      'underwire',
-      'tunnel',
-      'elastic_trim',
-      'tulle_stable',
-      'tulle_elastic',
-      'fabric',
-      'lace'
-    ];
+    if (isBralet) {
+      // Prioritize accessories, then cups, then back/wings band
+      const BRALET_HIT_TEST_PRIORITY = [
+        'ring',
+        'slider',
+        'closure',
+        'elastic_strap',
+        'elastic_trim',
+        'cups',
+        'band'
+      ];
+      for (const partId of BRALET_HIT_TEST_PRIORITY) {
+        const grid = hitTestGridsRef.current[partId];
+        if (grid && grid[index] === 1) {
+          return partId;
+        }
+      }
+    } else {
+      // Check grids in hit-test priority order (narrow details first, then background/fabrics)
+      const HIT_TEST_PRIORITY = [
+        'bow',
+        'ring',
+        'slider',
+        'closure',
+        'edge_elastic',
+        'elastic_strap',
+        'underwire',
+        'tunnel',
+        'elastic_trim',
+        'tulle_stable',
+        'tulle_elastic',
+        'fabric',
+        'lace'
+      ];
 
-    for (const partId of HIT_TEST_PRIORITY) {
-      const grid = hitTestGridsRef.current[partId];
-      if (grid && grid[index] === 1) {
-        return partId;
+      for (const partId of HIT_TEST_PRIORITY) {
+        const grid = hitTestGridsRef.current[partId];
+        if (grid && grid[index] === 1) {
+          return partId;
+        }
       }
     }
     return null;
-  }, []);
+  }, [garmentType]);
 
   const onMouseMove = (e) => {
     const hoveredPart = handleHitTest(e.clientX, e.clientY);
@@ -404,7 +487,9 @@ export default function GarmentVisualizer({
   const onOverlayClick = (e) => {
     const clickedPartId = handleHitTest(e.clientX, e.clientY);
     if (clickedPartId) {
-      const part = BRA_SVG_PARTS.find(p => p.id === clickedPartId);
+      const part = garmentType === 'bralet'
+        ? BRALET_SVG_PARTS.find(p => p.id === clickedPartId)
+        : BRA_SVG_PARTS.find(p => p.id === clickedPartId);
       if (part) {
         onPartClick(getPrimaryMainId(part));
       }
@@ -849,231 +934,256 @@ export default function GarmentVisualizer({
 
   // Render Bralette (Bralet) SVGs
   const renderBralet = () => {
-    const mainColor = getPartColor('fabric'); // Main cup lining / elastyczny tiul
-    const laceColor = getPartColor('lace');   // Lace cups
-    const elasticColor = getPartColor('elastic_trim');
-    const strapColor = getPartColor('elastic_strap');
-    const ringColor = getPartColor('ring', '#d1d5db');
-    const sliderColor = getPartColor('slider', '#d1d5db');
-    const closureColor = getPartColor('closure');
-    const bowColor = getPartColor('bow');
-    const insertColor = getPartColor('cup_insert', 'rgba(255, 255, 255, 0.4)');
-    const underwireColor = getPartColor('underwire', '#bfb5a8');
-    const tunnelColor = getPartColor('tunnel', '#e2ded5');
+    if (loadingHitTest) {
+      return (
+        <div className="garment-visualizer" style={{ flexDirection: 'column', padding: '1.5rem', alignItems: 'center' }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '400px',
+            color: '#94a3b8',
+            fontSize: '14px',
+            fontFamily: 'monospace',
+          }}>
+            <span className="pulse-dot" style={{
+              display: 'inline-block',
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: '#ec4899',
+              marginRight: '8px',
+            }} />
+            Wczytywanie makiety interaktywnej...
+          </div>
+        </div>
+      );
+    }
 
     return (
-      <div className="garment-visualizer">
-        {/* FRONT VIEW */}
-        <div className="view-section">
-          <svg width="240" height="240" viewBox="0 0 260 260" className="garment-svg">
-            <g transform="translate(0, 20)">
-              {/* Back wing elastics visible on sides */}
-              <line x1="30" y1="145" x2="80" y2="145" stroke={elasticColor} strokeWidth="6" />
-              <line x1="180" y1="145" x2="230" y2="145" stroke={elasticColor} strokeWidth="6" />
+      <div className="garment-visualizer" style={{ flexDirection: 'column', padding: '1.5rem', alignItems: 'center' }}>
+        <div className="view-section" style={{ width: '100%', maxWidth: '950px' }}>
+          
+          {/* Header Info Panel */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: '11px',
+            color: '#94a3b8',
+            fontFamily: 'monospace',
+            marginBottom: '0.75rem',
+            width: '100%',
+            padding: '0 0.5rem'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span className="pulse-dot" style={{
+                display: 'inline-block',
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: '#ec4899',
+              }} />
+              <span>Interaktywny model wektorowy</span>
+            </div>
+            <div>
+              {selectedPartId ? (
+                <span>Wybrano: <strong style={{ color: '#475569' }}>{getPartName(selectedPartId)}</strong></span>
+              ) : hoveredPartId ? (
+                <span style={{ color: '#c9a236' }}>{getHoverLabel()}</span>
+              ) : (
+                <span>Najedź lub kliknij часть, by wyodrębnić</span>
+              )}
+            </div>
+          </div>
 
-              {/* Left Triangle Cup (Main Lace) */}
-              <path
-                d="M 80,145 L 130,145 L 105,65 Z"
-                fill={laceColor}
-                stroke={getPartStroke('lace')}
-                strokeWidth={getPartStrokeWidth('lace')}
-                className="interactive-part"
-                onClick={() => onPartClick(mapGuidePartIdToMainId('lace'))}
-              />
+          {/* Interactive SVG Stacking Container */}
+          <div 
+            ref={containerRef}
+            style={{
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '1440 / 960',
+              backgroundColor: '#ffffff',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: '1px solid rgba(0,0,0,0.06)',
+            }}
+          >
+            {/* SVG 1: Drawings & Colors */}
+            <svg
+              viewBox="0 0 1440 960"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                pointerEvents: 'none',
+                zIndex: 1
+              }}
+            >
+              <defs>
+                {/* Clip path to ignore any vignettes or scanner shadows near JPEG borders */}
+                <clipPath id="ignore-borders-bralet">
+                  <rect x="24" y="24" width="1392" height="912" />
+                </clipPath>
+                
+                {/* Dynamically generated colorization filters for each part */}
+                {BRALET_SVG_PARTS.map(part => {
+                  const assignedColor = getAssignedColor(part.id);
+                  const isHovered = hoveredPartId === part.id;
+                  const useOriginalColor = !isHovered && !assignedColor;
+                  const floodColor = isHovered ? '#c9a236' : (assignedColor || '#ffffff');
+                  
+                  if (part.isVector) {
+                    // Vector parts do not have white background and are already transparent
+                    return (
+                      <filter key={part.id} id={`colorize-${part.id}`} colorInterpolationFilters="sRGB">
+                        <feFlood flood-color={floodColor} flood-opacity="1" result="floodColor"/>
+                        <feComposite in={useOriginalColor ? "SourceGraphic" : "floodColor"} in2="SourceGraphic" operator="in" result="colored-graphic"/>
+                        {isHovered ? (
+                          <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#c9a236" flood-opacity="1" />
+                        ) : (
+                          <feOffset in="colored-graphic" />
+                        )}
+                      </filter>
+                    );
+                  }
 
-              {/* Left Cup Inside Insert outline (visible) */}
-              <path
-                d="M 85,142 L 125,142 L 105,80 Z"
-                fill={insertColor}
-                stroke={getPartStroke('cup_insert')}
-                strokeWidth="0.8"
-                strokeDasharray="2,2"
-                className="interactive-part"
-                onClick={() => onPartClick('cup_insert')}
-              />
+                  return (
+                    <filter key={part.id} id={`colorize-${part.id}`} colorInterpolationFilters="sRGB">
+                      {/* Step 1: Make white background transparent.
+                           Alpha = 3 - R - G - B
+                      */}
+                      <feColorMatrix type="matrix" values="
+                        1 0 0 0 0
+                        0 1 0 0 0
+                        0 0 1 0 0
+                        -1 -1 -1 0 3
+                      " result="transmask"/>
 
-              {/* Right Triangle Cup (Main Lace) */}
-              <path
-                d="M 130,145 L 180,145 L 155,65 Z"
-                fill={laceColor}
-                stroke={getPartStroke('lace')}
-                strokeWidth={getPartStrokeWidth('lace')}
-                className="interactive-part"
-                onClick={() => onPartClick(mapGuidePartIdToMainId('lace'))}
-              />
+                      {/* Step 2: Steep threshold to keep lines solid and remove background noise */}
+                      <feComponentTransfer in="transmask" result="alpha-mask">
+                        <feFuncA type="linear" slope="20" intercept="-1"/>
+                      </feComponentTransfer>
 
-              {/* Right Cup Inside Insert outline */}
-              <path
-                d="M 135,142 L 175,142 L 155,80 Z"
-                fill={insertColor}
-                stroke={getPartStroke('cup_insert')}
-                strokeWidth="0.8"
-                strokeDasharray="2,2"
-                className="interactive-part"
-                onClick={() => onPartClick('cup_insert')}
-              />
+                      {/* Step 3: Flood with selected color */}
+                      <feFlood flood-color={floodColor} flood-opacity="1" result="floodColor"/>
 
-              {/* Bralet side underwires (underwire & tunnel) */}
-              <line 
-                x1="80" y1="145" x2="80" y2="110" 
-                stroke={tunnelColor} 
-                strokeWidth={selectedPartId === 'tunnel' ? '4' : '2.5'}
-                className="interactive-part"
-                onClick={() => onPartClick('tunnel')}
-              />
-              <line 
-                x1="80" y1="141" x2="80" y2="114" 
-                stroke={underwireColor} 
-                strokeWidth={selectedPartId === 'underwire' ? '2.5' : '1.5'}
-                className="interactive-part"
-                onClick={() => onPartClick('underwire')}
-              />
+                      {/* Step 4: Composite color or source graphic based on useOriginalColor */}
+                      <feComposite in={useOriginalColor ? "SourceGraphic" : "floodColor"} in2="alpha-mask" operator="in" result="colored-graphic"/>
 
-              <line 
-                x1="180" y1="145" x2="180" y2="110" 
-                stroke={tunnelColor} 
-                strokeWidth={selectedPartId === 'tunnel' ? '4' : '2.5'}
-                className="interactive-part"
-                onClick={() => onPartClick('tunnel')}
-              />
-              <line 
-                x1="180" y1="141" x2="180" y2="114" 
-                stroke={underwireColor} 
-                strokeWidth={selectedPartId === 'underwire' ? '2.5' : '1.5'}
-                className="interactive-part"
-                onClick={() => onPartClick('underwire')}
-              />
+                      {/* Step 5: GPU-accelerated glow shadow on the masked graphics */}
+                      {isHovered ? (
+                        <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#c9a236" flood-opacity="1" />
+                      ) : (
+                        <feOffset in="colored-graphic" />
+                      )}
+                    </filter>
+                  );
+                })}
+              </defs>
 
-              {/* Underband Elastic Band (Front bottom band) */}
-              <rect
-                x="80" y="145" width="100" height="6"
-                fill={elasticColor}
-                stroke={getPartStroke('elastic_trim')}
-                strokeWidth={getPartStrokeWidth('elastic_trim')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_trim')}
-              />
+              {/* LAYER 1: Colorized/Hovered Active Parts */}
+              {BRALET_SVG_PARTS.map(part => {
+                const hasColor = hasPartColor(part);
+                const isHovered = hoveredPartId === part.id;
+                const isVisible = isHovered || hasColor;
 
-              {/* Straps (Front) */}
-              <rect
-                x="103" y="15" width="4" height="50"
-                fill={strapColor}
-                stroke={getPartStroke('elastic_strap')}
-                strokeWidth={getPartStrokeWidth('elastic_strap')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_strap')}
-              />
-              <rect
-                x="153" y="15" width="4" height="50"
-                fill={strapColor}
-                stroke={getPartStroke('elastic_strap')}
-                strokeWidth={getPartStrokeWidth('elastic_strap')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_strap')}
-              />
+                if (!isVisible) return null;
 
-              {/* Center bow */}
-              <circle
-                cx="130" cy="144" r="3.5"
-                fill={bowColor}
-                stroke={getPartStroke('bow')}
-                strokeWidth={getPartStrokeWidth('bow')}
-                className="interactive-part"
-                onClick={() => onPartClick('bow')}
-              />
-            </g>
-          </svg>
-          <span className="view-label">Przód</span>
-        </div>
+                return (
+                  <image
+                    key={part.id}
+                    href={`/bralet/${part.file}?v=${CACHE_VERSION}`}
+                    x="0"
+                    y="0"
+                    width="1440"
+                    height="960"
+                    clipPath="url(#ignore-borders-bralet)"
+                    style={{
+                      opacity: 1.0,
+                      filter: `url(#colorize-${part.id})`,
+                      transition: 'filter 0.25s ease'
+                    }}
+                  />
+                );
+              })}
 
-        {/* BACK VIEW */}
-        <div className="view-section">
-          <svg width="240" height="240" viewBox="0 0 260 260" className="garment-svg">
-            <g transform="translate(0, 20)">
-              {/* Back Mesh/Lining Band Wings (fabric) */}
-              <path
-                d="M 30,139 C 55,143 95,145 120,145 L 120,154 C 95,154 55,150 30,144 Z"
-                fill={mainColor}
-                stroke={getPartStroke('fabric')}
-                strokeWidth={getPartStrokeWidth('fabric')}
-                className="interactive-part"
-                onClick={() => onPartClick(mapGuidePartIdToMainId('fabric'))}
+              {/* LAYER 2: Contour Reference Outline (mixBlendMode: multiply makes white background transparent) */}
+              <image 
+                href={`/bralet/caly.svg?v=${CACHE_VERSION}`} 
+                x="0" 
+                y="0" 
+                width="1440" 
+                height="960" 
+                clipPath="url(#ignore-borders-bralet)"
+                style={{
+                  mixBlendMode: 'multiply'
+                }}
               />
-              <path
-                d="M 230,139 C 205,143 165,145 140,145 L 140,154 C 165,154 205,150 230,144 Z"
-                fill={mainColor}
-                stroke={getPartStroke('fabric')}
-                strokeWidth={getPartStrokeWidth('fabric')}
-                className="interactive-part"
-                onClick={() => onPartClick(mapGuidePartIdToMainId('fabric'))}
-              />
+            </svg>
 
-              {/* Hook Closure (Back center) */}
-              <rect
-                x="120" y="139" width="20" height="16"
-                fill={closureColor}
-                stroke={getPartStroke('closure')}
-                strokeWidth={getPartStrokeWidth('closure')}
-                className="interactive-part"
-                onClick={() => onPartClick('closure')}
+            {/* SVG 2: Labels and Arrows (On top of outline) */}
+            <svg
+              viewBox="0 0 1440 960"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                pointerEvents: 'none',
+                zIndex: 3,
+                transition: 'opacity 0.3s ease, visibility 0.3s ease',
+                opacity: showLabels ? 1 : 0,
+                visibility: showLabels ? 'visible' : 'hidden'
+              }}
+            >
+              <defs>
+                {/* Filter to make white JPEG background transparent, keeping only labels/arrows */}
+                <filter id="labels-transparent-bg-bralet" colorInterpolationFilters="sRGB">
+                  <feColorMatrix type="matrix" values="
+                    1 0 0 0 0
+                    0 1 0 0 0
+                    0 0 1 0 0
+                    -1 -1 -1 0 3
+                  " result="transmask"/>
+                  <feComponentTransfer in="transmask" result="alpha-mask">
+                    <feFuncA type="linear" slope="20" intercept="-1"/>
+                  </feComponentTransfer>
+                  <feComposite in="SourceGraphic" in2="alpha-mask" operator="in"/>
+                </filter>
+              </defs>
+              <image
+                href={`/bralet/nazwy.svg?v=${CACHE_VERSION}`}
+                x="0"
+                y="0"
+                width="1440"
+                height="960"
+                style={{
+                  filter: 'url(#labels-transparent-bg-bralet)'
+                }}
               />
+            </svg>
 
-              {/* Straps (Back) */}
-              <rect
-                x="70" y="15" width="4" height="126"
-                fill={strapColor}
-                stroke={getPartStroke('elastic_strap')}
-                strokeWidth={getPartStrokeWidth('elastic_strap')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_strap')}
-              />
-              <rect
-                x="186" y="15" width="4" height="126"
-                fill={strapColor}
-                stroke={getPartStroke('elastic_strap')}
-                strokeWidth={getPartStrokeWidth('elastic_strap')}
-                className="interactive-part"
-                onClick={() => onPartClick('elastic_strap')}
-              />
-
-              {/* Rings */}
-              <circle
-                cx="72" cy="141" r="4"
-                fill="none"
-                stroke={ringColor}
-                strokeWidth={getPartStrokeWidth('ring')}
-                className="interactive-part"
-                onClick={() => onPartClick('ring')}
-              />
-              <circle
-                cx="188" cy="141" r="4"
-                fill="none"
-                stroke={ringColor}
-                strokeWidth={getPartStrokeWidth('ring')}
-                className="interactive-part"
-                onClick={() => onPartClick('ring')}
-              />
-
-              {/* Sliders */}
-              <rect
-                x="69" y="60" width="6" height="3"
-                fill={sliderColor}
-                stroke={getPartStroke('slider')}
-                strokeWidth={getPartStrokeWidth('slider')}
-                className="interactive-part"
-                onClick={() => onPartClick('slider')}
-              />
-              <rect
-                x="185" y="60" width="6" height="3"
-                fill={sliderColor}
-                stroke={getPartStroke('slider')}
-                strokeWidth={getPartStrokeWidth('slider')}
-                className="interactive-part"
-                onClick={() => onPartClick('slider')}
-              />
-            </g>
-          </svg>
-          <span className="view-label">Tył</span>
+            {/* LAYER 3: Invisible Hit-Test & Click Overlay */}
+            <div
+              onMouseMove={onMouseMove}
+              onMouseLeave={onMouseLeave}
+              onClick={onOverlayClick}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 4,
+                cursor: hoveredPartId ? 'pointer' : 'default'
+              }}
+            />
+          </div>
         </div>
       </div>
     );
