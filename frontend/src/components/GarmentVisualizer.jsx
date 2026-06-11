@@ -88,7 +88,7 @@ const BRA_SVG_PARTS = [
 const hitTestCache = {};
 
 // Cache version string for SVG resources to prevent browser caching old outline/contour files
-const CACHE_VERSION = '20260611_v7';
+const CACHE_VERSION = '20260611_v8';
 
 // ============================================================================
 // GarmentVisualizer Component
@@ -616,12 +616,31 @@ export default function GarmentVisualizer({
                 visibility: showLabels ? 'visible' : 'hidden'
               }}
             >
+              <defs>
+                {/* Filter to make white JPEG background transparent, keeping only labels/arrows */}
+                <filter id="labels-transparent-bg" colorInterpolationFilters="sRGB">
+                  {/* Step 1: Alpha = 3 - R - G - B (white becomes transparent) */}
+                  <feColorMatrix type="matrix" values="
+                    1 0 0 0 0
+                    0 1 0 0 0
+                    0 0 1 0 0
+                    -1 -1 -1 0 3
+                  " result="transmask"/>
+                  {/* Step 2: Steep threshold to keep text/arrows solid */}
+                  <feComponentTransfer in="transmask" result="alpha-mask">
+                    <feFuncA type="linear" slope="20" intercept="-1"/>
+                  </feComponentTransfer>
+                  {/* Step 3: Composite source graphic with alpha mask */}
+                  <feComposite in="SourceGraphic" in2="alpha-mask" operator="in"/>
+                </filter>
+              </defs>
               <image
                 href={`/bra/nazwy.svg?v=${CACHE_VERSION}`}
                 x="0"
                 y="0"
                 width="1536"
                 height="1085.25"
+                style={{ filter: 'url(#labels-transparent-bg)' }}
               />
             </svg>
 
