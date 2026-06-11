@@ -87,6 +87,9 @@ const BRA_SVG_PARTS = [
 // Global cache for preprocessed pixel hit-test grids
 const hitTestCache = {};
 
+// Cache version string for SVG resources to prevent browser caching old outline/contour files
+const CACHE_VERSION = '20260611_v7';
+
 // ============================================================================
 // GarmentVisualizer Component
 // ============================================================================
@@ -123,7 +126,7 @@ export default function GarmentVisualizer({
         if (!active) return;
         try {
           const img = new Image();
-          img.src = `/bra/${part.file}?v=20260609`;
+          img.src = `/bra/${part.file}?v=${CACHE_VERSION}`;
           await new Promise((resolve, reject) => {
             img.onload = resolve;
             img.onerror = () => reject(new Error(`Failed to load ${part.file}`));
@@ -139,8 +142,8 @@ export default function GarmentVisualizer({
           const pixels = imgData.data;
           const grid = new Uint8Array(width * height);
 
-          // 1. Thresholding: non-white pixels (luminance < 250) are part of the detail
-          // Skip outer boundary pixels to prevent border highlighting
+          // 1. Thresholding: non-white pixels (luminance < 250) that are also not transparent (alpha > 10) are part of the detail.
+          // Skip outer boundary pixels to prevent border highlighting.
           const borderMargin = 8;
           for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
@@ -151,15 +154,32 @@ export default function GarmentVisualizer({
               const r = pixels[idx];
               const g = pixels[idx + 1];
               const b = pixels[idx + 2];
-              if (r < 250 || g < 250 || b < 250) {
+              const a = pixels[idx + 3];
+              if (a > 10 && (r < 250 || g < 250 || b < 250)) {
                 grid[y * width + x] = 1;
               }
             }
           }
 
-          // 2. 2D Dilation with radius 1 to expand clickable bounds slightly and close minor gaps
+          // 2. 2D Dilation with dynamic radius to expand clickable bounds.
+          // Thin/small elements get radius = 4 for easier hover/click triggering.
+          // Large filled elements get radius = 1 to avoid excessive bleed.
           const dilatedGrid = new Uint8Array(width * height);
-          const radius = 1;
+          let radius = 1;
+          if ([
+            'edge_elastic',
+            'elastic_trim',
+            'elastic_strap',
+            'ring',
+            'slider',
+            'closure',
+            'underwire',
+            'tunnel',
+            'bow'
+          ].includes(part.id)) {
+            radius = 4;
+          }
+
           for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
               if (grid[y * width + x] === 1) {
@@ -524,7 +544,7 @@ export default function GarmentVisualizer({
                 return (
                   <image
                     key={part.id}
-                    href={`/bra/${part.file}?v=20260609`}
+                    href={`/bra/${part.file}?v=${CACHE_VERSION}`}
                     x="0"
                     y="0"
                     width="1536"
@@ -551,7 +571,7 @@ export default function GarmentVisualizer({
                 return (
                   <image
                     key={part.id}
-                    href={`/bra/${part.file}?v=20260609`}
+                    href={`/bra/${part.file}?v=${CACHE_VERSION}`}
                     x="0"
                     y="0"
                     width="1536"
@@ -568,7 +588,7 @@ export default function GarmentVisualizer({
 
               {/* LAYER 3: Contour Reference Outline (mixBlendMode: multiply makes white background transparent) */}
               <image 
-                href="/bra/biustonosz_caly.svg?v=20260609" 
+                href={`/bra/biustonosz_caly.svg?v=${CACHE_VERSION}`} 
                 x="0" 
                 y="0" 
                 width="1536" 
@@ -597,7 +617,7 @@ export default function GarmentVisualizer({
               }}
             >
               <image
-                href="/bra/nazwy.svg?v=20260609"
+                href={`/bra/nazwy.svg?v=${CACHE_VERSION}`}
                 x="0"
                 y="0"
                 width="1536"
