@@ -82,7 +82,13 @@ export async function addToCart(config, items) {
         'X-Requested-With': 'XMLHttpRequest',
         ...(config.csrfToken ? { 'X-CSRF-TOKEN': config.csrfToken } : {}),
       },
-      body: JSON.stringify({ items }),
+      body: JSON.stringify({
+        // id z bazy sklepu są liczbowe — wysyłamy je jako liczby
+        items: items.map((i) => ({
+          product_id: /^\d+$/.test(String(i.product_id)) ? Number(i.product_id) : i.product_id,
+          quantity: Math.round(i.quantity * 100) / 100,
+        })),
+      }),
     });
   } catch {
     throw new CartError('Brak połączenia ze sklepem. Sprawdź internet i spróbuj ponownie.');
