@@ -82,3 +82,22 @@ W tym kroku wykonaliśmy:
    * Sposób instalacji i komendy uruchomienia lokalnego (oraz polecenia Docker).
    * Instrukcję krok po kroku, jak zintegrować moduł z silnikiem Laravel sklepu **subtelnedetale.pl** (migracje SQL, routing, kontroler PHP, widoki Blade oraz deployment zasobów).
 3. Zweryfikowano działanie aplikacji w przeglądarce pod adresem `http://localhost:5173/`.
+
+---
+
+# Журнал доработок (с 2026-11-12, на русском)
+
+Ниже — шаги доработки после ревью безопасности и UX. Каждый шаг — отдельный коммит в ветке
+`claude/constructor-security-ux-review-ol8g8h`.
+
+## Шаг 8: Реалистичный бюстгальтер
+* `BraSvg.jsx` перерисован по фото-референсу: вид спереди, широкие бретели, чашки со швом и вытачкой,
+  мостик, боковые крылья, задняя лента с застёжкой, кант-пикот.
+* Невыбранная деталь — контур, выбранная — заливка цветом товара. Подсветка и подпись при наведении,
+  управление с клавиатуры (Tab / Enter).
+
+## Шаг 9: Удалён ИИ-консультант (Gemini)
+* Из `App.jsx` убраны чат, поле ввода ключа, вызов `generativelanguage.googleapis.com` и разбор ответа.
+* Из `docker-compose.yml` убрана переменная `VITE_GEMINI_API_KEY`, из `index.css` — стили чата.
+* Конструктор теперь полностью автономный: никаких внешних сервисов и ключей, только каталог и корзина магазина.
+* Причина: ключ из `VITE_*` попадал в публичный JS-бандл и передавался в URL — его мог забрать любой посетитель.

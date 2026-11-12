@@ -46,14 +46,6 @@ export default function App() {
     }
   });
 
-  // AI chat log state
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [aiChat, setAiChat] = useState([
-    { sender: 'assistant', text: 'Cześć! Jestem Twoim konsultantem krawieckim AI. Opisz mi, jaki komplet marzysz uszyć (np. "chcę zmysłowy czerwony zestaw ze złotymi regulatorami"), a pomogę dobrać odpowiednie materiały!' }
-  ]);
-  const [apiKey, setApiKey] = useState(import.meta.env.VITE_GEMINI_API_KEY || '');
-  const [showSettings, setShowSettings] = useState(false);
-
   // Load materials on mount
   useEffect(() => {
     fetch('/materials.json')
@@ -206,140 +198,6 @@ export default function App() {
       });
   };
 
-  // AI Assistant Call
-  const handleSendMessage = async () => {
-    if (!aiPrompt.trim()) return;
-
-    const userText = aiPrompt;
-    setAiChat(prev => [...prev, { sender: 'user', text: userText }]);
-    setAiPrompt('');
-
-    // If key not configured, return generic mock response matching the prompt
-    if (!apiKey) {
-      setTimeout(() => {
-        // Simple search heuristic for demo
-        const lower = userText.toLowerCase();
-        let selectedPreset = null;
-        if (lower.includes('szmaragd') || lower.includes('zielon') || lower.includes('emerald')) {
-          selectedPreset = COLOR_PRESETS[0];
-        } else if (lower.includes('win') || lower.includes('bord') || lower.includes('red') || lower.includes('wino')) {
-          selectedPreset = COLOR_PRESETS[1];
-        } else if (lower.includes('pudr') || lower.includes('róż') || lower.includes('pink') || lower.includes('blush')) {
-          selectedPreset = COLOR_PRESETS[2];
-        } else if (lower.includes('czarn') || lower.includes('ciem') || lower.includes('black')) {
-          selectedPreset = COLOR_PRESETS[3];
-        }
-
-        if (selectedPreset) {
-          applyPreset(selectedPreset);
-          setAiChat(prev => [...prev, { 
-            sender: 'assistant', 
-            text: `Dobrano zestaw "${selectedPreset.name}". Zastosowałem wybrane kolory materiałów do Twojego aktualnego modelu. Czy ten zestaw Ci się podoba?` 
-          }]);
-        } else {
-          setAiChat(prev => [...prev, { 
-            sender: 'assistant', 
-            text: 'Ciekawa propozycja! Nie mogłem jednoznacznie dopasować gotowej palety. Wypróbuj słowa kluczowe takie jak "szmaragdowy", "wino", "różowy" lub "czarny", bądź wprowadź Gemini API Key w ustawieniach na górze dla pełnej analizy katalogu!' 
-          }]);
-        }
-      }, 1000);
-      return;
-    }
-
-    // Call real Gemini API
-    try {
-      setAiChat(prev => [...prev, { sender: 'assistant', text: 'Analizuję katalog...' }]);
-      
-      const catalogContext = materials.map(m => `ID: ${m.id}, Nazwa: ${m.name}, Kategoria: ${m.category}, Kolor: ${m.colorName}, Hex: ${m.colorHex}`).join('\n');
-      
-      const prompt = `Jesteś wirtualnym konsultantem w luksusowym sklepie krawieckim "Subtelne Detale" (szycie bielizny damskiej). 
-Rozmawiasz wyłącznie po polsku.
-Klient poprosił o zestaw: "${userText}".
-Twój cel: dobrać z poniższego katalogu pasujące produkty na poszczególne elementy bielizny.
-
-Aktualnie szyte ubranie: ${activeGarment === 'bra' ? 'Biustonosz (bra)' : activeGarment === 'panties' ? 'Majtki (panties)' : 'Koszulka nocna (nightgown)'}.
-
-Dostępny katalog:
-${catalogContext}
-
-Wybierz najbardziej pasujące produkty i napisz krótkie (max 3 zdania) uzasadnienie po polsku. Na samym końcu wypowiedzi dodaj blok JSON w formacie:
-\`\`\`json
-{
-  "matched": {
-    "fabric": "ID_PRODUKTU",
-    "elastic": "ID_PRODUKTU",
-    "hardware": "ID_PRODUKTU",
-    "closure": "ID_PRODUKTU",
-    "underwire": "ID_PRODUKTU"
-  }
-}
-\`\`\`
-Wybierz tylko poprawne ID z katalogu! Nie wymyślaj nowych ID.`;
-
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
-        })
-      });
-
-      const data = await res.json();
-      const aiText = data.candidates[0].content.parts[0].text;
-      
-      // Parse JSON from text response
-      const jsonMatch = aiText.match(/```json\s*([\s\S]*?)\s*```/) || aiText.match(/\{[\s\S]*?\}/);
-      let matchedIds = null;
-      if (jsonMatch) {
-        try {
-          const parsed = JSON.parse(jsonMatch[1] || jsonMatch[0]);
-          if (parsed.matched) matchedIds = parsed.matched;
-        } catch (e) {
-          console.error("JSON parsing from Gemini response failed", e);
-        }
-      }
-
-      const cleanResponseText = aiText.replace(/```json[\s\S]*?```/, '').trim();
-      
-      setAiChat(prev => {
-        const copy = [...prev];
-        copy.pop(); // Remove "Analizuję..."
-        return [...copy, { sender: 'assistant', text: cleanResponseText }];
-      });
-
-      if (matchedIds) {
-        setSelections(prev => {
-          const updatedGarment = { ...prev[activeGarment] };
-          Object.keys(updatedGarment).forEach(partKey => {
-            let cat = 'fabric';
-            if (['straps', 'elastics', 'waist', 'legs', 'underbust'].includes(partKey)) cat = 'elastic';
-            else if (['hardware'].includes(partKey)) cat = 'hardware';
-            else if (['closure'].includes(partKey)) cat = 'closure';
-            else if (['underwires'].includes(partKey)) cat = 'underwire';
-
-            const matchedId = matchedIds[cat];
-            const product = materials.find(m => m.id === matchedId);
-            if (product) {
-              updatedGarment[partKey] = product;
-            }
-          });
-          return {
-            ...prev,
-            [activeGarment]: updatedGarment
-          };
-        });
-      }
-
-    } catch (err) {
-      console.error(err);
-      setAiChat(prev => {
-        const copy = [...prev];
-        copy.pop();
-        return [...copy, { sender: 'assistant', text: 'Wystąpił błąd podczas komunikacji z AI. Sprawdź poprawność klucza API.' }];
-      });
-    }
-  };
-
   return (
     <div className="app-container">
       {/* Header */}
@@ -372,56 +230,7 @@ Wybierz tylko poprawne ID z katalogu! Nie wymyślaj nowych ID.`;
             Koszulka nocna
           </button>
         </div>
-
-        {/* Key Settings Button */}
-        <div>
-          <button 
-            onClick={() => setShowSettings(!showSettings)}
-            style={{
-              padding: '0.4rem 0.8rem',
-              fontSize: '0.8rem',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-md)',
-              background: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            ⚙️ Gemini API Key
-          </button>
-        </div>
       </header>
-
-      {/* Settings Dialog Overlay */}
-      {showSettings && (
-        <div style={{
-          backgroundColor: '#fff',
-          border: '1px solid var(--color-border)',
-          borderRadius: 'var(--radius-lg)',
-          padding: '1.25rem',
-          marginBottom: '1.5rem',
-          boxShadow: 'var(--shadow-md)'
-        }}>
-          <h4 style={{ marginBottom: '0.5rem', fontSize: '1rem' }}>Konfiguracja Gemini AI</h4>
-          <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
-            Podaj swój klucz API Gemini, aby móc porozmawiać z wirtualnym projektantem, który dobierze produkty bezpośrednio z naszego sklepu.
-          </p>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <input 
-              type="password"
-              placeholder="Wprowadź Gemini API Key"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              className="ai-input"
-            />
-            <button 
-              onClick={() => setShowSettings(false)}
-              className="ai-btn"
-            >
-              Zapisz
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Dashboard Grid */}
       <div className="constructor-grid">
@@ -693,35 +502,6 @@ Wybierz tylko poprawne ID z katalogu! Nie wymyślaj nowych ID.`;
 
       </div>
 
-      {/* AI Consultant Panel */}
-      <section className="card ai-box" style={{ width: '100%', marginTop: '1.5rem' }}>
-        <div className="ai-header">
-          <span>🤖</span> Wirtualny Projektant AI
-        </div>
-        <div className="ai-chat-area">
-          {aiChat.map((msg, index) => (
-            <div key={index} className={`ai-message ${msg.sender}`}>
-              {msg.text}
-            </div>
-          ))}
-        </div>
-        <div className="ai-input-group">
-          <input 
-            type="text" 
-            placeholder="Napisz do AI np. 'Chcę uszyć zmysłowy czarny komplet z regulatorami w kolorze różowego złota'..." 
-            value={aiPrompt}
-            onChange={(e) => setAiPrompt(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
-            className="ai-input"
-          />
-          <button 
-            className="ai-btn"
-            onClick={handleSendMessage}
-          >
-            Wyślij
-          </button>
-        </div>
-      </section>
     </div>
   );
 }
