@@ -10,7 +10,7 @@ const majtki = goals.find((g) => g.id === 2);
 const PART_IDS = {
   bra: ['cups', 'gore', 'wings', 'straps', 'elastics', 'underwires', 'hardware', 'closure'],
   panties: ['front', 'back', 'gusset', 'waist', 'legs'],
-  nightgown: ['bodice', 'skirt', 'straps', 'underbust', 'trim'],
+  nightgown: ['bodice', 'skirt', 'straps', 'hardware', 'underbust', 'trim'],
 };
 
 test('makieta odwzorowuje prawdziwy cel „majtki”: 3 sloty, 28 produktów, 2 wymagane', () => {

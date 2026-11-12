@@ -41,6 +41,7 @@ export const GARMENTS = {
       { id: 'bodice', label: 'Góra (stanik)', hint: 'Koronka', accepts: { category: 'fabric', types: ['lace'] }, qty: bySize(0.5, 0.6, 0.7, 0.8) },
       { id: 'skirt', label: 'Dół koszulki', hint: 'Satyna, mikrofibra lub koronka', accepts: { category: 'fabric', types: ['satin', 'microfiber', 'lace'] }, qty: bySize(1.0, 1.1, 1.3, 1.4) },
       { id: 'straps', label: 'Ramiączka', hint: 'Taśma ramiączkowa', accepts: { category: 'elastic', types: ['strap'] }, qty: bySize(0.7, 0.8, 0.8, 0.9) },
+      { id: 'hardware', label: 'Regulatory i kółka', hint: 'Komplet: 2 regulatory + 2 kółka', accepts: { category: 'hardware' }, qty: flat(1) },
       { id: 'underbust', label: 'Gumka pod biustem', hint: 'Gumka z pikotką', accepts: { category: 'elastic', types: ['band'] }, qty: bySize(0.7, 0.8, 0.9, 1.0) },
       { id: 'trim', label: 'Koronka na dole', hint: 'Koronka wykończeniowa', accepts: { category: 'fabric', types: ['lace'] }, qty: bySize(1.4, 1.6, 1.8, 2.0) },
     ],

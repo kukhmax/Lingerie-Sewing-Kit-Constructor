@@ -598,6 +598,45 @@
      ]
     },
     {
+     "id": 1024,
+     "name": "regulatory",
+     "description": "dla ramiączek",
+     "required": false,
+     "products": [
+      {
+       "id": 40,
+       "name": "Regulatory metalowe, biały, 12mm",
+       "price": "0.40",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_170535163.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-bialy-12mm/"
+      },
+      {
+       "id": 41,
+       "name": "Regulatory metalowe, czarny, 12mm",
+       "price": "0.40",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_171924454.MP2_-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-czarny-12mm/"
+      },
+      {
+       "id": 38,
+       "name": "Regulatory metalowe, jasny złoty, 12mm",
+       "price": "0.60",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_171225859.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-zloty-12mm/"
+      },
+      {
+       "id": 39,
+       "name": "Regulatory metalowe, srebrny, 12mm",
+       "price": "0.50",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_170100764.PORTRAIT.ORIGINAL2-1-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-srebrny-12mm/"
+      }
+     ],
+     "visualParts": [
+      "hardware"
+     ]
+    },
+    {
      "id": 1023,
      "name": "nici",
      "description": "najlepsze nici",
