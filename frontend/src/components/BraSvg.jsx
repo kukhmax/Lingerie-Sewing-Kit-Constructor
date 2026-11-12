@@ -1,212 +1,144 @@
-import React from 'react';
+import { FabricDefs, GarmentFigure, Mirror } from './GarmentBits.jsx';
+import { METAL, isLace, useGarmentParts } from './useGarmentParts.js';
+
+// Podpisy części pokazywane po najechaniu / dla czytników ekranu
+const LABELS = {
+  cups: 'Miseczki',
+  gore: 'Mostek',
+  wings: 'Obwód biustonosza',
+  straps: 'Ramiączka',
+  elastics: 'Gumki wykończeniowe',
+  underwires: 'Tunele na fiszbiny',
+  hardware: 'Regulatory i kółka',
+  closure: 'Zapięcie tyłu',
+};
+
+// Geometria lewej połowy (prawa jest lustrzanym odbiciem względem x = 300)
+const CUP = 'M 120 222 L 166 205 C 185 250, 235 285, 286 300 C 288 350, 262 418, 195 428 C 130 432, 92 370, 86 300 C 95 270, 108 245, 120 222 Z';
+const CUP_SEAM = 'M 88 322 C 150 296, 230 302, 286 320';
+const CUP_DART = 'M 190 306 C 194 350, 196 390, 195 428';
+const WIRE = 'M 286 302 C 288 350, 262 418, 195 428 C 130 432, 92 370, 86 302';
+const STRAP = 'M 95 8 L 133 8 L 166 205 L 120 222 Z';
+const SIDE_WING = 'M 104 258 C 72 266, 46 284, 34 310 L 30 396 C 62 418, 112 434, 195 436 L 195 300 Z';
+const NECKLINE = 'M 166 205 C 185 250, 235 285, 286 300';
+const ARMHOLE = 'M 120 222 C 108 245, 95 270, 86 300 M 104 258 C 72 266, 46 284, 34 310';
+const BOTTOM_EDGE = 'M 30 397 C 62 419, 112 435, 195 437 C 240 438, 275 428, 300 422';
 
 export default function BraSvg({ activePart, setActivePart, selections }) {
-  // Helper to get fill color for a part based on selection
-  const getPartFill = (partId, defaultColor = '#f3f4f6') => {
-    const selectedItem = selections[partId];
-    return selectedItem ? selectedItem.colorHex : defaultColor;
-  };
+  const { isOn, fill, outline, outlineW, dash, partProps, caption } = useGarmentParts({
+    activePart,
+    setActivePart,
+    selections,
+    labels: LABELS,
+  });
+  const metal = selections.hardware?.colorHex || METAL;
 
   return (
-    <svg 
-      viewBox="0 0 400 250" 
-      className="svg-garment" 
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.05))' }}
-    >
-      <defs>
-        {/* Semi-transparent lace texture overlay */}
-        <pattern id="lace-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
-          <path d="M 0 10 Q 5 5 10 10 T 20 10" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" />
-          <path d="M 0 0 A 5 5 0 0 1 10 5 A 5 5 0 0 0 20 10" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8" />
-          <circle cx="5" cy="5" r="1" fill="rgba(255,255,255,0.2)" />
-          <circle cx="15" cy="15" r="1.5" fill="rgba(255,255,255,0.3)" />
-        </pattern>
-      </defs>
+    <GarmentFigure viewBox="0 0 600 520" label="Biustonosz — kliknij część, aby dobrać materiał" caption={caption}>
+      <FabricDefs prefix="bra" />
 
-      {/* 1. WINGS / PAS OBWODU (Left & Right) */}
-      <g 
-        id="wings" 
-        className={`interactive-part ${activePart === 'wings' ? 'active' : ''}`}
-        onClick={() => setActivePart('wings')}
-      >
-        {/* Left Wing */}
-        <path 
-          d="M 50 120 C 50 120, 20 125, 10 140 C 5 147, 5 160, 25 155 C 45 150, 100 135, 110 135 L 110 155 C 90 155, 60 162, 50 162 Z" 
-          fill={getPartFill('wings', '#e5e7eb')} 
-          stroke={activePart === 'wings' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'wings' ? '2.5' : '1.2'}
+      {/* 1. OBWÓD: tylna taśma (widoczna od środka) + boczne skrzydełka */}
+      <g {...partProps('wings')}>
+        <path
+          d="M 185 428 C 235 478, 365 478, 415 428 L 415 452 C 365 504, 235 504, 185 452 Z"
+          fill={fill('wings')} stroke={outline('wings')} strokeWidth={outlineW('wings')} strokeDasharray={dash('wings')}
         />
-        {/* Right Wing */}
-        <path 
-          d="M 350 120 C 350 120, 380 125, 390 140 C 395 147, 395 160, 375 155 C 355 150, 300 135, 290 135 L 290 155 C 310 155, 340 162, 350 162 Z" 
-          fill={getPartFill('wings', '#e5e7eb')} 
-          stroke={activePart === 'wings' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'wings' ? '2.5' : '1.2'}
-        />
+        <path d="M 185 428 C 235 478, 365 478, 415 428 L 415 452 C 365 504, 235 504, 185 452 Z" fill="rgba(0,0,0,0.16)" pointerEvents="none" />
+        <Mirror>
+          <path d={SIDE_WING} fill={fill('wings')} stroke={outline('wings')} strokeWidth={outlineW('wings')} strokeDasharray={dash('wings')} />
+          <path d={SIDE_WING} fill="url(#bra-shade)" pointerEvents="none" />
+        </Mirror>
       </g>
 
-      {/* 2. STRAPS / RAMIĄCZKA (Left & Right) */}
-      <g 
-        id="straps" 
-        className={`interactive-part ${activePart === 'straps' ? 'active' : ''}`}
-        onClick={() => setActivePart('straps')}
-      >
-        {/* Left Strap */}
-        <path 
-          d="M 128 100 L 128 30 C 128 30, 126 25, 120 25 C 114 25, 112 30, 112 30 L 112 120 L 118 120 L 118 35 L 122 35 L 122 100 Z" 
-          fill={getPartFill('straps', '#d1d5db')} 
-          stroke={activePart === 'straps' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'straps' ? '2.5' : '1'}
-        />
-        {/* Right Strap */}
-        <path 
-          d="M 272 100 L 272 30 C 272 30, 274 25, 280 25 C 286 25, 288 30, 288 30 L 288 120 L 282 120 L 282 35 L 278 35 L 278 100 Z" 
-          fill={getPartFill('straps', '#d1d5db')} 
-          stroke={activePart === 'straps' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'straps' ? '2.5' : '1'}
-        />
+      {/* 2. ZAPIĘCIE: haftki na środku tylnej taśmy */}
+      <g {...partProps('closure')}>
+        <rect x="278" y="462" width="44" height="30" rx="3"
+          fill={fill('closure')} stroke={outline('closure')} strokeWidth={outlineW('closure')} strokeDasharray={dash('closure')} />
+        <path d="M 300 464 L 300 490" stroke="rgba(0,0,0,0.25)" strokeWidth="1" pointerEvents="none" />
+        {[470, 484].map((y) => (
+          <g key={y} pointerEvents="none">
+            <circle cx="289" cy={y} r="2.2" fill="none" stroke="#6b7280" strokeWidth="1.2" />
+            <path d={`M 307 ${y} h 7`} stroke="#6b7280" strokeWidth="1.6" strokeLinecap="round" />
+          </g>
+        ))}
       </g>
 
-      {/* 3. CUPS / MISECZKI (Left & Right) */}
-      <g 
-        id="cups" 
-        className={`interactive-part ${activePart === 'cups' ? 'active' : ''}`}
-        onClick={() => setActivePart('cups')}
-      >
-        {/* Left Cup */}
-        <path 
-          d="M 110 135 C 110 135, 115 85, 145 80 C 175 75, 195 105, 195 130 C 195 155, 150 180, 115 155 C 105 147, 110 135, 110 135 Z" 
-          fill={getPartFill('cups', '#f9fafb')} 
-          stroke={activePart === 'cups' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'cups' ? '2.5' : '1.5'}
-        />
-        {/* Left Cup Lace Pattern Overlay */}
-        {selections.cups && (
-          <path 
-            d="M 110 135 C 110 135, 115 85, 145 80 C 175 75, 195 105, 195 130 C 195 155, 150 180, 115 155 C 105 147, 110 135, 110 135 Z" 
-            fill="url(#lace-pattern)" 
-            style={{ mixBlendMode: 'overlay', pointerEvents: 'none' }}
-          />
-        )}
-
-        {/* Right Cup */}
-        <path 
-          d="M 290 135 C 290 135, 285 85, 255 80 C 225 75, 205 105, 205 130 C 205 155, 250 180, 285 155 C 295 147, 290 135, 290 135 Z" 
-          fill={getPartFill('cups', '#f9fafb')} 
-          stroke={activePart === 'cups' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'cups' ? '2.5' : '1.5'}
-        />
-        {/* Right Cup Lace Pattern Overlay */}
-        {selections.cups && (
-          <path 
-            d="M 290 135 C 290 135, 285 85, 255 80 C 225 75, 205 105, 205 130 C 205 155, 250 180, 285 155 C 295 147, 290 135, 290 135 Z" 
-            fill="url(#lace-pattern)" 
-            style={{ mixBlendMode: 'overlay', pointerEvents: 'none' }}
-          />
-        )}
+      {/* 3. RAMIĄCZKA */}
+      <g {...partProps('straps')}>
+        <Mirror>
+          <path d={STRAP} fill={fill('straps')} stroke={outline('straps')} strokeWidth={outlineW('straps')} strokeDasharray={dash('straps')} strokeLinejoin="round" />
+          <path d={STRAP} fill="url(#bra-shade)" pointerEvents="none" />
+          {/* przeszycia wzdłuż krawędzi */}
+          <path d="M 101 10 L 126 216 M 127 10 L 160 204" fill="none" stroke="rgba(0,0,0,0.18)" strokeWidth="0.8" strokeDasharray="3 3" pointerEvents="none" />
+        </Mirror>
       </g>
 
-      {/* 4. UNDERWIRE / TUNELE NA FISZBINY (Left & Right) */}
-      <g 
-        id="underwires" 
-        className={`interactive-part ${activePart === 'underwires' ? 'active' : ''}`}
-        onClick={() => setActivePart('underwires')}
-      >
-        {/* Left Underwire Channel */}
-        <path 
-          d="M 112 153 C 122 165, 155 178, 190 135 C 193 131, 195 125, 195 125" 
-          fill="none" 
-          stroke={getPartFill('underwires', '#d1d5db')} 
-          strokeWidth="6" 
-          strokeLinecap="round"
-        />
-        {/* Right Underwire Channel */}
-        <path 
-          d="M 288 153 C 278 165, 245 178, 210 135 C 207 131, 205 125, 205 125" 
-          fill="none" 
-          stroke={getPartFill('underwires', '#d1d5db')} 
-          strokeWidth="6" 
-          strokeLinecap="round"
-        />
+      {/* 4. MOSTEK */}
+      <g {...partProps('gore')}>
+        <path d="M 284 298 L 316 298 L 352 424 L 248 424 Z"
+          fill={fill('gore')} stroke={outline('gore')} strokeWidth={outlineW('gore')} strokeDasharray={dash('gore')} strokeLinejoin="round" />
       </g>
 
-      {/* 5. GORE / MOSTEK */}
-      <g 
-        id="gore" 
-        className={`interactive-part ${activePart === 'gore' ? 'active' : ''}`}
-        onClick={() => setActivePart('gore')}
-      >
-        <polygon 
-          points="195,130 205,130 208,162 192,162" 
-          fill={getPartFill('gore', '#e5e7eb')} 
-          stroke={activePart === 'gore' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'gore' ? '2.5' : '1.2'}
-        />
+      {/* 5. MISECZKI (z cięciem poziomym i zaszewką, jak w szytym biustonoszu) */}
+      <g {...partProps('cups')}>
+        <Mirror>
+          <path d={CUP} fill={fill('cups')} stroke={outline('cups')} strokeWidth={outlineW('cups', 1.6)} strokeDasharray={dash('cups')} strokeLinejoin="round" />
+          {isLace(selections.cups) && <path d={CUP} fill="url(#bra-lace)" pointerEvents="none" />}
+          <path d={CUP} fill="url(#bra-volume)" pointerEvents="none" />
+          <path d={CUP_SEAM} fill="none" stroke="rgba(0,0,0,0.28)" strokeWidth="1.2" pointerEvents="none" />
+          <path d={CUP_SEAM} fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth="1" strokeDasharray="4 3" transform="translate(0 4)" pointerEvents="none" />
+          <path d={CUP_DART} fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="1" pointerEvents="none" />
+        </Mirror>
       </g>
 
-      {/* 6. ELASTICS / GUMKI (Underband and Upper Edge) */}
-      <g 
-        id="elastics" 
-        className={`interactive-part ${activePart === 'elastics' ? 'active' : ''}`}
-        onClick={() => setActivePart('elastics')}
-      >
-        {/* Underband Elastic */}
-        <path 
-          d="M 20 157 C 50 156, 112 165, 192, 163 L 208, 163 C 288, 165, 350 156, 380 157" 
-          fill="none" 
-          stroke={getPartFill('elastics', '#c9cdd4')} 
-          strokeWidth="3.5"
-          strokeLinecap="round"
-        />
-        {/* Upper Left Wing Elastic */}
-        <path 
-          d="M 10 140 C 20 125, 50 120, 110 135" 
-          fill="none" 
-          stroke={getPartFill('elastics', '#c9cdd4')} 
-          strokeWidth="2.5"
-        />
-        {/* Upper Right Wing Elastic */}
-        <path 
-          d="M 390 140 C 380 125, 350 120, 290 135" 
-          fill="none" 
-          stroke={getPartFill('elastics', '#c9cdd4')} 
-          strokeWidth="2.5"
-        />
+      {/* 6. FISZBINY I TUNELE: łuk pod miseczką */}
+      <g {...partProps('underwires')}>
+        <Mirror>
+          <path d={WIRE} fill="none" stroke="transparent" strokeWidth="20" />
+          <path d={WIRE} fill="none" stroke={outline('underwires')} strokeWidth={isOn('underwires') ? 13 : 10.5} strokeLinecap="round" />
+          <path d={WIRE} fill="none" stroke={fill('underwires')} strokeWidth="8" strokeLinecap="round" />
+          <path d={WIRE} fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth="0.8" strokeDasharray="3 3" pointerEvents="none" />
+        </Mirror>
       </g>
 
-      {/* 7. HARDWARE / REGULATORY */}
-      <g 
-        id="hardware" 
-        className={`interactive-part ${activePart === 'hardware' ? 'active' : ''}`}
-        onClick={() => setActivePart('hardware')}
-      >
-        {/* Left Adjuster Rings */}
-        <circle cx="120" cy="35" r="4" fill="none" stroke={getPartFill('hardware', '#9ca3af')} strokeWidth="2.5" />
-        {/* Right Adjuster Rings */}
-        <circle cx="280" cy="35" r="4" fill="none" stroke={getPartFill('hardware', '#9ca3af')} strokeWidth="2.5" />
+      {/* 7. GUMKI: koronkowy brzeg dekoltu, pacha, dolny pas */}
+      <g {...partProps('elastics')}>
+        <Mirror>
+          <path d={`${NECKLINE} ${ARMHOLE} ${BOTTOM_EDGE}`} fill="none" stroke="transparent" strokeWidth="18" />
+          <path d={BOTTOM_EDGE} fill="none" stroke={outline('elastics')} strokeWidth={isOn('elastics') ? 10 : 8} strokeLinecap="round" />
+          <path d={BOTTOM_EDGE} fill="none" stroke={fill('elastics')} strokeWidth="6" strokeLinecap="round" />
+          <path d={ARMHOLE} fill="none" stroke={outline('elastics')} strokeWidth={isOn('elastics') ? 7 : 5.5} strokeLinecap="round" />
+          <path d={ARMHOLE} fill="none" stroke={fill('elastics')} strokeWidth="3.5" strokeLinecap="round" />
+          {/* pikotka: rząd ząbków wzdłuż dekoltu */}
+          <path d={NECKLINE} fill="none" stroke={outline('elastics')} strokeWidth={isOn('elastics') ? 11 : 9.5} strokeLinecap="round" strokeDasharray="0.1 9" transform="translate(4 -4)" />
+          <path d={NECKLINE} fill="none" stroke={fill('elastics')} strokeWidth="7.5" strokeLinecap="round" strokeDasharray="0.1 9" transform="translate(4 -4)" />
+          <path d={NECKLINE} fill="none" stroke={outline('elastics')} strokeWidth="5.5" strokeLinecap="round" />
+          <path d={NECKLINE} fill="none" stroke={fill('elastics')} strokeWidth="3.5" strokeLinecap="round" />
+        </Mirror>
       </g>
 
-      {/* 8. CLOSURE / ZAPIĘCIE */}
-      <g 
-        id="closure" 
-        className={`interactive-part ${activePart === 'closure' ? 'active' : ''}`}
-        onClick={() => setActivePart('closure')}
-      >
-        {/* Back Hook & Eye Piece representation on Left Wing end */}
-        <rect 
-          x="12" 
-          y="138" 
-          width="12" 
-          height="18" 
-          rx="1" 
-          fill={getPartFill('closure', '#d1d5db')} 
-          stroke={activePart === 'closure' ? 'var(--color-primary)' : '#9ca3af'}
-          strokeWidth={activePart === 'closure' ? '2' : '1'}
-        />
-        {/* Small hooks */}
-        <path d="M 9 143 L 12 143 M 9 151 L 12 151" stroke="#4b5563" strokeWidth="1.5" />
+      {/* 8. REGULATORY I KÓŁKA */}
+      <g {...partProps('hardware')}>
+        <Mirror>
+          {/* powiększony obszar klikalny */}
+          <rect x="88" y="52" width="72" height="46" fill="transparent" stroke="none" />
+          <circle cx="143" cy="210" r="16" fill="transparent" stroke="none" />
+          {/* regulator */}
+          <g transform="rotate(-9 124 75)">
+            <rect x="98" y="66" width="52" height="18" rx="5" fill="none"
+              stroke={outline('hardware')} strokeWidth={isOn('hardware') ? 8 : 6.5} />
+            <rect x="98" y="66" width="52" height="18" rx="5" fill="none"
+              stroke={metal} strokeWidth="4" />
+            <path d="M 100 75 H 148" stroke={metal} strokeWidth="3" />
+          </g>
+          {/* kółko łączące ramiączko z miseczką */}
+          <ellipse cx="143" cy="211" rx="21" ry="6.5" fill="none" transform="rotate(-20 143 211)"
+            stroke={outline('hardware')} strokeWidth={isOn('hardware') ? 7 : 5.5} />
+          <ellipse cx="143" cy="211" rx="21" ry="6.5" fill="none" transform="rotate(-20 143 211)"
+            stroke={metal} strokeWidth="3.2" />
+        </Mirror>
       </g>
-    </svg>
+
+    </GarmentFigure>
   );
 }

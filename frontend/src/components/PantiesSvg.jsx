@@ -1,113 +1,87 @@
-import React from 'react';
+import { FabricDefs, GarmentFigure, Mirror } from './GarmentBits.jsx';
+import { isLace, useGarmentParts } from './useGarmentParts.js';
+
+const LABELS = {
+  front: 'Panel przedni',
+  back: 'Panel tylny',
+  gusset: 'Klin (krok)',
+  waist: 'Gumka w pasie',
+  legs: 'Wykończenie nogawek',
+};
+
+// Widok z przodu, majtki leżą płasko; tył wystaje przy nogawkach i nad linią pasa
+const FRONT = 'M 95 72 Q 300 142 505 72 L 495 152 C 430 190, 370 290, 345 372 L 255 372 C 230 290, 170 190, 105 152 Z';
+const BACK = 'M 95 72 L 505 72 L 497 160 C 488 260, 415 350, 352 388 Q 300 400 248 388 C 185 350, 112 260, 103 160 Z';
+const GUSSET = 'M 230 309 Q 300 294 370 309 L 345 372 Q 300 384 255 372 Z';
+const WAIST_FRONT = 'M 95 72 Q 300 142 505 72';
+const WAIST_BACK = 'M 95 72 L 505 72';
+// lewa nogawka (prawa = odbicie lustrzane)
+const LEG_FRONT = 'M 105 152 C 170 190, 230 290, 255 372';
+const LEG_BACK = 'M 103 160 C 112 260, 185 350, 248 388';
 
 export default function PantiesSvg({ activePart, setActivePart, selections }) {
-  const getPartFill = (partId, defaultColor = '#f3f4f6') => {
-    const selectedItem = selections[partId];
-    return selectedItem ? selectedItem.colorHex : defaultColor;
-  };
+  const { isOn, fill, outline, outlineW, dash, partProps, caption } = useGarmentParts({
+    activePart,
+    setActivePart,
+    selections,
+    labels: LABELS,
+  });
 
   return (
-    <svg 
-      viewBox="0 0 400 250" 
-      className="svg-garment" 
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.05))' }}
-    >
-      <defs>
-        {/* Lace pattern overlay */}
-        <pattern id="lace-pattern-panties" width="20" height="20" patternUnits="userSpaceOnUse">
-          <path d="M 0 10 Q 5 5 10 10 T 20 10" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" />
-          <path d="M 0 0 A 5 5 0 0 1 10 5 A 5 5 0 0 0 20 10" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8" />
-          <circle cx="5" cy="5" r="1" fill="rgba(255,255,255,0.2)" />
-        </pattern>
-      </defs>
+    <GarmentFigure viewBox="0 0 600 440" label="Majtki — kliknij część, aby dobrać materiał" caption={caption}>
+      <FabricDefs prefix="pan" />
 
-      {/* 1. BACK PANEL / TYŁ (Shows at sides as a backdrop) */}
-      <g 
-        id="back" 
-        className={`interactive-part ${activePart === 'back' ? 'active' : ''}`}
-        onClick={() => setActivePart('back')}
-      >
-        <path 
-          d="M 80 50 L 320 50 C 320 50, 360 120, 310 170 C 270 210, 220 220, 220 220 L 180 220 C 180 220, 130 210, 90 170 C 40 120, 80 50, 80 50 Z" 
-          fill={getPartFill('back', '#e5e7eb')} 
-          stroke={activePart === 'back' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'back' ? '2.5' : '1.2'}
-        />
+      {/* 1. TYŁ (widoczny od środka: nad pasem i przy nogawkach) */}
+      <g {...partProps('back')}>
+        <path d={BACK} fill={fill('back')} stroke={outline('back')} strokeWidth={outlineW('back')} strokeDasharray={dash('back')} />
+        {isLace(selections.back) && <path d={BACK} fill="url(#pan-lace)" pointerEvents="none" />}
+        <path d={BACK} fill="rgba(0,0,0,0.14)" pointerEvents="none" />
       </g>
 
-      {/* 2. FRONT PANEL / PRZÓD (Main front piece overlays back) */}
-      <g 
-        id="front" 
-        className={`interactive-part ${activePart === 'front' ? 'active' : ''}`}
-        onClick={() => setActivePart('front')}
-      >
-        <path 
-          d="M 83 55 L 317 55 C 317 55, 300 130, 240 180 C 225 192, 220 195, 220 195 L 180 195 C 180 195, 175 192, 160 180 C 100 130, 83 55, 83 55 Z" 
-          fill={getPartFill('front', '#f9fafb')} 
-          stroke={activePart === 'front' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'front' ? '2.5' : '1.5'}
-        />
-        {/* Overlay lace pattern */}
-        {selections.front && (
-          <path 
-            d="M 83 55 L 317 55 C 317 55, 300 130, 240 180 C 225 192, 220 195, 220 195 L 180 195 C 180 195, 175 192, 160 180 C 100 130, 83 55, 83 55 Z" 
-            fill="url(#lace-pattern-panties)" 
-            style={{ mixBlendMode: 'overlay', pointerEvents: 'none' }}
-          />
-        )}
+      {/* 2. PRZÓD */}
+      <g {...partProps('front')}>
+        <path d={FRONT} fill={fill('front')} stroke={outline('front')} strokeWidth={outlineW('front', 1.6)} strokeDasharray={dash('front')} />
+        {isLace(selections.front) && <path d={FRONT} fill="url(#pan-lace)" pointerEvents="none" />}
+        <path d={FRONT} fill="url(#pan-volume)" pointerEvents="none" />
+        {/* szwy boczne */}
+        <Mirror>
+          <path d="M 100 76 L 109 150" fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="0.9" strokeDasharray="3 3" pointerEvents="none" />
+        </Mirror>
       </g>
 
-      {/* 3. GUSSET / KLIN (Crotch area) */}
-      <g 
-        id="gusset" 
-        className={`interactive-part ${activePart === 'gusset' ? 'active' : ''}`}
-        onClick={() => setActivePart('gusset')}
-      >
-        <path 
-          d="M 180 195 L 220 195 C 220 195, 220 215, 215 220 L 185 220 C 180 215, 180 195, 180 195 Z" 
-          fill={getPartFill('gusset', '#f3f4f6')} 
-          stroke={activePart === 'gusset' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'gusset' ? '2.5' : '1.2'}
-        />
+      {/* 3. KLIN */}
+      <g {...partProps('gusset')}>
+        <path d={GUSSET} fill={fill('gusset')} stroke={outline('gusset')} strokeWidth={outlineW('gusset')} strokeDasharray={dash('gusset')} />
+        <path d="M 236 314 Q 300 300 364 314" fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="0.9" strokeDasharray="3 3" pointerEvents="none" />
       </g>
 
-      {/* 4. WAISTBAND ELASTIC / GUMA W PASIE */}
-      <g 
-        id="waist" 
-        className={`interactive-part ${activePart === 'waist' ? 'active' : ''}`}
-        onClick={() => setActivePart('waist')}
-      >
-        <path 
-          d="M 76 48 L 324 48" 
-          fill="none" 
-          stroke={getPartFill('waist', '#c9cdd4')} 
-          strokeWidth="4.5"
-          strokeLinecap="round"
-        />
+      {/* 4. WYKOŃCZENIE NOGAWEK */}
+      <g {...partProps('legs')}>
+        <Mirror>
+          <path d={LEG_FRONT} fill="none" stroke="transparent" strokeWidth="16" />
+          <path d={LEG_BACK} fill="none" stroke={outline('legs')} strokeWidth={isOn('legs') ? 7.5 : 6} strokeLinecap="round" />
+          <path d={LEG_BACK} fill="none" stroke={fill('legs')} strokeWidth="4" strokeLinecap="round" />
+          <path d={LEG_FRONT} fill="none" stroke={outline('legs')} strokeWidth={isOn('legs') ? 9.5 : 8} strokeLinecap="round" />
+          <path d={LEG_FRONT} fill="none" stroke={fill('legs')} strokeWidth="6" strokeLinecap="round" />
+          <path d={LEG_FRONT} fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="0.8" strokeDasharray="3 3" pointerEvents="none" />
+        </Mirror>
       </g>
 
-      {/* 5. LEG ELASTICS / GUMKI W NOGAWKACH (Left & Right) */}
-      <g 
-        id="legs" 
-        className={`interactive-part ${activePart === 'legs' ? 'active' : ''}`}
-        onClick={() => setActivePart('legs')}
-      >
-        {/* Left Leg Open Elastic */}
-        <path 
-          d="M 80 52 C 80 52, 98 135, 180 195" 
-          fill="none" 
-          stroke={getPartFill('legs', '#c9cdd4')} 
-          strokeWidth="3"
-        />
-        {/* Right Leg Open Elastic */}
-        <path 
-          d="M 320 52 C 320 52, 302 135, 220 195" 
-          fill="none" 
-          stroke={getPartFill('legs', '#c9cdd4')} 
-          strokeWidth="3"
-        />
+      {/* 5. GUMKA W PASIE (z pikotką) */}
+      <g {...partProps('waist')}>
+        <path d={WAIST_BACK} fill="none" stroke={outline('waist')} strokeWidth={isOn('waist') ? 8 : 6.5} strokeLinecap="round" />
+        <path d={WAIST_BACK} fill="none" stroke={fill('waist')} strokeWidth="4.5" strokeLinecap="round" />
+        <path d={WAIST_FRONT} fill="none" stroke={outline('waist')} strokeWidth={isOn('waist') ? 11 : 9.5} strokeLinecap="round" strokeDasharray="0.1 9" transform="translate(0 -5)" />
+        <path d={WAIST_FRONT} fill="none" stroke={fill('waist')} strokeWidth="7.5" strokeLinecap="round" strokeDasharray="0.1 9" transform="translate(0 -5)" />
+        <path d={WAIST_FRONT} fill="none" stroke={outline('waist')} strokeWidth={isOn('waist') ? 13 : 11.5} strokeLinecap="round" />
+        <path d={WAIST_FRONT} fill="none" stroke={fill('waist')} strokeWidth="9.5" strokeLinecap="round" />
+        <path d={WAIST_FRONT} fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="0.8" strokeDasharray="3 3" pointerEvents="none" />
+        {/* kokardka */}
+        <g pointerEvents="none" stroke={outline('waist')} strokeWidth="1" fill={fill('waist')}>
+          <path d="M 300 108 L 282 98 L 284 118 Z M 300 108 L 318 98 L 316 118 Z" />
+          <circle cx="300" cy="108" r="4" />
+        </g>
       </g>
-    </svg>
+    </GarmentFigure>
   );
 }

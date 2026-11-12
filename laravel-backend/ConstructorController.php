@@ -2,105 +2,98 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Product; // Adjust to your actual Product model namespace
-use Illuminate\Support\Facades\Log;
+use App\Http\Requests\ConstructorAddToCartRequest;
+use App\Http\Resources\ConstructorMaterialResource;
+use App\Models\Product; // замените на реальную модель товара
+use App\Services\ConstructorCart;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ConstructorController extends Controller
 {
+    /** Сколько секунд кэшируется каталог. */
+    private const CATALOG_TTL = 300;
+
     /**
-     * Get all constructor-compatible products from the database.
-     * Accessible via GET /api/constructor/materials
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * GET /constructor/materials
+     * Каталог материалов, доступных в конструкторе.
      */
-    public function getMaterials()
+    public function materials(): JsonResponse
     {
         try {
-            // Retrieve only products flagged as constructor-compatible
-            $materials = Product::where('is_constructor_compatible', true)
-                ->select([
-                    'id',
-                    'name',
-                    'category_constructor_assigned as category', // fabric, elastic, hardware, closure
-                    'color_hex as colorHex',                     // e.g. #047857
-                    'price',                                     // base price per unit
-                    'consumption_unit as unit',                  // m, pcs, set
-                    'standard_consumption_qty as standard_qty',  // default qty needed
-                    'image_path'                                 // path to catalog image
-                ])
-                ->get();
+            $materials = Cache::remember('constructor.materials', self::CATALOG_TTL, function () {
+                $products = Product::query()
+                    ->where('is_constructor_compatible', true)
+                    ->orderBy('constructor_category')
+                    ->orderBy('name')
+                    ->get();
 
-            return response()->json($materials, 200);
-        } catch (\Exception $e) {
-            Log::error('Constructor materials fetch failed: ' . $e->getMessage());
-            return response()->json([
-                'error' => 'Nie udało się pobrać materiałów.',
-                'message' => $e->getMessage()
-            ], 500);
+                return ConstructorMaterialResource::collection($products)->resolve();
+            });
+
+            return response()->json($materials);
+        } catch (Throwable $e) {
+            // Подробности — только в лог. Клиенту текст исключения не отдаём.
+            report($e);
+
+            return response()->json(['message' => 'Nie udało się pobrać materiałów.'], 500);
         }
     }
 
     /**
-     * Add the custom-assembled kit items to the cart.
-     * Accessible via POST /api/constructor/cart/add
+     * POST /constructor/cart
+     * Тело: { "items": [ { "product_id": 17, "quantity": 0.5 }, ... ] }
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * Формат, количество и существование товаров уже проверены в ConstructorAddToCartRequest.
+     * Цена НИКОГДА не берётся из запроса — только из базы.
      */
-    public function addToCart(Request $request)
+    public function addToCart(ConstructorAddToCartRequest $request, ConstructorCart $cart): JsonResponse
     {
-        // Validate payload format
-        $request->validate([
-            'items' => 'required|array',
-            'items.*.product_id' => 'required',
-            'items.*.quantity' => 'required|numeric|min:0.01',
-        ]);
+        $items = collect($request->validated('items'));
 
         try {
-            $itemsToAdd = $request->input('items');
-            $addedCount = 0;
+            $products = Product::query()
+                ->whereIn('id', $items->pluck('product_id'))
+                ->where('is_constructor_compatible', true)
+                ->get()
+                ->keyBy('id');
 
-            foreach ($itemsToAdd as $item) {
-                // Fetch the product to verify active status and price
-                $product = Product::find($item['product_id']);
-                
-                if (!$product) {
-                    return response()->json([
-                        'error' => "Produkt o ID {$item['product_id']} nie istnieje."
-                    ], 422);
+            // Проверяем остатки по всем позициям ДО изменения корзины: либо добавляется всё, либо ничего
+            $errors = [];
+            foreach ($items as $index => $item) {
+                $product = $products->get($item['product_id']);
+                $available = $cart->availableQuantity($product);
+                if ($available !== null && (float) $item['quantity'] > $available) {
+                    $errors["items.$index.quantity"] = ["Produkt „{$product->name}” — dostępne tylko {$available} {$product->consumption_unit}."];
                 }
-
-                // Add to your custom cart system
-                // (e.g. Darryldecode Cart, WooCommerce-like Session, or DB-based Cart)
-                
-                // Example using a generic Cart manager:
-                // \Cart::add([
-                //     'id' => $product->id,
-                //     'name' => $product->name,
-                //     'price' => $product->price,
-                //     'quantity' => $item['quantity'],
-                //     'attributes' => [
-                //         'color' => $product->color_hex,
-                //         'constructor' => true
-                //     ]
-                // ]);
-
-                $addedCount++;
             }
+            if ($errors !== []) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Niektóre materiały nie są dostępne w wybranej ilości.',
+                    'errors' => $errors,
+                ], 422);
+            }
+
+            DB::transaction(function () use ($items, $products, $cart) {
+                foreach ($items as $item) {
+                    $cart->add($products->get($item['product_id']), (float) $item['quantity']);
+                }
+            });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Twój zestaw został pomyślnie dodany do koszyka!',
-                'added_items_count' => $addedCount,
-                'redirect_url' => '/cart' // Path to standard cart page for redirect
-            ], 200);
+                'added_items_count' => $items->count(),
+                'cart_url' => $cart->url(),
+            ]);
+        } catch (Throwable $e) {
+            report($e);
 
-        } catch (\Exception $e) {
-            Log::error('Constructor cart add failed: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Błąd podczas dodawania do koszyka.',
-                'message' => $e->getMessage()
+                'success' => false,
+                'message' => 'Nie udało się dodać do koszyka.',
             ], 500);
         }
     }

@@ -1,0 +1,696 @@
+{
+ "_comment": "Cel 2 (majtki) — rzeczywiste dane z mojzestaw.subtelnedetale.pl (2026-11-12) + nowe pola visual / visualParts. Cele 101 i 102 są wymyślone na potrzeby makiety.",
+ "limits": {
+  "minQuantity": 1,
+  "maxQuantity": 99
+ },
+ "goals": [
+  {
+   "id": 2,
+   "name": "majtki",
+   "slots": [
+    {
+     "id": 3,
+     "name": "tkanina",
+     "description": "najważniejszy element",
+     "required": true,
+     "products": [
+      {
+       "id": 8,
+       "name": "Koronka elastyczna, szer. 16,5 cm, pralina",
+       "price": "15.50",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/38.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17cm-pralina/"
+      },
+      {
+       "id": 7,
+       "name": "Koronka elastyczna, szer. 16,7 cm, truskawka",
+       "price": "14.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/76.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-16-7cm-truskawka/"
+      },
+      {
+       "id": 6,
+       "name": "Koronka elastyczna, szer. 17,1 cm, len i morwa",
+       "price": "20.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/27.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17-1cm-len-i-morwa/"
+      },
+      {
+       "id": 18,
+       "name": "Koronka elastyczna, szer. 16,7 cm, kwiat brzoskwini",
+       "price": "15.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/18.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-167cm-kwiat-brzoskwini/"
+      },
+      {
+       "id": 11,
+       "name": "Koronka elastyczna, szer. 17,4 cm, hazel nugat i brownie",
+       "price": "17.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/35.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17-4cm-hazel-nugat-i-brownie/"
+      },
+      {
+       "id": 21,
+       "name": "Koronka elastyczna, szer. 17cm, turkusowy i brąz",
+       "price": "17.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/73.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17cm-turkusowy-i-braz/"
+      },
+      {
+       "id": 9,
+       "name": "Koronka elastyczna, szer. 17cm, różowa",
+       "price": "13.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/61.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17cm-rozowa/"
+      },
+      {
+       "id": 12,
+       "name": "Koronka elastyczna, szer. 22,6 cm, błękit i śliwka",
+       "price": "19.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/44.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-226cm-jadeit-i-sliwka/"
+      },
+      {
+       "id": 16,
+       "name": "Koronka elastyczna, szer. 23,5 cm, mandarynka",
+       "price": "17.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/45.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-23-5cm-mandarynka/"
+      },
+      {
+       "id": 2,
+       "name": "Microfibra Lauma, czarna, 0.5m",
+       "price": "30.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/IMG_4584_1098b682-5819-4c27-97aa-66b645771613.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/microfibra-lauma-czarna/"
+      },
+      {
+       "id": 3,
+       "name": "Microfibra Lauma, silver peony, 0.5m",
+       "price": "20.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/72-1.png",
+       "permalink": "https://subtelnedetale.pl/produkt/microfibra-lauma-silver-peony/"
+      },
+      {
+       "id": 1,
+       "name": "Siatka elastyczna Lauma, czarna, 0.5m",
+       "price": "14.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/IMG_8381-Edit_0d06c598-a345-46a6-8e48-2aaf7853338c.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/siatka-elastyczna-lauma-czarna/"
+      }
+     ],
+     "visualParts": [
+      "front",
+      "back",
+      "gusset"
+     ]
+    },
+    {
+     "id": 5,
+     "name": "nici",
+     "description": "najlepsze nici",
+     "required": true,
+     "products": [
+      {
+       "id": 22,
+       "name": "Nici Gütermann Mara 120, 1000m, biały (800)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/IMG_8437-Edit.webp",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-bialy-800/"
+      },
+      {
+       "id": 23,
+       "name": "Nici Gütermann Mara 120, 1000m, brudny róż (2528)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_193608900.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-brudny-roz-2528/"
+      },
+      {
+       "id": 30,
+       "name": "Nici Gütermann Mara 120, 1000m, ciemny beż (215)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_202527362.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-ciemny-bez-215/"
+      },
+      {
+       "id": 28,
+       "name": "Nici Gütermann Mara 120, 1000m, czerwony (156)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_191519562.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-czerwony-156/"
+      },
+      {
+       "id": 31,
+       "name": "Nici Gütermann Mara 120, 1000m, jasny błękit (193)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_204000902.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-blekit-193/"
+      },
+      {
+       "id": 25,
+       "name": "Nici Gütermann Mara 120, 1000m, jasny róż (320)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_175105631.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-320-jasny-roz-320/"
+      },
+      {
+       "id": 29,
+       "name": "Nici Gütermann Mara 120, 1000m, kolor: czarny (000)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_205632370.PORTRAIT2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-czarny-000/"
+      },
+      {
+       "id": 27,
+       "name": "Nici Gütermann Mara 120, 1000m, kolor: jasny beż (275)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/file_00000000ce5071f489e84534ac150a6c.png",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-jasny-bez-275/"
+      },
+      {
+       "id": 26,
+       "name": "Nici Gütermann Mara 120, 1000m, silver peony (802)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_194324512.MP2_-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-silver-peony-802/"
+      },
+      {
+       "id": 24,
+       "name": "Nici Gütermann Mara 120, 1000m, łososiowy (210)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260115_115923557.PORTRAIT.ORIGINAL-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-lososiowy-210/"
+      },
+      {
+       "id": 33,
+       "name": "Nici Gütermann Mara 150, 1000m, biały (800)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_204944833.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-150-1000m-kolor-bialy-800/"
+      },
+      {
+       "id": 32,
+       "name": "Nici Gütermann Mara 150, 1000m, czarny (000)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/nici_mara_150_000.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-150-1000m-kolor-czarny-000/"
+      }
+     ],
+     "visualParts": []
+    },
+    {
+     "id": 7,
+     "name": "regulatory",
+     "description": "dla ramiączek",
+     "required": false,
+     "products": [
+      {
+       "id": 40,
+       "name": "Regulatory metalowe, biały, 12mm",
+       "price": "0.40",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_170535163.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-bialy-12mm/"
+      },
+      {
+       "id": 41,
+       "name": "Regulatory metalowe, czarny, 12mm",
+       "price": "0.40",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_171924454.MP2_-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-czarny-12mm/"
+      },
+      {
+       "id": 38,
+       "name": "Regulatory metalowe, jasny złoty, 12mm",
+       "price": "0.60",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_171225859.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-zloty-12mm/"
+      },
+      {
+       "id": 39,
+       "name": "Regulatory metalowe, srebrny, 12mm",
+       "price": "0.50",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_170100764.PORTRAIT.ORIGINAL2-1-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-srebrny-12mm/"
+      }
+     ],
+     "visualParts": []
+    }
+   ],
+   "visual": "panties"
+  },
+  {
+   "id": 101,
+   "name": "biustonosz (demo)",
+   "visual": "bra",
+   "slots": [
+    {
+     "id": 1011,
+     "name": "miseczki",
+     "description": "koronka na miseczki",
+     "required": true,
+     "products": [
+      {
+       "id": 8,
+       "name": "Koronka elastyczna, szer. 16,5 cm, pralina",
+       "price": "15.50",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/38.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17cm-pralina/"
+      },
+      {
+       "id": 7,
+       "name": "Koronka elastyczna, szer. 16,7 cm, truskawka",
+       "price": "14.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/76.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-16-7cm-truskawka/"
+      },
+      {
+       "id": 6,
+       "name": "Koronka elastyczna, szer. 17,1 cm, len i morwa",
+       "price": "20.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/27.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17-1cm-len-i-morwa/"
+      },
+      {
+       "id": 18,
+       "name": "Koronka elastyczna, szer. 16,7 cm, kwiat brzoskwini",
+       "price": "15.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/18.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-167cm-kwiat-brzoskwini/"
+      },
+      {
+       "id": 11,
+       "name": "Koronka elastyczna, szer. 17,4 cm, hazel nugat i brownie",
+       "price": "17.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/35.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17-4cm-hazel-nugat-i-brownie/"
+      },
+      {
+       "id": 21,
+       "name": "Koronka elastyczna, szer. 17cm, turkusowy i brąz",
+       "price": "17.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/73.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17cm-turkusowy-i-braz/"
+      },
+      {
+       "id": 9,
+       "name": "Koronka elastyczna, szer. 17cm, różowa",
+       "price": "13.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/61.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17cm-rozowa/"
+      },
+      {
+       "id": 12,
+       "name": "Koronka elastyczna, szer. 22,6 cm, błękit i śliwka",
+       "price": "19.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/44.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-226cm-jadeit-i-sliwka/"
+      },
+      {
+       "id": 16,
+       "name": "Koronka elastyczna, szer. 23,5 cm, mandarynka",
+       "price": "17.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/45.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-23-5cm-mandarynka/"
+      }
+     ],
+     "visualParts": [
+      "cups"
+     ]
+    },
+    {
+     "id": 1012,
+     "name": "obwód i mostek",
+     "description": "mikrofibra lub siatka",
+     "required": true,
+     "products": [
+      {
+       "id": 2,
+       "name": "Microfibra Lauma, czarna, 0.5m",
+       "price": "30.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/IMG_4584_1098b682-5819-4c27-97aa-66b645771613.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/microfibra-lauma-czarna/"
+      },
+      {
+       "id": 3,
+       "name": "Microfibra Lauma, silver peony, 0.5m",
+       "price": "20.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/72-1.png",
+       "permalink": "https://subtelnedetale.pl/produkt/microfibra-lauma-silver-peony/"
+      },
+      {
+       "id": 1,
+       "name": "Siatka elastyczna Lauma, czarna, 0.5m",
+       "price": "14.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/IMG_8381-Edit_0d06c598-a345-46a6-8e48-2aaf7853338c.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/siatka-elastyczna-lauma-czarna/"
+      }
+     ],
+     "visualParts": [
+      "wings",
+      "gore"
+     ]
+    },
+    {
+     "id": 1013,
+     "name": "regulatory",
+     "description": "dla ramiączek",
+     "required": false,
+     "products": [
+      {
+       "id": 40,
+       "name": "Regulatory metalowe, biały, 12mm",
+       "price": "0.40",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_170535163.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-bialy-12mm/"
+      },
+      {
+       "id": 41,
+       "name": "Regulatory metalowe, czarny, 12mm",
+       "price": "0.40",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_171924454.MP2_-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-czarny-12mm/"
+      },
+      {
+       "id": 38,
+       "name": "Regulatory metalowe, jasny złoty, 12mm",
+       "price": "0.60",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_171225859.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-zloty-12mm/"
+      },
+      {
+       "id": 39,
+       "name": "Regulatory metalowe, srebrny, 12mm",
+       "price": "0.50",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_170100764.PORTRAIT.ORIGINAL2-1-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/regulatory-metalowe-srebrny-12mm/"
+      }
+     ],
+     "visualParts": [
+      "hardware"
+     ]
+    },
+    {
+     "id": 1014,
+     "name": "nici",
+     "description": "najlepsze nici",
+     "required": true,
+     "products": [
+      {
+       "id": 22,
+       "name": "Nici Gütermann Mara 120, 1000m, biały (800)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/IMG_8437-Edit.webp",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-bialy-800/"
+      },
+      {
+       "id": 23,
+       "name": "Nici Gütermann Mara 120, 1000m, brudny róż (2528)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_193608900.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-brudny-roz-2528/"
+      },
+      {
+       "id": 30,
+       "name": "Nici Gütermann Mara 120, 1000m, ciemny beż (215)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_202527362.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-ciemny-bez-215/"
+      },
+      {
+       "id": 28,
+       "name": "Nici Gütermann Mara 120, 1000m, czerwony (156)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_191519562.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-czerwony-156/"
+      },
+      {
+       "id": 31,
+       "name": "Nici Gütermann Mara 120, 1000m, jasny błękit (193)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_204000902.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-blekit-193/"
+      },
+      {
+       "id": 25,
+       "name": "Nici Gütermann Mara 120, 1000m, jasny róż (320)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_175105631.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-320-jasny-roz-320/"
+      },
+      {
+       "id": 29,
+       "name": "Nici Gütermann Mara 120, 1000m, kolor: czarny (000)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_205632370.PORTRAIT2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-czarny-000/"
+      },
+      {
+       "id": 27,
+       "name": "Nici Gütermann Mara 120, 1000m, kolor: jasny beż (275)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/file_00000000ce5071f489e84534ac150a6c.png",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-jasny-bez-275/"
+      },
+      {
+       "id": 26,
+       "name": "Nici Gütermann Mara 120, 1000m, silver peony (802)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_194324512.MP2_-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-silver-peony-802/"
+      },
+      {
+       "id": 24,
+       "name": "Nici Gütermann Mara 120, 1000m, łososiowy (210)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260115_115923557.PORTRAIT.ORIGINAL-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-lososiowy-210/"
+      },
+      {
+       "id": 33,
+       "name": "Nici Gütermann Mara 150, 1000m, biały (800)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_204944833.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-150-1000m-kolor-bialy-800/"
+      },
+      {
+       "id": 32,
+       "name": "Nici Gütermann Mara 150, 1000m, czarny (000)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/nici_mara_150_000.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-150-1000m-kolor-czarny-000/"
+      }
+     ],
+     "visualParts": []
+    }
+   ]
+  },
+  {
+   "id": 102,
+   "name": "koszulka nocna (demo)",
+   "visual": "nightgown",
+   "slots": [
+    {
+     "id": 1021,
+     "name": "góra i koronka na dole",
+     "description": "koronka elastyczna",
+     "required": true,
+     "products": [
+      {
+       "id": 8,
+       "name": "Koronka elastyczna, szer. 16,5 cm, pralina",
+       "price": "15.50",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/38.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17cm-pralina/"
+      },
+      {
+       "id": 7,
+       "name": "Koronka elastyczna, szer. 16,7 cm, truskawka",
+       "price": "14.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/76.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-16-7cm-truskawka/"
+      },
+      {
+       "id": 6,
+       "name": "Koronka elastyczna, szer. 17,1 cm, len i morwa",
+       "price": "20.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/27.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17-1cm-len-i-morwa/"
+      },
+      {
+       "id": 18,
+       "name": "Koronka elastyczna, szer. 16,7 cm, kwiat brzoskwini",
+       "price": "15.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/18.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-167cm-kwiat-brzoskwini/"
+      },
+      {
+       "id": 11,
+       "name": "Koronka elastyczna, szer. 17,4 cm, hazel nugat i brownie",
+       "price": "17.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/35.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17-4cm-hazel-nugat-i-brownie/"
+      },
+      {
+       "id": 21,
+       "name": "Koronka elastyczna, szer. 17cm, turkusowy i brąz",
+       "price": "17.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/73.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17cm-turkusowy-i-braz/"
+      },
+      {
+       "id": 9,
+       "name": "Koronka elastyczna, szer. 17cm, różowa",
+       "price": "13.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/61.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-17cm-rozowa/"
+      },
+      {
+       "id": 12,
+       "name": "Koronka elastyczna, szer. 22,6 cm, błękit i śliwka",
+       "price": "19.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/44.png",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-226cm-jadeit-i-sliwka/"
+      },
+      {
+       "id": 16,
+       "name": "Koronka elastyczna, szer. 23,5 cm, mandarynka",
+       "price": "17.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/45.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/koronka-elastyczna-szerokosc-23-5cm-mandarynka/"
+      }
+     ],
+     "visualParts": [
+      "bodice",
+      "trim"
+     ]
+    },
+    {
+     "id": 1022,
+     "name": "dół koszulki",
+     "description": "mikrofibra lub siatka",
+     "required": true,
+     "products": [
+      {
+       "id": 2,
+       "name": "Microfibra Lauma, czarna, 0.5m",
+       "price": "30.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/IMG_4584_1098b682-5819-4c27-97aa-66b645771613.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/microfibra-lauma-czarna/"
+      },
+      {
+       "id": 3,
+       "name": "Microfibra Lauma, silver peony, 0.5m",
+       "price": "20.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/72-1.png",
+       "permalink": "https://subtelnedetale.pl/produkt/microfibra-lauma-silver-peony/"
+      },
+      {
+       "id": 1,
+       "name": "Siatka elastyczna Lauma, czarna, 0.5m",
+       "price": "14.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/IMG_8381-Edit_0d06c598-a345-46a6-8e48-2aaf7853338c.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/siatka-elastyczna-lauma-czarna/"
+      }
+     ],
+     "visualParts": [
+      "skirt"
+     ]
+    },
+    {
+     "id": 1023,
+     "name": "nici",
+     "description": "najlepsze nici",
+     "required": true,
+     "products": [
+      {
+       "id": 22,
+       "name": "Nici Gütermann Mara 120, 1000m, biały (800)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/IMG_8437-Edit.webp",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-bialy-800/"
+      },
+      {
+       "id": 23,
+       "name": "Nici Gütermann Mara 120, 1000m, brudny róż (2528)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_193608900.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-brudny-roz-2528/"
+      },
+      {
+       "id": 30,
+       "name": "Nici Gütermann Mara 120, 1000m, ciemny beż (215)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_202527362.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-ciemny-bez-215/"
+      },
+      {
+       "id": 28,
+       "name": "Nici Gütermann Mara 120, 1000m, czerwony (156)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_191519562.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-czerwony-156/"
+      },
+      {
+       "id": 31,
+       "name": "Nici Gütermann Mara 120, 1000m, jasny błękit (193)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_204000902.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-blekit-193/"
+      },
+      {
+       "id": 25,
+       "name": "Nici Gütermann Mara 120, 1000m, jasny róż (320)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_175105631.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-320-jasny-roz-320/"
+      },
+      {
+       "id": 29,
+       "name": "Nici Gütermann Mara 120, 1000m, kolor: czarny (000)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260121_205632370.PORTRAIT2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-czarny-000/"
+      },
+      {
+       "id": 27,
+       "name": "Nici Gütermann Mara 120, 1000m, kolor: jasny beż (275)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/file_00000000ce5071f489e84534ac150a6c.png",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-jasny-bez-275/"
+      },
+      {
+       "id": 26,
+       "name": "Nici Gütermann Mara 120, 1000m, silver peony (802)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_194324512.MP2_-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-silver-peony-802/"
+      },
+      {
+       "id": 24,
+       "name": "Nici Gütermann Mara 120, 1000m, łososiowy (210)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260115_115923557.PORTRAIT.ORIGINAL-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-120-1000m-kolor-lososiowy-210/"
+      },
+      {
+       "id": 33,
+       "name": "Nici Gütermann Mara 150, 1000m, biały (800)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/PXL_20260117_204944833.PORTRAIT.ORIGINAL2-scaled.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-150-1000m-kolor-bialy-800/"
+      },
+      {
+       "id": 32,
+       "name": "Nici Gütermann Mara 150, 1000m, czarny (000)",
+       "price": "9.00",
+       "imageUrl": "https://subtelnedetale.pl/wp-content/uploads/nici_mara_150_000.jpg",
+       "permalink": "https://subtelnedetale.pl/produkt/nici-gutermann-mara-150-1000m-kolor-czarny-000/"
+      }
+     ],
+     "visualParts": []
+    }
+   ]
+  }
+ ]
+}

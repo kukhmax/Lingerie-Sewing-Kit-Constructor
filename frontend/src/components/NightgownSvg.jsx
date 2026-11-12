@@ -1,131 +1,96 @@
-import React from 'react';
+import { FabricDefs, GarmentFigure, Mirror } from './GarmentBits.jsx';
+import { isLace, useGarmentParts } from './useGarmentParts.js';
+
+const LABELS = {
+  bodice: 'Góra (stanik)',
+  skirt: 'Dół koszulki',
+  straps: 'Ramiączka',
+  underbust: 'Gumka pod biustem',
+  trim: 'Koronka na dole',
+};
+
+// lewa połowa (prawa = odbicie lustrzane względem x = 300)
+const CUP = 'M 200 118 C 230 150, 275 190, 300 214 L 300 252 C 250 264, 190 260, 150 242 C 152 200, 170 150, 200 118 Z';
+const STRAP = 'M 211 8 L 223 8 L 208 124 L 194 120 Z';
+const UNDERBUST = 'M 150 242 C 190 260, 250 264, 300 252';
+const NECK = 'M 200 118 C 230 150, 275 190, 300 214';
+// całość
+const SKIRT = 'M 150 242 C 190 260, 250 264, 300 252 C 350 264, 410 260, 450 242 C 470 380, 500 520, 530 640 Q 300 680 70 640 C 100 520, 130 380, 150 242 Z';
+const TRIM = 'M 70 640 Q 300 680 530 640 L 537 674 Q 300 716 63 674 Z';
+const HEM = 'M 63 674 Q 300 716 537 674';
 
 export default function NightgownSvg({ activePart, setActivePart, selections }) {
-  const getPartFill = (partId, defaultColor = '#f3f4f6') => {
-    const selectedItem = selections[partId];
-    return selectedItem ? selectedItem.colorHex : defaultColor;
-  };
+  const { isOn, fill, outline, outlineW, dash, partProps, caption } = useGarmentParts({
+    activePart,
+    setActivePart,
+    selections,
+    labels: LABELS,
+  });
 
   return (
-    <svg 
-      viewBox="0 0 400 250" 
-      className="svg-garment" 
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.05))' }}
-    >
-      <defs>
-        {/* Lace pattern overlay for bodice and trim */}
-        <pattern id="lace-pattern-gown" width="20" height="20" patternUnits="userSpaceOnUse">
-          <path d="M 0 10 Q 5 5 10 10 T 20 10" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.0" />
-          <circle cx="5" cy="5" r="1" fill="rgba(255,255,255,0.15)" />
-        </pattern>
-      </defs>
+    <GarmentFigure viewBox="0 0 600 730" label="Koszulka nocna — kliknij część, aby dobrać materiał" caption={caption}>
+      <FabricDefs prefix="ng" />
 
-      {/* 1. STRAPS / RAMIĄCZKA (Left & Right) */}
-      <g 
-        id="straps" 
-        className={`interactive-part ${activePart === 'straps' ? 'active' : ''}`}
-        onClick={() => setActivePart('straps')}
-      >
-        {/* Left Strap */}
-        <path 
-          d="M 160 60 L 160 15 C 160 15, 158 10, 154 10 C 150 10, 148 15, 148 15 L 148 65 L 152 65 L 152 20 L 156 20 L 156 60 Z" 
-          fill={getPartFill('straps', '#d1d5db')} 
-          stroke={activePart === 'straps' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'straps' ? '2.5' : '1'}
-        />
-        {/* Right Strap */}
-        <path 
-          d="M 240 60 L 240 15 C 240 15, 242 10, 246 10 C 250 10, 252 15, 252 15 L 252 65 L 248 65 L 248 20 L 244 20 L 244 60 Z" 
-          fill={getPartFill('straps', '#d1d5db')} 
-          stroke={activePart === 'straps' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'straps' ? '2.5' : '1'}
+      {/* 1. RAMIĄCZKA */}
+      <g {...partProps('straps')}>
+        <Mirror>
+          <path d="M 200 8 L 234 8 L 220 126 L 184 120 Z" fill="transparent" stroke="none" />
+          <path d={STRAP} fill={fill('straps')} stroke={outline('straps')} strokeWidth={outlineW('straps')} strokeDasharray={dash('straps')} strokeLinejoin="round" />
+          {/* regulator */}
+          <rect x="203" y="52" width="20" height="9" rx="3" fill="none" stroke="#b9b3aa" strokeWidth="2.4" transform="rotate(-7 213 56)" pointerEvents="none" />
+        </Mirror>
+      </g>
+
+      {/* 2. DÓŁ KOSZULKI */}
+      <g {...partProps('skirt')}>
+        <path d={SKIRT} fill={fill('skirt')} stroke={outline('skirt')} strokeWidth={outlineW('skirt', 1.6)} strokeDasharray={dash('skirt')} strokeLinejoin="round" />
+        {isLace(selections.skirt) && <path d={SKIRT} fill="url(#ng-lace)" pointerEvents="none" />}
+        <path d={SKIRT} fill="url(#ng-folds)" pointerEvents="none" />
+        <path d={SKIRT} fill="url(#ng-shade)" pointerEvents="none" />
+        {/* fałdy */}
+        <path
+          d="M 215 262 C 205 400, 175 540, 150 652 M 270 262 C 268 400, 255 540, 245 664 M 330 262 C 332 400, 345 540, 355 664 M 385 262 C 395 400, 425 540, 450 652"
+          fill="none" stroke="rgba(0,0,0,0.13)" strokeWidth="1.2" pointerEvents="none"
         />
       </g>
 
-      {/* 2. SKIRT / DÓŁ KOSZULKI (Flowy gown body) */}
-      <g 
-        id="skirt" 
-        className={`interactive-part ${activePart === 'skirt' ? 'active' : ''}`}
-        onClick={() => setActivePart('skirt')}
-      >
-        <path 
-          d="M 145 92 L 255 92 C 255 92, 275 160, 290 220 L 110 220 C 125 160, 145 92, 145 92 Z" 
-          fill={getPartFill('skirt', '#f9fafb')} 
-          stroke={activePart === 'skirt' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'skirt' ? '2.5' : '1.5'}
-        />
+      {/* 3. KORONKA NA DOLE */}
+      <g {...partProps('trim')}>
+        <path d={TRIM} fill={fill('trim')} stroke={outline('trim')} strokeWidth={outlineW('trim')} strokeDasharray={dash('trim')} strokeLinejoin="round" />
+        <path d={TRIM} fill="url(#ng-lace)" pointerEvents="none" />
+        {/* ząbki koronki */}
+        <path d={HEM} fill="none" stroke={outline('trim')} strokeWidth={isOn('trim') ? 15 : 13.5} strokeLinecap="round" strokeDasharray="0.1 13" />
+        <path d={HEM} fill="none" stroke={fill('trim')} strokeWidth="11.5" strokeLinecap="round" strokeDasharray="0.1 13" />
       </g>
 
-      {/* 3. BODICE / STANIK (Upper lace chest area) */}
-      <g 
-        id="bodice" 
-        className={`interactive-part ${activePart === 'bodice' ? 'active' : ''}`}
-        onClick={() => setActivePart('bodice')}
-      >
-        {/* Left cup area */}
-        <path 
-          d="M 145 90 C 145 90, 140 55, 170 55 C 190 55, 200 75, 200 90 L 145 90 Z" 
-          fill={getPartFill('bodice', '#e5e7eb')} 
-          stroke={activePart === 'bodice' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'bodice' ? '2.5' : '1.2'}
-        />
-        {/* Right cup area */}
-        <path 
-          d="M 255 90 C 255 90, 260 55, 230 55 C 210 55, 200 75, 200 90 L 255 90 Z" 
-          fill={getPartFill('bodice', '#e5e7eb')} 
-          stroke={activePart === 'bodice' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'bodice' ? '2.5' : '1.2'}
-        />
-        {/* Lace Overlay */}
-        {selections.bodice && (
-          <path 
-            d="M 145 90 C 145 90, 140 55, 170 55 C 190 55, 200 75, 200 90 C 200 75, 210 55, 230 55 C 260 55, 255 90, 255 90 Z" 
-            fill="url(#lace-pattern-gown)" 
-            style={{ mixBlendMode: 'overlay', pointerEvents: 'none' }}
-          />
-        )}
+      {/* 4. GÓRA */}
+      <g {...partProps('bodice')}>
+        <Mirror>
+          <path d={CUP} fill={fill('bodice')} stroke={outline('bodice')} strokeWidth={outlineW('bodice', 1.6)} strokeDasharray={dash('bodice')} strokeLinejoin="round" />
+          {isLace(selections.bodice) && <path d={CUP} fill="url(#ng-lace)" pointerEvents="none" />}
+          <path d={CUP} fill="url(#ng-volume)" pointerEvents="none" />
+          {/* zaszewka */}
+          <path d="M 228 256 C 226 225, 222 200, 216 180" fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="1" pointerEvents="none" />
+          {/* ząbki wzdłuż dekoltu */}
+          <path d={NECK} fill="none" stroke={outline('bodice')} strokeWidth="8" strokeLinecap="round" strokeDasharray="0.1 8.5" transform="translate(3 -3)" pointerEvents="none" />
+          <path d={NECK} fill="none" stroke={fill('bodice')} strokeWidth="6" strokeLinecap="round" strokeDasharray="0.1 8.5" transform="translate(3 -3)" pointerEvents="none" />
+        </Mirror>
       </g>
 
-      {/* 4. UNDER-BUST ELASTIC / GUMKA POD BIUSTEM */}
-      <g 
-        id="underbust" 
-        className={`interactive-part ${activePart === 'underbust' ? 'active' : ''}`}
-        onClick={() => setActivePart('underbust')}
-      >
-        <rect 
-          x="142" 
-          y="90" 
-          width="116" 
-          height="4" 
-          fill={getPartFill('underbust', '#c9cdd4')} 
-          stroke={activePart === 'underbust' ? 'var(--color-primary)' : 'none'}
-          strokeWidth="1.5"
-        />
+      {/* 5. GUMKA POD BIUSTEM */}
+      <g {...partProps('underbust')}>
+        <Mirror>
+          <path d={UNDERBUST} fill="none" stroke="transparent" strokeWidth="22" />
+          <path d={UNDERBUST} fill="none" stroke={outline('underbust')} strokeWidth={isOn('underbust') ? 12.5 : 11} strokeLinecap="round" />
+          <path d={UNDERBUST} fill="none" stroke={fill('underbust')} strokeWidth="9" strokeLinecap="round" />
+          <path d={UNDERBUST} fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="0.8" strokeDasharray="3 3" pointerEvents="none" />
+        </Mirror>
+        {/* kokardka */}
+        <g pointerEvents="none" stroke={outline('underbust')} strokeWidth="1" fill={fill('underbust')}>
+          <path d="M 300 252 L 284 243 L 286 262 Z M 300 252 L 316 243 L 314 262 Z" />
+          <circle cx="300" cy="252" r="3.6" />
+        </g>
       </g>
-
-      {/* 5. LACE TRIM / WYKOŃCZENIE (Hem lace at bottom) */}
-      <g 
-        id="trim" 
-        className={`interactive-part ${activePart === 'trim' ? 'active' : ''}`}
-        onClick={() => setActivePart('trim')}
-      >
-        {/* Scalloped edge representation at bottom hem */}
-        <path 
-          d="M 110 220 Q 115 228 120 220 Q 125 228 130 220 Q 135 228 140 220 Q 145 228 150 220 Q 155 228 160 220 Q 165 228 170 220 Q 175 228 180 220 Q 185 228 190 220 Q 195 228 200 220 Q 205 228 210 220 Q 215 228 220 220 Q 225 228 230 220 Q 235 228 240 220 Q 245 228 250 220 Q 255 228 260 220 Q 265 228 270 220 Q 275 228 280 220 Q 285 228 290 220 L 290 226 L 110 226 Z" 
-          fill={getPartFill('trim', '#d1d5db')} 
-          stroke={activePart === 'trim' ? 'var(--color-primary)' : '#b5a595'}
-          strokeWidth={activePart === 'trim' ? '2' : '1'}
-        />
-        {/* Lace pattern overlay */}
-        {selections.trim && (
-          <path 
-            d="M 110 220 Q 115 228 120 220 Q 125 228 130 220 Q 135 228 140 220 Q 145 228 150 220 Q 155 228 160 220 Q 165 228 170 220 Q 175 228 180 220 Q 185 228 190 220 Q 195 228 200 220 Q 205 228 210 220 Q 215 228 220 220 Q 225 228 230 220 Q 235 228 240 220 Q 245 228 250 220 Q 255 228 260 220 Q 265 228 270 220 Q 275 228 280 220 Q 285 228 290 220 L 290 226 L 110 226 Z" 
-            fill="url(#lace-pattern-gown)" 
-            style={{ mixBlendMode: 'overlay', pointerEvents: 'none' }}
-          />
-        )}
-      </g>
-    </svg>
+    </GarmentFigure>
   );
 }
