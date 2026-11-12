@@ -1,3 +1,6 @@
+> **Документ устарел.** Это исходное ТЗ. ИИ-консультант (Gemini) удалён, Tailwind, TypeScript и переключатель языков
+> в проекте не используются, API и поля базы изменены. Актуальное описание — в [README.md](README.md), история — в [DEVELOP.md](DEVELOP.md).
+
 # Technical Specification & Integration Plan for Subtelne Detale Sewing Kit Constructor
 > **Проект:** Интерактивный конструктор комплектов пошива (ткани, кружево и фурнитура для нижнего белья)
 > **Клиентский сайт:** [subtelnedetale.pl](https://subtelnedetale.pl/)
