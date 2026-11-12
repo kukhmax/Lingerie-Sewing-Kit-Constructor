@@ -527,3 +527,22 @@ h1, h2, h3, h4 {
   font-weight: 600;
   text-transform: uppercase;
 }
+
+/* Realistyczny biustonosz: większe płótno, widoczny fokus z klawiatury, podpis części */
+.svg-garment-bra {
+  max-width: 520px;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.08));
+}
+
+.interactive-part:focus-visible {
+  outline: none;
+  filter: drop-shadow(0 0 8px rgba(197, 160, 54, 0.8));
+}
+
+.svg-part-label {
+  font-family: var(--font-sans, inherit);
+  font-size: 17px;
+  font-weight: 600;
+  fill: var(--color-primary);
+  stroke: none;
+}
