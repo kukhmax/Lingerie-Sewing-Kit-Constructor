@@ -96,3 +96,25 @@ test('pickForPalette wybiera typ preferowany dla części (dół koszulki → sa
   assert.equal(pickForPalette('bra', getPart('bra', 'cups'), catalog, 'wine').id, 'fab-lace-wine');
   assert.equal(pickForPalette('bra', getPart('bra', 'cups'), catalog, 'brak-takiej'), null);
 });
+
+test('sanitizeState: uszkodzone dane z localStorage dają poprawny stan', async () => {
+  const { sanitizeState, pruneState } = await import('../src/lib/storage.js');
+  const s = sanitizeState({
+    activeGarment: 'kapelusz',
+    sizes: { bra: 'XXL', panties: 'L' },
+    selections: { bra: { cups: 17, nieznana: 'x', gore: { zly: 1 } }, panties: 'zle' },
+    overrides: { a: -1, b: 'dużo', c: 1.5 },
+  });
+  assert.equal(s.activeGarment, 'bra');
+  assert.deepEqual(s.sizes, { bra: 'M', panties: 'L', nightgown: 'M' });
+  assert.deepEqual(s.selections, { bra: { cups: '17' }, panties: {}, nightgown: {} });
+  assert.deepEqual(s.overrides, { c: 1.5 });
+  assert.deepEqual(sanitizeState(null).selections, { bra: {}, panties: {}, nightgown: {} });
+
+  // materiał usunięty ze sklepu oraz materiał niezgodny z częścią znikają z zestawu
+  const sel = { bra: { cups: 'fab-lace-wine', gore: 'hard-gold-15', straps: 'usuniety' }, panties: {}, nightgown: {} };
+  const pruned = pruneState(sel, { 'fab-lace-wine': 1, usuniety: 2 }, byId, isCompatible);
+  assert.equal(pruned.removed, 2);
+  assert.deepEqual(pruned.selections.bra, { cups: 'fab-lace-wine' });
+  assert.deepEqual(pruned.overrides, { 'fab-lace-wine': 1 });
+});

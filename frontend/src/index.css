@@ -1,40 +1,34 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
-
-:root {
-  --color-bg-base: #fdfcf9;
-  --color-bg-surface: #ffffff;
-  --color-bg-input: #faf9f6;
-  --color-primary: #c9a236;
-  --color-primary-hover: #b08d2b;
-  --color-primary-text: #8a6d1c;
-  --color-accent: #cca374;
-  --color-accent-light: #f5efe6;
-  --color-text-main: #1f2937;
-  --color-text-muted: #6b7280;
-  --color-border: #e5e7eb;
-  --color-danger: #b42318;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --shadow-md: 0 4px 6px -1px rgba(197, 160, 54, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  --shadow-lg: 0 20px 40px -8px rgba(0, 0, 0, 0.25);
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 16px;
-  --transition-normal: 0.2s ease;
-}
-
-body {
-  margin: 0;
-  background-color: var(--color-bg-base);
-}
-
+/* Wszystkie style są ograniczone do .sdc — nie zmieniają reszty strony sklepu.
+   Kolory i kroje pisma można nadpisać z zewnątrz: .sdc { --sdc-color-primary: ...; } */
 .sdc {
+  --sdc-color-bg-base: #fdfcf9;
+  --sdc-color-bg-surface: #ffffff;
+  --sdc-color-bg-input: #faf9f6;
+  --sdc-color-primary: #c9a236;
+  --sdc-color-primary-hover: #b08d2b;
+  --sdc-color-primary-text: #8a6d1c;
+  --sdc-color-accent: #cca374;
+  --sdc-color-accent-light: #f5efe6;
+  --sdc-color-text-main: #1f2937;
+  --sdc-color-text-muted: #6b7280;
+  --sdc-color-border: #e5e7eb;
+  --sdc-color-danger: #b42318;
+  --sdc-font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --sdc-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --sdc-shadow-md: 0 4px 6px -1px rgba(197, 160, 54, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --sdc-shadow-lg: 0 20px 40px -8px rgba(0, 0, 0, 0.25);
+  --sdc-radius-sm: 4px;
+  --sdc-radius-md: 8px;
+  --sdc-radius-lg: 16px;
+  --sdc-transition-normal: 0.2s ease;
+
+
   box-sizing: border-box;
   max-width: 1280px;
   margin: 0 auto;
   padding: 1.5rem;
-  color: var(--color-text-main);
-  font-family: var(--font-sans);
+  color: var(--sdc-color-text-main);
+  font-family: var(--sdc-font-sans);
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -70,14 +64,14 @@ body {
 }
 
 .sdc :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--sdc-color-primary);
   outline-offset: 2px;
 }
 
 .sdc-title,
 .sdc-card-title,
 .sdc-dialog h3 {
-  font-family: var(--font-serif);
+  font-family: var(--sdc-font-serif);
   font-weight: 600;
   color: #111827;
 }
@@ -87,7 +81,7 @@ body {
 }
 
 .sdc-muted {
-  color: var(--color-text-muted);
+  color: var(--sdc-color-text-muted);
   font-size: 0.85rem;
 }
 
@@ -96,7 +90,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--sdc-color-text-muted);
 }
 
 /* Nagłówek i zakładki wyrobów */
@@ -114,8 +108,8 @@ body {
   display: inline-flex;
   gap: 0.25rem;
   padding: 0.3rem;
-  background-color: var(--color-accent-light);
-  border-radius: var(--radius-lg);
+  background-color: var(--sdc-color-accent-light);
+  border-radius: var(--sdc-radius-lg);
 }
 
 .sdc-tab,
@@ -126,8 +120,8 @@ body {
   border-radius: 12px;
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--color-text-muted);
-  transition: var(--transition-normal);
+  color: var(--sdc-color-text-muted);
+  transition: var(--sdc-transition-normal);
 }
 
 .sdc-segment button {
@@ -137,15 +131,15 @@ body {
 
 .sdc-tab.is-active,
 .sdc-segment button.is-active {
-  background-color: var(--color-bg-surface);
-  color: var(--color-text-main);
+  background-color: var(--sdc-color-bg-surface);
+  color: var(--sdc-color-text-main);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .sdc-tab-count {
   margin-left: 0.4rem;
   font-size: 0.72rem;
-  color: var(--color-primary-text);
+  color: var(--sdc-color-primary-text);
 }
 
 /* Układ */
@@ -157,10 +151,10 @@ body {
 }
 
 .sdc-card {
-  background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  background-color: var(--sdc-color-bg-surface);
+  border: 1px solid var(--sdc-color-border);
+  border-radius: var(--sdc-radius-lg);
+  box-shadow: var(--sdc-shadow-md);
   padding: 1.25rem;
 }
 
@@ -176,7 +170,7 @@ body {
   font-size: 1.2rem;
   padding-bottom: 0.75rem;
   margin-bottom: 0.75rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--sdc-color-border);
 }
 
 .sdc-toolbar {
@@ -204,16 +198,16 @@ body {
   align-items: center;
   gap: 0.4rem;
   padding: 0.3rem 0.65rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--sdc-color-border);
   border-radius: 999px;
-  background: var(--color-bg-surface);
+  background: var(--sdc-color-bg-surface);
   font-size: 0.8rem;
-  transition: var(--transition-normal);
+  transition: var(--sdc-transition-normal);
 }
 
 .sdc-palette:hover:not(:disabled) {
-  border-color: var(--color-primary);
-  background-color: var(--color-accent-light);
+  border-color: var(--sdc-color-primary);
+  background-color: var(--sdc-color-accent-light);
 }
 
 .sdc-palette i,
@@ -236,7 +230,7 @@ body {
   padding: 1rem 0;
 }
 
-.svg-garment {
+.sdc-garment {
   width: 100%;
   max-width: 520px;
   max-height: 62vh;
@@ -244,21 +238,21 @@ body {
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.08));
 }
 
-.interactive-part {
+.sdc-ipart {
   cursor: pointer;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: filter var(--transition-normal);
+  transition: filter var(--sdc-transition-normal);
   outline: none;
 }
 
-.interactive-part:hover,
-.interactive-part:focus-visible,
-.interactive-part.active {
+.sdc-ipart:hover,
+.sdc-ipart:focus-visible,
+.sdc-ipart.active {
   filter: drop-shadow(0 0 7px rgba(197, 160, 54, 0.75));
 }
 
-.sdc .interactive-part:focus-visible {
+.sdc .sdc-ipart:focus-visible {
   outline: none;
 }
 
@@ -275,7 +269,7 @@ body {
   margin-top: 0.5rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-primary-text);
+  color: var(--sdc-color-primary-text);
   text-align: center;
 }
 
@@ -285,7 +279,7 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 0.5rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--sdc-color-border);
 }
 
 .sdc-part {
@@ -295,21 +289,21 @@ body {
   width: 100%;
   padding: 0.5rem 0.65rem;
   text-align: left;
-  border: 1px dashed var(--color-accent);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-input);
-  transition: var(--transition-normal);
+  border: 1px dashed var(--sdc-color-accent);
+  border-radius: var(--sdc-radius-md);
+  background: var(--sdc-color-bg-input);
+  transition: var(--sdc-transition-normal);
 }
 
 .sdc-part:hover {
-  border-color: var(--color-primary);
-  background: var(--color-accent-light);
+  border-color: var(--sdc-color-primary);
+  background: var(--sdc-color-accent-light);
 }
 
 .sdc-part.is-done {
   border-style: solid;
-  border-color: var(--color-border);
-  background: var(--color-bg-surface);
+  border-color: var(--sdc-color-border);
+  background: var(--sdc-color-bg-surface);
 }
 
 .sdc-part i {
@@ -334,37 +328,37 @@ body {
 
 .sdc-part small {
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--sdc-color-text-muted);
 }
 
 /* Przyciski */
 .sdc-btn {
   padding: 0.6rem 1.1rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-surface);
+  border: 1px solid var(--sdc-color-border);
+  border-radius: var(--sdc-radius-md);
+  background: var(--sdc-color-bg-surface);
   font-weight: 600;
   font-size: 0.9rem;
-  transition: var(--transition-normal);
+  transition: var(--sdc-transition-normal);
 }
 
 .sdc-btn:hover:not(:disabled) {
-  border-color: var(--color-primary);
+  border-color: var(--sdc-color-primary);
 }
 
 .sdc-btn-primary {
-  border-color: var(--color-primary);
-  background: var(--color-primary);
+  border-color: var(--sdc-color-primary);
+  background: var(--sdc-color-primary);
   color: #fff;
 }
 
 .sdc-btn-primary:hover:not(:disabled) {
-  background: var(--color-primary-hover);
+  background: var(--sdc-color-primary-hover);
 }
 
 .sdc-btn-ghost {
   border-color: transparent;
-  color: var(--color-danger);
+  color: var(--sdc-color-danger);
 }
 
 .sdc-btn-block {
@@ -378,14 +372,14 @@ body {
   padding: 0.25rem 0;
   font-size: 0.82rem;
   font-weight: 600;
-  color: var(--color-primary-text);
+  color: var(--sdc-color-primary-text);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .sdc-link-danger {
-  color: var(--color-danger);
-  font-family: var(--font-sans);
+  color: var(--sdc-color-danger);
+  font-family: var(--sdc-font-sans);
   font-size: 0.82rem;
 }
 
@@ -394,7 +388,7 @@ body {
   height: 2.25rem;
   border: none;
   border-radius: 50%;
-  background: var(--color-accent-light);
+  background: var(--sdc-color-accent-light);
   font-size: 1.4rem;
   line-height: 1;
 }
@@ -403,7 +397,7 @@ body {
 .sdc-swatch {
   display: block;
   object-fit: cover;
-  border-radius: var(--radius-md);
+  border-radius: var(--sdc-radius-md);
   border: 1px solid rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
 }
@@ -424,9 +418,9 @@ body {
   padding: 1.25rem;
   text-align: center;
   font-size: 0.9rem;
-  color: var(--color-text-muted);
-  background: var(--color-bg-input);
-  border-radius: var(--radius-md);
+  color: var(--sdc-color-text-muted);
+  background: var(--sdc-color-bg-input);
+  border-radius: var(--sdc-radius-md);
 }
 
 .sdc-kit {
@@ -440,7 +434,7 @@ body {
   display: flex;
   gap: 0.75rem;
   padding: 0.75rem 0;
-  border-bottom: 1px dashed var(--color-border);
+  border-bottom: 1px dashed var(--sdc-color-border);
 }
 
 .sdc-kit-main {
@@ -470,8 +464,8 @@ body {
 .sdc-stepper {
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--sdc-color-border);
+  border-radius: var(--sdc-radius-md);
   overflow: hidden;
 }
 
@@ -479,7 +473,7 @@ body {
   width: 2rem;
   height: 2rem;
   border: none;
-  background: var(--color-bg-input);
+  background: var(--sdc-color-bg-input);
   font-size: 1.1rem;
 }
 
@@ -502,12 +496,12 @@ body {
   justify-content: space-between;
   align-items: baseline;
   margin: 1rem 0;
-  font-family: var(--font-serif);
+  font-family: var(--sdc-font-serif);
   font-size: 1.2rem;
 }
 
 .sdc-total strong {
-  color: var(--color-primary-text);
+  color: var(--sdc-color-primary-text);
 }
 
 .sdc-alert {
@@ -517,9 +511,9 @@ body {
   margin-bottom: 1rem;
   padding: 0.75rem 1rem;
   border: 1px solid #fecaca;
-  border-radius: var(--radius-md);
+  border-radius: var(--sdc-radius-md);
   background: #fef2f2;
-  color: var(--color-danger);
+  color: var(--sdc-color-danger);
   font-size: 0.9rem;
 }
 
@@ -530,10 +524,10 @@ body {
   max-height: calc(100dvh - 2rem);
   padding: 0;
   border: none;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  color: var(--color-text-main);
-  font-family: var(--font-sans);
+  border-radius: var(--sdc-radius-lg);
+  box-shadow: var(--sdc-shadow-lg);
+  color: var(--sdc-color-text-main);
+  font-family: var(--sdc-font-sans);
   overflow: hidden;
 }
 
@@ -562,7 +556,7 @@ body {
 }
 
 .sdc-dialog-head {
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--sdc-color-border);
 }
 
 .sdc-dialog-head h3 {
@@ -571,7 +565,7 @@ body {
 
 .sdc-dialog-foot {
   justify-content: flex-end;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--sdc-color-border);
 }
 
 .sdc-dialog .sdc-empty {
@@ -595,20 +589,20 @@ body {
   height: 100%;
   padding: 0.6rem;
   text-align: left;
-  border: 2px solid var(--color-border);
+  border: 2px solid var(--sdc-color-border);
   border-radius: 12px;
-  background: var(--color-bg-surface);
-  transition: var(--transition-normal);
+  background: var(--sdc-color-bg-surface);
+  transition: var(--sdc-transition-normal);
 }
 
 .sdc-product:hover:not(:disabled) {
-  border-color: var(--color-accent);
+  border-color: var(--sdc-color-accent);
   transform: translateY(-2px);
 }
 
 .sdc-product.is-selected {
-  border-color: var(--color-primary);
-  background: var(--color-accent-light);
+  border-color: var(--sdc-color-primary);
+  background: var(--sdc-color-accent-light);
 }
 
 .sdc-product-name {
@@ -626,7 +620,7 @@ body {
 
 .sdc-product-price {
   font-weight: 700;
-  color: var(--color-primary-text);
+  color: var(--sdc-color-primary-text);
 }
 
 .sdc-product-need {
@@ -639,7 +633,7 @@ body {
   right: 0.9rem;
   padding: 0.1rem 0.5rem;
   border-radius: 999px;
-  background: var(--color-primary);
+  background: var(--sdc-color-primary);
   color: #fff;
   font-size: 0.72rem;
   font-weight: 600;
@@ -659,11 +653,11 @@ body {
 
 .sdc-toast {
   padding: 0.75rem 1rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--sdc-radius-md);
   background: #1f2937;
   color: #fff;
   font-size: 0.88rem;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--sdc-shadow-lg);
 }
 
 .sdc-toast a {

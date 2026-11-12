@@ -2,12 +2,20 @@
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Konstruktor zestawów krawieckich — Subtelne Detale</title>
+    <!-- Strona demonstracyjna. Na stronie sklepu kroje pisma i tło pochodzą z szablonu sklepu. -->
+    <style>
+      body { margin: 0; background: #fdfcf9; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <!--
+      Tryb demo: bez data-cart-url nic nie jest wysyłane do sklepu.
+      Na stronie sklepu: data-materials-url="/constructor/materials" data-cart-url="/constructor/cart"
+    -->
+    <div id="subtelne-constructor"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

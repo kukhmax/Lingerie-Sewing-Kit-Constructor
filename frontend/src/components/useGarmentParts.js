@@ -13,14 +13,14 @@ export function useGarmentParts({ activePart, setActivePart, selections, labels 
 
   const isOn = (partId) => activePart === partId || hovered === partId;
   const fill = (partId, empty = EMPTY_FILL) => selections[partId]?.colorHex || empty;
-  const outline = (partId) => (isOn(partId) ? 'var(--color-primary)' : OUTLINE);
+  const outline = (partId) => (isOn(partId) ? 'var(--sdc-color-primary)' : OUTLINE);
   const outlineW = (partId, base = 1.4) => (isOn(partId) ? 3 : base);
   // Niewybrana część = sam kontur (linia przerywana), wybrana = pełny kolor
   const dash = (partId) => (selections[partId] || isOn(partId) ? undefined : '5 4');
 
   const partProps = (partId) => ({
     id: partId,
-    className: `interactive-part ${activePart === partId ? 'active' : ''}`,
+    className: `sdc-ipart ${activePart === partId ? 'active' : ''}`,
     role: 'button',
     tabIndex: 0,
     'aria-label': `${labels[partId]}${selections[partId] ? `: ${selections[partId].name}` : ' — wybierz materiał'}`,

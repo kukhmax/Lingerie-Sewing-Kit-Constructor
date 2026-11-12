@@ -12,7 +12,7 @@ export function Mirror({ children, axis = 300 }) {
 export function GarmentFigure({ viewBox, label, caption, children }) {
   return (
     <figure className="sdc-figure">
-      <svg viewBox={viewBox} className="svg-garment" xmlns="http://www.w3.org/2000/svg" role="group" aria-label={label}>
+      <svg viewBox={viewBox} className="sdc-garment" xmlns="http://www.w3.org/2000/svg" role="group" aria-label={label}>
         {children}
       </svg>
       <figcaption aria-hidden="true">{caption}</figcaption>

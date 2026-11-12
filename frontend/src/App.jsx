@@ -1,31 +1,45 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BraSvg from './components/BraSvg.jsx';
 import PantiesSvg from './components/PantiesSvg.jsx';
 import NightgownSvg from './components/NightgownSvg.jsx';
 import ProductPicker from './components/ProductPicker.jsx';
 import KitList from './components/KitList.jsx';
 import { GARMENTS, GARMENT_IDS, PALETTES, SIZES } from './config/garments.js';
-import { buildKit, garmentProgress, getPart, kitTotal, partQty, pickForPalette, productsForPart } from './lib/kit.js';
+import { buildKit, garmentProgress, isCompatible, getPart, kitTotal, partQty, pickForPalette, productsForPart } from './lib/kit.js';
 import { addToCart, CartError, loadMaterials } from './api.js';
+import { defaultState, loadState, pruneState, saveState } from './lib/storage.js';
 
 const GARMENT_SVG = { bra: BraSvg, panties: PantiesSvg, nightgown: NightgownSvg };
 
-const emptySelections = () => Object.fromEntries(GARMENT_IDS.map((g) => [g, {}]));
-const defaultSizes = () => Object.fromEntries(GARMENT_IDS.map((g) => [g, 'M']));
+const emptySelections = () => defaultState().selections;
 
 let toastSeq = 0;
 
 export default function App({ config }) {
   const [materials, setMaterials] = useState(null); // null = ładowanie
   const [loadFailed, setLoadFailed] = useState(false);
-  const [activeGarment, setActiveGarment] = useState('bra');
-  const [selections, setSelections] = useState(emptySelections); // { bra: { cups: productId } }
-  const [sizes, setSizes] = useState(defaultSizes);
-  const [overrides, setOverrides] = useState({}); // ręcznie zmienione ilości
+  const [saved] = useState(loadState); // zestaw zapamiętany w przeglądarce
+  const [activeGarment, setActiveGarment] = useState(saved.activeGarment);
+  const [selections, setSelections] = useState(saved.selections); // { bra: { cups: productId } }
+  const [sizes, setSizes] = useState(saved.sizes);
+  const [overrides, setOverrides] = useState(saved.overrides); // ręcznie zmienione ilości
   const [pickerPart, setPickerPart] = useState(null); // id części, dla której otwarto okno
   const [busyId, setBusyId] = useState(null);
   const [addedIds, setAddedIds] = useState(() => new Set());
   const [toasts, setToasts] = useState([]);
+
+  const toast = useCallback((text, kind = 'info', link = null) => {
+    const id = ++toastSeq;
+    setToasts((prev) => [...prev, { id, text, kind, link }]);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 6000);
+  }, []);
+
+  // Aktualny stan dla callbacków asynchronicznych + zapis do localStorage
+  const stateRef = useRef({ selections, overrides });
+  useEffect(() => {
+    stateRef.current = { selections, overrides };
+    saveState({ activeGarment, selections, sizes, overrides });
+  }, [activeGarment, selections, sizes, overrides]);
 
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -33,7 +47,16 @@ export default function App({ config }) {
     let cancelled = false;
     loadMaterials(config)
       .then((list) => {
-        if (!cancelled) setMaterials(list);
+        if (cancelled) return;
+        setMaterials(list);
+        // zapamiętany zestaw mógł zawierać materiały, których już nie ma w sklepie
+        const byId = new Map(list.map((p) => [p.id, p]));
+        const pruned = pruneState(stateRef.current.selections, stateRef.current.overrides, byId, isCompatible);
+        if (pruned.removed > 0) {
+          setSelections(pruned.selections);
+          setOverrides(pruned.overrides);
+          toast(`Usunięto z zestawu materiały, które nie są już dostępne (${pruned.removed}).`, 'warn');
+        }
       })
       .catch(() => {
         if (cancelled) return;
@@ -43,7 +66,7 @@ export default function App({ config }) {
     return () => {
       cancelled = true;
     };
-  }, [config, reloadKey]);
+  }, [config, reloadKey, toast]);
 
   const retryLoad = () => {
     setLoadFailed(false);
@@ -52,12 +75,6 @@ export default function App({ config }) {
   };
 
   const productsById = useMemo(() => new Map((materials ?? []).map((p) => [p.id, p])), [materials]);
-
-  const toast = useCallback((text, kind = 'info', link = null) => {
-    const id = ++toastSeq;
-    setToasts((prev) => [...prev, { id, text, kind, link }]);
-    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 6000);
-  }, []);
 
   const garment = GARMENTS[activeGarment];
   const GarmentSvg = GARMENT_SVG[activeGarment];
