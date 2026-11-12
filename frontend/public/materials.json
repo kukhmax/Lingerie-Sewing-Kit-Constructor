@@ -5,10 +5,10 @@
     "category": "fabric",
     "colorName": "Szmaragdowy",
     "colorHex": "#047857",
-    "price": 38.00,
+    "price": 38.0,
     "unit": "m",
     "description": "Elastyczna koronka rzęskowa o szerokości 18 cm, idealna na miseczki biustonosza lub ozdobne wstawki.",
-    "standard_qty": 1.50
+    "type": "lace"
   },
   {
     "id": "fab-lace-wine",
@@ -16,10 +16,10 @@
     "category": "fabric",
     "colorName": "Wino",
     "colorHex": "#881337",
-    "price": 42.00,
+    "price": 42.0,
     "unit": "m",
     "description": "Premium włoska koronka o głębokiej barwie bordowej ze złotą nitką metalizowaną.",
-    "standard_qty": 1.50
+    "type": "lace"
   },
   {
     "id": "fab-lace-blush",
@@ -27,10 +27,10 @@
     "category": "fabric",
     "colorName": "Różowy Pudrowy",
     "colorHex": "#fda4af",
-    "price": 35.00,
+    "price": 35.0,
     "unit": "m",
     "description": "Bardzo delikatna i miękka koronka elastyczna w kolorze pastelowego różu.",
-    "standard_qty": 1.50
+    "type": "lace"
   },
   {
     "id": "fab-micro-black",
@@ -38,10 +38,10 @@
     "category": "fabric",
     "colorName": "Czarny",
     "colorHex": "#111827",
-    "price": 29.00,
+    "price": 29.0,
     "unit": "m",
     "description": "Kryjąca, mięsista i bardzo elastyczna dzianina z przeznaczeniem na obwody biustonoszy lub główne części majtek.",
-    "standard_qty": 1.20
+    "type": "microfiber"
   },
   {
     "id": "fab-mesh-nude",
@@ -49,22 +49,27 @@
     "category": "fabric",
     "colorName": "Cielisty (Nude)",
     "colorHex": "#fbcfe8",
-    "price": 25.00,
+    "price": 25.0,
     "unit": "m",
     "description": "Mocna siatka tiulowa stabilizująca, stosowana jako podszewka miseczek lub mostka.",
-    "standard_qty": 1.00
+    "palettes": [
+      "emerald",
+      "wine",
+      "blush",
+      "black"
+    ],
+    "type": "mesh"
   },
-  
   {
     "id": "elas-strap-emerald",
     "name": "Guma ramiączkowa 15mm (Szmaragdowa)",
     "category": "elastic",
     "colorName": "Szmaragdowy",
     "colorHex": "#047857",
-    "price": 4.50,
+    "price": 4.5,
     "unit": "m",
     "description": "Aksamitna, mocna guma ramiączkowa o szerokości 15 mm.",
-    "standard_qty": 1.20
+    "type": "strap"
   },
   {
     "id": "elas-strap-wine",
@@ -72,10 +77,10 @@
     "category": "elastic",
     "colorName": "Wino",
     "colorHex": "#881337",
-    "price": 4.50,
+    "price": 4.5,
     "unit": "m",
     "description": "Elegancka guma ramiączkowa w odcieniu burgundu.",
-    "standard_qty": 1.20
+    "type": "strap"
   },
   {
     "id": "elas-strap-blush",
@@ -83,10 +88,10 @@
     "category": "elastic",
     "colorName": "Różowy Pudrowy",
     "colorHex": "#fda4af",
-    "price": 4.00,
+    "price": 4.0,
     "unit": "m",
     "description": "Węższa guma ramiączkowa, doskonała do lżejszych biustonoszy i koszulek.",
-    "standard_qty": 1.20
+    "type": "strap"
   },
   {
     "id": "elas-strap-black",
@@ -94,22 +99,21 @@
     "category": "elastic",
     "colorName": "Czarny",
     "colorHex": "#111827",
-    "price": 4.00,
+    "price": 4.0,
     "unit": "m",
     "description": "Matowa, stabilna guma ramiączkowa najwyższej jakości.",
-    "standard_qty": 1.20
+    "type": "strap"
   },
-  
   {
     "id": "elas-band-emerald",
     "name": "Gumka obszywkowa z pikotką 10mm (Szmaragd)",
     "category": "elastic",
     "colorName": "Szmaragdowy",
     "colorHex": "#047857",
-    "price": 3.00,
+    "price": 3.0,
     "unit": "m",
     "description": "Elastyczna gumka z ozdobnym brzegiem (pikotką) do wykończenia krawędzi obwodu i miseczek.",
-    "standard_qty": 2.00
+    "type": "band"
   },
   {
     "id": "elas-band-wine",
@@ -117,10 +121,10 @@
     "category": "elastic",
     "colorName": "Wino",
     "colorHex": "#881337",
-    "price": 3.00,
+    "price": 3.0,
     "unit": "m",
     "description": "Gumka obszywkowa z ozdobnym brzegiem w kolorze głębokiego wina.",
-    "standard_qty": 2.00
+    "type": "band"
   },
   {
     "id": "elas-band-blush",
@@ -128,10 +132,10 @@
     "category": "elastic",
     "colorName": "Różowy Pudrowy",
     "colorHex": "#fda4af",
-    "price": 2.80,
+    "price": 2.8,
     "unit": "m",
     "description": "Cienka gumka wykończeniowa, idealna do majtek i delikatnego wykończenia miseczek.",
-    "standard_qty": 2.00
+    "type": "band"
   },
   {
     "id": "elas-band-black",
@@ -139,22 +143,24 @@
     "category": "elastic",
     "colorName": "Czarny",
     "colorHex": "#111827",
-    "price": 2.50,
+    "price": 2.5,
     "unit": "m",
     "description": "Czarna elastyczna gumka obszywkowa o szerokości 10 mm z delikatnym zdobieniem.",
-    "standard_qty": 2.00
+    "type": "band"
   },
-
   {
     "id": "hard-gold-15",
     "name": "Zestaw regulatorów i kółek 15mm (Złoty)",
     "category": "hardware",
     "colorName": "Złoty",
     "colorHex": "#cca374",
-    "price": 8.00,
+    "price": 8.0,
     "unit": "kpl",
     "description": "Komplet metalowych kółek i regulatorów (po 2 szt.) powlekanych warstwą w kolorze złota.",
-    "standard_qty": 1.00
+    "palettes": [
+      "emerald",
+      "wine"
+    ]
   },
   {
     "id": "hard-silver-15",
@@ -162,10 +168,10 @@
     "category": "hardware",
     "colorName": "Srebrny",
     "colorHex": "#d1d5db",
-    "price": 7.50,
+    "price": 7.5,
     "unit": "kpl",
     "description": "Komplet metalowych kółek i regulatorów w kolorze klasycznego srebra.",
-    "standard_qty": 1.00
+    "palettes": []
   },
   {
     "id": "hard-rose-12",
@@ -173,10 +179,12 @@
     "category": "hardware",
     "colorName": "Różowe Złoto",
     "colorHex": "#f472b6",
-    "price": 9.00,
+    "price": 9.0,
     "unit": "kpl",
     "description": "Luksusowy zestaw kółeczek i regulatorów o szerokości 12 mm w kolorze różowego złota.",
-    "standard_qty": 1.00
+    "palettes": [
+      "blush"
+    ]
   },
   {
     "id": "hard-black-15",
@@ -184,22 +192,19 @@
     "category": "hardware",
     "colorName": "Czarny",
     "colorHex": "#1f2937",
-    "price": 7.00,
+    "price": 7.0,
     "unit": "kpl",
-    "description": "Zestaw metalowych akcesoriów w kolorze czarnego niklu (pistoletowym).",
-    "standard_qty": 1.00
+    "description": "Zestaw metalowych akcesoriów w kolorze czarnego niklu (pistoletowym)."
   },
-
   {
     "id": "clos-emerald-2",
     "name": "Zapięcie biustonosza 2-rzędowe (Szmaragd)",
     "category": "closure",
     "colorName": "Szmaragdowy",
     "colorHex": "#047857",
-    "price": 5.00,
+    "price": 5.0,
     "unit": "szt",
-    "description": "Miękkie zapięcie na haftki o szerokości 38 mm z 3-stopniową regulacją obwodu.",
-    "standard_qty": 1.00
+    "description": "Miękkie zapięcie na haftki o szerokości 38 mm z 3-stopniową regulacją obwodu."
   },
   {
     "id": "clos-wine-2",
@@ -207,10 +212,9 @@
     "category": "closure",
     "colorName": "Wino",
     "colorHex": "#881337",
-    "price": 5.00,
+    "price": 5.0,
     "unit": "szt",
-    "description": "Zapięcie z haftkami w kolorze wina, 2 rzędy haczyków.",
-    "standard_qty": 1.00
+    "description": "Zapięcie z haftkami w kolorze wina, 2 rzędy haczyków."
   },
   {
     "id": "clos-blush-2",
@@ -218,10 +222,9 @@
     "category": "closure",
     "colorName": "Różowy Pudrowy",
     "colorHex": "#fda4af",
-    "price": 5.00,
+    "price": 5.0,
     "unit": "szt",
-    "description": "Pastelowo-różowe dwurzędowe zapięcie tyłu biustonosza.",
-    "standard_qty": 1.00
+    "description": "Pastelowo-różowe dwurzędowe zapięcie tyłu biustonosza."
   },
   {
     "id": "clos-black-2",
@@ -229,22 +232,20 @@
     "category": "closure",
     "colorName": "Czarny",
     "colorHex": "#111827",
-    "price": 4.50,
+    "price": 4.5,
     "unit": "szt",
-    "description": "Standardowe zapięcie dwurzędowe do biustonosza w kolorze czarnym.",
-    "standard_qty": 1.00
+    "description": "Standardowe zapięcie dwurzędowe do biustonosza w kolorze czarnym."
   },
-
   {
     "id": "wire-tunnel-emerald",
     "name": "Taśma tunelowa na fiszbiny (Szmaragd)",
     "category": "underwire",
     "colorName": "Szmaragdowy",
     "colorHex": "#047857",
-    "price": 3.50,
+    "price": 3.5,
     "unit": "m",
     "description": "Delikatna taśma tunelowa do wszywania fiszbin metalowych w gorseciarstwie.",
-    "standard_qty": 1.00
+    "type": "tunnel"
   },
   {
     "id": "wire-tunnel-wine",
@@ -252,10 +253,10 @@
     "category": "underwire",
     "colorName": "Wino",
     "colorHex": "#881337",
-    "price": 3.50,
+    "price": 3.5,
     "unit": "m",
     "description": "Puszysta i miękka taśma tunelowa chroniąca ciało przed uciskiem fiszbiny.",
-    "standard_qty": 1.00
+    "type": "tunnel"
   },
   {
     "id": "wire-tunnel-blush",
@@ -263,10 +264,10 @@
     "category": "underwire",
     "colorName": "Różowy Pudrowy",
     "colorHex": "#fda4af",
-    "price": 3.50,
+    "price": 3.5,
     "unit": "m",
     "description": "Tunel gorseciarski w kolorze pudrowego różu do wykończenia misek.",
-    "standard_qty": 1.00
+    "type": "tunnel"
   },
   {
     "id": "wire-tunnel-black",
@@ -274,10 +275,10 @@
     "category": "underwire",
     "colorName": "Czarny",
     "colorHex": "#111827",
-    "price": 3.00,
+    "price": 3.0,
     "unit": "m",
     "description": "Klasyczna czarna pluszowa taśma tunelowa na fiszbiny pod biust.",
-    "standard_qty": 1.00
+    "type": "tunnel"
   },
   {
     "id": "wire-classic-80b",
@@ -285,9 +286,15 @@
     "category": "underwire",
     "colorName": "Srebrny metal",
     "colorHex": "#9ca3af",
-    "price": 6.00,
+    "price": 6.0,
     "unit": "para",
     "description": "Para wytrzymałych fiszbin metalowych pokrytych nylonową powłoką ochronną na końcach.",
-    "standard_qty": 1.00
+    "palettes": [
+      "emerald",
+      "wine",
+      "blush",
+      "black"
+    ],
+    "type": "wire"
   }
 ]

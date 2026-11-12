@@ -7,7 +7,7 @@ const PART_LABELS = {
   wings: 'Obwód biustonosza',
   straps: 'Ramiączka',
   elastics: 'Gumki wykończeniowe',
-  underwires: 'Fiszbiny i tunele',
+  underwires: 'Tunele na fiszbiny',
   hardware: 'Regulatory i kółka',
   closure: 'Zapięcie tyłu',
 };
