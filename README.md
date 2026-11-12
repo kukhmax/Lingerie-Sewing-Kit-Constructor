@@ -7,6 +7,11 @@
 Модуль полностью автономный: никаких сторонних сервисов, ключей и ИИ. Он общается только с двумя адресами магазина —
 каталог материалов и корзина.
 
+> **Важно (12.11.2026).** Магазин `subtelnedetale.pl` работает на WordPress + WooCommerce, а наборы уже собирает
+> отдельное приложение `mojzestaw.subtelnedetale.pl` (sets-creator: Laravel + Inertia + Vue 3). Поэтому рисунки переносятся
+> внутрь него — см. раздел 8 и [`sets-creator-visual/INTEGRATION.md`](sets-creator-visual/INTEGRATION.md).
+> Разделы 3–5 описывают автономный вариант с собственным Laravel-бэкендом; для этого магазина он не понадобится.
+
 | | |
 |---|---|
 | Интерфейс | React 19 + Vite 8, чистый CSS, язык интерфейса — польский |
@@ -50,11 +55,7 @@ npm run dev        # http://localhost:5173 — режим разработки
 | `npm test` | тесты логики набора и целостности каталога |
 | `npm run lint` | проверка кода |
 
-Через Docker (только для разработки, не для продакшена):
-
-```bash
-docker compose up --build      # http://localhost:5173
-```
+Через Docker — см. раздел 8.
 
 **Демо-режим.** Без настроенных адресов магазина конструктор берёт каталог из `frontend/public/materials.json`
 и в корзину ничего не отправляет — при нажатии честно сообщает об этом.
@@ -280,6 +281,7 @@ frontend/dist/constructor.css
 ## 6. Структура проекта
 
 ```
+sets-creator-visual/          макет для sets-creator: Vue-компоненты, сервер-заглушка, INTEGRATION.md
 frontend/
   index.html                  демо-страница
   public/materials.json       демо-каталог (43 товара)
@@ -301,6 +303,41 @@ frontend/
 laravel-backend/              файлы для проекта магазина (раздел 3)
 DEVELOP.md                    журнал шагов разработки
 PLAN_AND_SPEC.md              исходное ТЗ (устарело, оставлено для истории)
+```
+
+---
+
+## 8. Макет для sets-creator и запуск через Docker
+
+Папка `sets-creator-visual/` — те же рисунки изделий на Vue 3 плюс сервер-заглушка, повторяющий адреса и формат данных
+sets-creator. Деталь закрашивается фотографией выбранного товара. Данные цели «majtki» — настоящие, с сайта.
+
+### Через Docker
+
+Нужны Docker и Docker Compose. Из корня репозитория:
+
+```bash
+docker compose up --build
+```
+
+| Адрес | Что это |
+|---|---|
+| http://localhost:8080 | макет режима «рисунок» для sets-creator |
+| http://localhost:5173 | автономный конструктор (React), режим разработки |
+
+Только макет: `docker compose up --build mojzestaw`. Остановить: `Ctrl+C`, затем `docker compose down`.
+Если порт занят — поменяйте левую часть в `ports` в `docker-compose.yml`, например `"9090:8080"`.
+
+Фото товаров в макете грузятся с `subtelnedetale.pl`, поэтому нужен интернет. В корзину магазина макет ничего не отправляет.
+
+### Без Docker
+
+```bash
+cd sets-creator-visual
+npm install
+npm run build && npm start     # http://localhost:8080
+npm run dev                    # разработка: http://localhost:5174, заглушка на 8080
+npm test
 ```
 
 ---

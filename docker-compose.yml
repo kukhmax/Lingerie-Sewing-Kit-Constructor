@@ -1,13 +1,22 @@
+# Запуск:  docker compose up --build
+#
+#   http://localhost:8080  — макет режима «рисунок» для sets-creator (Vue + сервер-заглушка)
+#   http://localhost:5173  — автономный конструктор (React), режим разработки
+#
+# Только один из них:  docker compose up --build mojzestaw
+
 services:
+  mojzestaw:
+    build: ./sets-creator-visual
+    container_name: mojzestaw-visual
+    ports:
+      - "8080:8080"
+
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: konstructor-frontend
+    build: ./frontend
+    container_name: konstruktor-frontend
     ports:
       - "5173:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    stdin_open: true
-    tty: true
