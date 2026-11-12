@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { GARMENTS, PALETTES, SIZES } from '../src/config/garments.js';
-import { buildKit, ceilToStep, getPart, isCompatible, kitTotal, matchesPalette, productsForPart } from '../src/lib/kit.js';
+import { buildKit, ceilToStep, getPart, isCompatible, kitTotal, matchesPalette, pickForPalette, productsForPart } from '../src/lib/kit.js';
 import { normalizeProduct } from '../src/api.js';
 
 const catalog = JSON.parse(readFileSync(new URL('../public/materials.json', import.meta.url), 'utf8'))
@@ -89,4 +89,10 @@ test('normalizeProduct: kształt z Laravel (id liczbowe, cena jako string) i odr
   assert.equal(p.inStock, true);
   assert.equal(normalizeProduct({ id: 1, name: 'x', category: 'fabric', price: 'abc' }), null);
   assert.equal(normalizeProduct({ name: 'bez id', category: 'fabric', price: 1 }), null);
+});
+
+test('pickForPalette wybiera typ preferowany dla części (dół koszulki → satyna, miseczki → koronka)', () => {
+  assert.equal(pickForPalette('nightgown', getPart('nightgown', 'skirt'), catalog, 'wine').id, 'fab-satin-wine');
+  assert.equal(pickForPalette('bra', getPart('bra', 'cups'), catalog, 'wine').id, 'fab-lace-wine');
+  assert.equal(pickForPalette('bra', getPart('bra', 'cups'), catalog, 'brak-takiej'), null);
 });

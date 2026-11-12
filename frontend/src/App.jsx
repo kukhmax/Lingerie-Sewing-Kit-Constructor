@@ -5,7 +5,7 @@ import NightgownSvg from './components/NightgownSvg.jsx';
 import ProductPicker from './components/ProductPicker.jsx';
 import KitList from './components/KitList.jsx';
 import { GARMENTS, GARMENT_IDS, PALETTES, SIZES } from './config/garments.js';
-import { buildKit, garmentProgress, getPart, kitTotal, matchesPalette, partQty, productsForPart } from './lib/kit.js';
+import { buildKit, garmentProgress, getPart, kitTotal, partQty, pickForPalette, productsForPart } from './lib/kit.js';
 import { addToCart, CartError, loadMaterials } from './api.js';
 
 const GARMENT_SVG = { bra: BraSvg, panties: PantiesSvg, nightgown: NightgownSvg };
@@ -89,7 +89,7 @@ export default function App({ config }) {
     let applied = 0;
     const next = { ...selections[activeGarment] };
     for (const part of garment.parts) {
-      const match = productsForPart(activeGarment, part, materials ?? []).find((p) => p.inStock && matchesPalette(p, palette.key));
+      const match = pickForPalette(activeGarment, part, materials ?? [], palette.key);
       if (match) {
         next[part.id] = match.id;
         applied += 1;

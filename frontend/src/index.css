@@ -239,6 +239,7 @@ body {
 .svg-garment {
   width: 100%;
   max-width: 520px;
+  max-height: 62vh;
   height: auto;
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.08));
 }
@@ -261,12 +262,21 @@ body {
   outline: none;
 }
 
-.svg-part-label {
-  font-family: var(--font-sans);
-  font-size: 17px;
+.sdc-figure {
+  width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sdc-figure figcaption {
+  min-height: 1.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  fill: var(--color-primary-text);
-  stroke: none;
+  color: var(--color-primary-text);
+  text-align: center;
 }
 
 /* Lista części pod rysunkiem */

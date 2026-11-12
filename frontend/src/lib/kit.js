@@ -43,6 +43,20 @@ export function matchesPalette(product, key) {
   return String(product.id).includes(key);
 }
 
+// Materiał dla części w danej palecie. Kolejność accepts.types = preferencja (np. dół koszulki: najpierw satyna).
+export function pickForPalette(garmentId, part, products, key) {
+  const types = part.accepts.types ?? [];
+  const rank = (p) => {
+    const i = types.indexOf(p.type);
+    return i === -1 ? types.length : i;
+  };
+  return (
+    productsForPart(garmentId, part, products)
+      .filter((p) => p.inStock !== false && matchesPalette(p, key))
+      .sort((x, y) => rank(x) - rank(y))[0] ?? null
+  );
+}
+
 /**
  * Buduje listę zakupów ze wszystkich wyrobów.
  * selections: { bra: { cups: productId, ... }, ... }
