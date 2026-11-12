@@ -36,7 +36,7 @@ Id деталей:
 |---|---|
 | `bra` | `cups`, `gore`, `wings`, `straps`, `elastics`, `underwires`, `hardware`, `closure` |
 | `panties` | `front`, `back`, `gusset`, `waist`, `legs` |
-| `nightgown` | `bodice`, `skirt`, `straps`, `underbust`, `trim` |
+| `nightgown` | `bodice`, `skirt`, `straps`, `hardware`, `underbust`, `trim` |
 
 Одна деталь должна принадлежать не более чем одному слоту — это стоит проверять при сохранении в админке.
 

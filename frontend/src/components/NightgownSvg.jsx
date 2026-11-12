@@ -1,5 +1,5 @@
 import { FabricDefs, GarmentFigure, Mirror } from './GarmentBits.jsx';
-import { isLace, useGarmentParts } from './useGarmentParts.js';
+import { METAL, isLace, useGarmentParts } from './useGarmentParts.js';
 
 const LABELS = {
   bodice: 'Góra (stanik)',
@@ -7,6 +7,7 @@ const LABELS = {
   straps: 'Ramiączka',
   underbust: 'Gumka pod biustem',
   trim: 'Koronka na dole',
+  hardware: 'Regulatory i kółka',
 };
 
 // lewa połowa (prawa = odbicie lustrzane względem x = 300)
@@ -26,6 +27,7 @@ export default function NightgownSvg({ activePart, setActivePart, selections }) 
     selections,
     labels: LABELS,
   });
+  const metal = selections.hardware?.colorHex || METAL;
 
   return (
     <GarmentFigure viewBox="0 0 600 730" label="Koszulka nocna — kliknij część, aby dobrać materiał" caption={caption}>
@@ -36,8 +38,6 @@ export default function NightgownSvg({ activePart, setActivePart, selections }) 
         <Mirror>
           <path d="M 200 8 L 234 8 L 220 126 L 184 120 Z" fill="transparent" stroke="none" />
           <path d={STRAP} fill={fill('straps')} stroke={outline('straps')} strokeWidth={outlineW('straps')} strokeDasharray={dash('straps')} strokeLinejoin="round" />
-          {/* regulator */}
-          <rect x="203" y="52" width="20" height="9" rx="3" fill="none" stroke="#b9b3aa" strokeWidth="2.4" transform="rotate(-7 213 56)" pointerEvents="none" />
         </Mirror>
       </g>
 
@@ -77,7 +77,25 @@ export default function NightgownSvg({ activePart, setActivePart, selections }) 
         </Mirror>
       </g>
 
-      {/* 5. GUMKA POD BIUSTEM */}
+      {/* 5. REGULATORY I KÓŁKA na ramiączkach */}
+      <g {...partProps('hardware')}>
+        <Mirror>
+          {/* powiększony obszar klikalny */}
+          <rect x="192" y="40" width="42" height="32" fill="transparent" stroke="none" />
+          <circle cx="201" cy="121" r="13" fill="transparent" stroke="none" />
+          {/* regulator */}
+          <g transform="rotate(-7 213 56)">
+            <rect x="201" y="50" width="24" height="12" rx="3.5" fill="none" stroke={outline('hardware')} strokeWidth={isOn('hardware') ? 6.5 : 5} />
+            <rect x="201" y="50" width="24" height="12" rx="3.5" fill="none" stroke={metal} strokeWidth="2.8" />
+            <path d="M 202 56 H 224" stroke={metal} strokeWidth="2" />
+          </g>
+          {/* kółko łączące ramiączko ze stanikiem */}
+          <ellipse cx="201" cy="121" rx="10" ry="4.2" fill="none" stroke={outline('hardware')} strokeWidth={isOn('hardware') ? 6 : 4.8} transform="rotate(-12 201 121)" />
+          <ellipse cx="201" cy="121" rx="10" ry="4.2" fill="none" stroke={metal} strokeWidth="2.6" transform="rotate(-12 201 121)" />
+        </Mirror>
+      </g>
+
+      {/* 6. GUMKA POD BIUSTEM */}
       <g {...partProps('underbust')}>
         <Mirror>
           <path d={UNDERBUST} fill="none" stroke="transparent" strokeWidth="22" />
